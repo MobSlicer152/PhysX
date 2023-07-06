@@ -255,7 +255,7 @@ public:
 	*/
 	virtual	void				setConstraintFunctions(PxConstraintConnector& connector, const PxConstraintShaderTable& shaders)	= 0;
 
-	virtual	const char*			getConcreteTypeName() const PX_OVERRIDE { return "PxConstraint"; }
+	virtual	const char*			getConcreteTypeName() const  { return "PxConstraint"; }
 
 			void*				userData;	//!< user can assign this to whatever, usually to create a 1:1 relationship with a user object.
 
@@ -263,7 +263,7 @@ protected:
 	PX_INLINE					PxConstraint(PxType concreteType, PxBaseFlags baseFlags) : PxBase(concreteType, baseFlags), userData(NULL) {}
 	PX_INLINE					PxConstraint(PxBaseFlags baseFlags) : PxBase(baseFlags), userData(NULL) {}
 	virtual						~PxConstraint() {}
-	virtual	bool				isKindOf(const char* name) const PX_OVERRIDE { return !::strcmp("PxConstraint", name) || PxBase::isKindOf(name); }
+	virtual	bool				isKindOf(const char* name) const  { return !::strcmp("PxConstraint", name) || PxBase::isKindOf(name); }
 };
 
 #if !PX_DOXYGEN

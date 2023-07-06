@@ -38,7 +38,6 @@ PxDefaultCpuDispatcher* physx::PxDefaultCpuDispatcherCreate(PxU32 numThreads, Px
 	return PX_NEW(Ext::DefaultCpuDispatcher)(numThreads, affinityMasks, mode, yieldProcessorCount);
 }
 
-#if !PX_SWITCH
 void Ext::DefaultCpuDispatcher::getAffinityMasks(PxU32* affinityMasks, PxU32 threadCount)
 {
 	for(PxU32 i=0; i < threadCount; i++)
@@ -46,7 +45,6 @@ void Ext::DefaultCpuDispatcher::getAffinityMasks(PxU32* affinityMasks, PxU32 thr
 		affinityMasks[i] = 0;
 	}
 }
-#endif
 
 Ext::DefaultCpuDispatcher::DefaultCpuDispatcher(PxU32 numThreads, PxU32* affinityMasks, PxDefaultCpuDispatcherWaitForWorkMode::Enum mode, PxU32 yieldProcessorCount)
 	: mQueueEntryPool(EXT_TASK_QUEUE_ENTRY_POOL_SIZE, "QueueEntryPool"), mNumThreads(numThreads), mShuttingDown(false)

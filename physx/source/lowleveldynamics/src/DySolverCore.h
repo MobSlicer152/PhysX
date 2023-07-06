@@ -60,7 +60,7 @@ typedef void (*WriteBackBlockMethod)(const PxSolverConstraintDesc* desc, const P
 #define PX_PROFILE_SOLVE_STALLS 0
 #if PX_PROFILE_SOLVE_STALLS
 #if PX_WINDOWS
-#include <windows.h>
+#include <xtl.h>
 
 
 PX_FORCE_INLINE PxU64 readTimer()

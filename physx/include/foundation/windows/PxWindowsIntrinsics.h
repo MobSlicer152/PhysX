@@ -44,7 +44,26 @@
 #if PX_VC == 10
 #pragma warning(disable : 4987) // nonstandard extension used: 'throw (...)'
 #endif
+#ifdef _XBOX
+unsigned char _BitScanForward(
+   unsigned long * Index,
+   unsigned long Mask
+);
+unsigned char _BitScanForward64(
+   unsigned long * Index,
+   unsigned __int64 Mask
+);
+unsigned char _BitScanReverse(
+   unsigned long * Index,
+   unsigned long Mask
+);
+unsigned char _BitScanReverse64(
+   unsigned long * Index,
+   unsigned __int64 Mask
+);
+#else
 #include <intrin.h>
+#endif
 #pragma warning(pop)
 
 #pragma warning(push)
@@ -55,7 +74,10 @@
 #include <float.h>
 // do not include for ARM target
 #if !PX_ARM && !PX_A64
+#ifdef _XBOX
+#else
 #include <mmintrin.h>
+#endif
 #endif
 
 #pragma intrinsic(_BitScanForward)

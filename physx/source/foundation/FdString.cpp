@@ -29,6 +29,9 @@
 #include "foundation/PxString.h"
 #include <stdarg.h>
 #include <stdio.h>
+#if PX_SWITCH
+#include <strings.h>
+#endif
 #include <string.h>
 
 #if PX_WINDOWS_FAMILY

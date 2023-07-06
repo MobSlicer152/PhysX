@@ -72,7 +72,7 @@
 #include "NpFactory.h"
 
 #if PX_SWITCH
-#include "switch/NpMiddlewareInfo.h"
+//#include "switch/NpMiddlewareInfo.h"
 #endif
 
 #if PX_SUPPORT_OMNI_PVD
@@ -285,7 +285,7 @@ void NpPhysics::initOffsetTables(PxvOffsetTable& pxvOffsetTable)
 NpPhysics* NpPhysics::createInstance(PxU32 version, PxFoundation& foundation, const PxTolerancesScale& scale, bool trackOutstandingAllocations, pvdsdk::PsPvd* pvd, PxOmniPvd* omniPvd)
 {
 #if PX_SWITCH
-	NpSetMiddlewareInfo();  // register middleware info such that PhysX usage can be tracked
+//	NpSetMiddlewareInfo();  // register middleware info such that PhysX usage can be tracked
 #endif
 	
 	if (version!=PX_PHYSICS_VERSION) 

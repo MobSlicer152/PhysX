@@ -170,6 +170,7 @@ class CMakePreset:
                 os.environ['PM_CMakeModules_PATH'] + \
                 '/switch/NX64Toolchain.txt'
             outString = outString + ' -DCMAKE_GENERATOR_PLATFORM=NX64'
+            outString = outString + ' -DCMAKE_VS_USER_PROPS=C:\\packman-repo\\chk\\CMakeModules\\1.28.trunk.32494385\\switch\\Microsoft.Cpp.NX-NXFP2-a64.user.props'
             return outString
         elif self.targetPlatform == 'linux':
             outString = outString + ' -DTARGET_BUILD_PLATFORM=linux'

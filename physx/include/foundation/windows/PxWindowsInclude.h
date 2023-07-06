@@ -85,7 +85,11 @@
 
 #pragma warning(push)
 #pragma warning(disable : 4668) //'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
+#ifdef _XBOX
+#include <xtl.h>
+#else
 #include <windows.h>
+#endif
 #pragma warning(pop)
 
 #if PX_SSE2
