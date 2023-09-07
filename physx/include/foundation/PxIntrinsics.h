@@ -37,6 +37,8 @@
 #include "unix/PxUnixIntrinsics.h"
 #elif PX_SWITCH
 #include "switch/PxSwitchIntrinsics.h"
+#elif PX_PSP
+#include "psp/PxPspIntrinsics.h"
 #else
 #error "Platform not supported!"
 #endif

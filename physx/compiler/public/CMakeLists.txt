@@ -36,7 +36,9 @@ OPTION(PX_BUILDSNIPPETS "Generate the snippets" OFF)
 OPTION(PX_BUILDPVDRUNTIME "Generate the OmniPVD project" OFF)
 OPTION(PX_CMAKE_SUPPRESS_REGENERATION "Disable zero_check projects" OFF)
 
-IF(NOT DEFINED CMAKEMODULES_VERSION)
+set(CMAKEMODULES_PATH "${PHYSX_ROOT_DIR}/compiler/modules" CACHE INTERNAL "Path to CMakeModules")
+
+IF(FALSE)#NOT DEFINED CMAKEMODULES_VERSION)
 	SET(CMAKEMODULES_PATH $ENV{PM_CMakeModules_PATH} CACHE INTERNAL "Path to CMakeModules")
 	SET(CMAKEMODULES_NAME "CMakeModules" CACHE INTERNAL "CMakeModules name")
 	SET(CMAKEMODULES_VERSION "1.27" CACHE INTERNAL "CMakeModules version from generation batch")
@@ -82,9 +84,9 @@ ENDIF()
 
 IF(PX_BUILDSNIPPETS)
 	# Add Snippets projects into the solution
-	ADD_SUBDIRECTORY(${PHYSX_ROOT_DIR}/snippets/compiler/cmake ${CMAKE_CURRENT_BINARY_DIR}/sdk_snippets_bin)
+	#ADD_SUBDIRECTORY(${PHYSX_ROOT_DIR}/snippets/compiler/cmake ${CMAKE_CURRENT_BINARY_DIR}/sdk_snippets_bin)
 
-	MESSAGE("Added Snippets")
+	#MESSAGE("Added Snippets")
 ENDIF()
 
 

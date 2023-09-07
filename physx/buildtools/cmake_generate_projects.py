@@ -113,27 +113,29 @@ class CMakePreset:
             return False
         elif self.targetPlatform == 'linuxAarch64':
             return False
+        elif self.targetPlatform == 'psp':
+            return False
         return True
 
     def getCMakeSwitches(self):
         outString = ''
         for cmakeSwitch in self.cmakeSwitches:
-            outString = outString + ' ' + cmakeSwitch
+            outString += ' ' + cmakeSwitch
             if cmakeSwitch.find('PX_GENERATE_GPU_PROJECTS') != -1:
                 if os.environ.get('PM_CUDA_PATH') is not None:
-                    outString = outString + ' -DCUDA_TOOLKIT_ROOT_DIR=' + \
+                    outString += ' -DCUDA_TOOLKIT_ROOT_DIR=' + \
                         os.environ['PM_CUDA_PATH']
                 if self.compiler == 'vc15':
                     print('VS15CL:' + os.environ['VS150CLPATH'])
-                    outString = outString + ' -DCUDA_HOST_COMPILER=' + \
+                    outString += ' -DCUDA_HOST_COMPILER=' + \
                         os.environ['VS150CLPATH']
                 if self.compiler == 'vc16':
                     print('VS16CL:' + os.environ['VS160CLPATH'])
-                    outString = outString + ' -DCUDA_HOST_COMPILER=' + \
+                    outString += ' -DCUDA_HOST_COMPILER=' + \
                         os.environ['VS160CLPATH']
                 if self.compiler == 'vc17':
                     print('VS17CL:' + os.environ['VS170CLPATH'])
-                    outString = outString + ' -DCUDA_HOST_COMPILER=' + \
+                    outString += ' -DCUDA_HOST_COMPILER=' + \
                         os.environ['VS170CLPATH']
 
         return outString
@@ -141,84 +143,85 @@ class CMakePreset:
     def getCMakeParams(self):
         outString = ''
         for cmakeParam in self.cmakeParams:
-            outString = outString + ' ' + cmakeParam
+            outString += ' ' + cmakeParam
         return outString
 
     def getPlatformCMakeParams(self):
         outString = ' '
         if self.compiler == 'vc15':
-            outString = outString + '-G \"Visual Studio 15 2017\"'
+            outString += '-G \"Visual Studio 15 2017\"'
         elif self.compiler == 'vc16':
-            outString = outString + '-G \"Visual Studio 16 2019\"'
+            outString += '-G \"Visual Studio 16 2019\"'
         elif self.compiler == 'vc17':
-            outString = outString + '-G \"Visual Studio 17 2022\"'
+            outString += '-G \"Visual Studio 17 2022\"'
         elif self.compiler == 'xcode':
-            outString = outString + '-G Xcode'
+            outString += '-G Xcode'
         elif self.targetPlatform == 'linux':
-            outString = outString + '-G \"Unix Makefiles\"'
+            outString += '-G \"Unix Makefiles\"'
         elif self.targetPlatform == 'linuxAarch64':
-            outString = outString + '-G \"Unix Makefiles\"'
+            outString += '-G \"Unix Makefiles\"'
+        elif self.targetPlatform == 'psp':
+            outString += '-G \"Unix Makefiles\"'
 
         if self.targetPlatform == 'win64':
-            outString = outString + ' -Ax64'
-            outString = outString + ' -DTARGET_BUILD_PLATFORM=windows'
-            outString = outString + ' -DPX_OUTPUT_ARCH=x86'
+            outString += ' -Ax64'
+            outString += ' -DTARGET_BUILD_PLATFORM=windows'
+            outString += ' -DPX_OUTPUT_ARCH=x86'
             return outString
         elif self.targetPlatform == 'switch64':
-            outString = outString + ' -DTARGET_BUILD_PLATFORM=switch'
-            outString = outString + ' -DCMAKE_TOOLCHAIN_FILE=' + \
-                os.environ['PM_CMakeModules_PATH'] + \
-                '/switch/NX64Toolchain.txt'
-            outString = outString + ' -DCMAKE_GENERATOR_PLATFORM=NX64'
-            outString = outString + ' -DCMAKE_VS_USER_PROPS=C:\\packman-repo\\chk\\CMakeModules\\1.28.trunk.32494385\\switch\\Microsoft.Cpp.NX-NXFP2-a64.user.props'
+            outString += ' -DTARGET_BUILD_PLATFORM=switch'
+            outString += ' -DCMAKE_TOOLCHAIN_FILE=' + \
+                os.environ['PHYSX_ROOT_DIR'] + '/compiler/modules/switch/NX64Toolchain.txt'
+            outString += ' -DCMAKE_GENERATOR_PLATFORM=NX64'
+            outString += ' -DCMAKE_VS_USER_PROPS=' + os.environ['PHYSX_ROOT_DIR'] + '/compiler/modules/switch/Microsoft.Cpp.NX-NXFP2-a64.user.props'
+            return outString
+        elif self.targetPlatform == 'psp':
+            outString += ' -DTARGET_BUILD_PLATFORM=psp'
             return outString
         elif self.targetPlatform == 'linux':
-            outString = outString + ' -DTARGET_BUILD_PLATFORM=linux'
-            outString = outString + ' -DPX_OUTPUT_ARCH=x86'
+            outString += ' -DTARGET_BUILD_PLATFORM=linux'
+            outString += ' -DPX_OUTPUT_ARCH=x86'
             if self.compiler == 'clang-crosscompile':
-                outString = outString + ' -DCMAKE_TOOLCHAIN_FILE=' + \
-                    os.environ['PM_CMakeModules_PATH'] + \
-                    '/linux/LinuxCrossToolchain.x86_64-unknown-linux-gnu.cmake'
+                outString += ' -DCMAKE_TOOLCHAIN_FILE=' + \
+                    os.environ['PHYSX_ROOT_DIR'] + '/compiler/modules/linux/LinuxCrossToolchain.x86_64-unknown-linux-gnu.cmake'
             elif self.compiler == 'clang':
                 if os.environ.get('PM_clang_PATH') is not None:
-                    outString = outString + ' -DCMAKE_C_COMPILER=' + \
+                    outString += ' -DCMAKE_C_COMPILER=' + \
                         os.environ['PM_clang_PATH'] + '/bin/clang'
-                    outString = outString + ' -DCMAKE_CXX_COMPILER=' + \
+                    outString += ' -DCMAKE_CXX_COMPILER=' + \
                         os.environ['PM_clang_PATH'] + '/bin/clang++'
                 else:
-                    outString = outString + ' -DCMAKE_C_COMPILER=clang'
-                    outString = outString + ' -DCMAKE_CXX_COMPILER=clang++'
+                    outString += ' -DCMAKE_C_COMPILER=clang'
+                    outString += ' -DCMAKE_CXX_COMPILER=clang++'
             return outString
         elif self.targetPlatform == 'linuxAarch64':
-            outString = outString + ' -DTARGET_BUILD_PLATFORM=linux'
-            outString = outString + ' -DPX_OUTPUT_ARCH=arm'
+            outString += ' -DTARGET_BUILD_PLATFORM=linux'
+            outString += ' -DPX_OUTPUT_ARCH=arm'
             if self.compiler == 'clang-crosscompile':
-                outString = outString + ' -DCMAKE_TOOLCHAIN_FILE=' + \
-                    os.environ['PM_CMakeModules_PATH'] + \
-                    '/linux/LinuxCrossToolchain.aarch64-unknown-linux-gnueabihf.cmake'
+                outString += ' -DCMAKE_TOOLCHAIN_FILE=' + \
+                    os.environ['PHYSX_ROOT_DIR'] + '/compiler/modules/linux/LinuxCrossToolchain.aarch64-unknown-linux-gnueabihf.cmake'
             elif self.compiler == 'gcc':
-                outString = outString + ' -DCMAKE_TOOLCHAIN_FILE=\"' + \
-                    os.environ['PM_CMakeModules_PATH'] + \
-                    '/linux/LinuxAarch64.cmake\"'
+                outString += ' -DCMAKE_TOOLCHAIN_FILE=\"' + \
+                    os.environ['PHYSX_ROOT_DIR'] + '/compiler/modules/linux/LinuxAarch64.cmake\"'
             return outString
         elif self.targetPlatform == 'mac64':
-            outString = outString + ' -DTARGET_BUILD_PLATFORM=mac'
-            outString = outString + ' -DPX_OUTPUT_ARCH=x86'
+            outString += ' -DTARGET_BUILD_PLATFORM=mac'
+            outString += ' -DPX_OUTPUT_ARCH=x86'
             return outString
         return ''
 
 
 def getCommonParams():
     outString = '--no-warn-unused-cli'
-    outString = outString + ' -DCMAKE_PREFIX_PATH=\"' + os.environ['PM_PATHS'] + '\"'
-    outString = outString + ' -DPHYSX_ROOT_DIR=\"' + \
+    outString += ' -DCMAKE_PREFIX_PATH=\"' + os.environ['PHYSX_ROOT_DIR'] + '/compiler/modules\"'
+    outString += ' -DPHYSX_ROOT_DIR=\"' + \
         os.environ['PHYSX_ROOT_DIR'] + '\"'
-    outString = outString + ' -DPX_OUTPUT_LIB_DIR=\"' + \
+    outString += ' -DPX_OUTPUT_LIB_DIR=\"' + \
         os.environ['PHYSX_ROOT_DIR'] + '\"'
-    outString = outString + ' -DPX_OUTPUT_BIN_DIR=\"' + \
+    outString += ' -DPX_OUTPUT_BIN_DIR=\"' + \
         os.environ['PHYSX_ROOT_DIR'] + '\"'
     if os.environ.get('GENERATE_SOURCE_DISTRO') == '1':
-        outString = outString + ' -DPX_GENERATE_SOURCE_DISTRO=1'
+        outString += ' -DPX_GENERATE_SOURCE_DISTRO=1'
     return outString
 
 def cleanupCompilerDir(compilerDirName):
@@ -233,11 +236,13 @@ def cleanupCompilerDir(compilerDirName):
 def presetProvided(pName):
     parsedPreset = CMakePreset(pName)
 
-    print('PM_CMakeModules_PATH: ' + os.environ['PM_CMakeModules_PATH'])
+    print('PM_CMakeModules_PATH: ' + os.environ['PHYSX_ROOT_DIR'] + '/compiler/modules')
     print('PM_PATHS: ' + os.environ['PM_PATHS'])
 
     if os.environ.get('PM_cmake_PATH') is not None:
         cmakeExec = os.environ['PM_cmake_PATH'] + '/bin/cmake' + cmakeExt()
+    elif pName == 'psp':
+        cmakeExec = 'psp-cmake'
     else:
         cmakeExec = 'cmake' + cmakeExt()
     print('Cmake: ' + cmakeExec)
@@ -247,7 +252,7 @@ def presetProvided(pName):
     cmakeParams = cmakeParams + ' ' + getCommonParams()
     cmakeParams = cmakeParams + ' ' + parsedPreset.getCMakeSwitches()
     cmakeParams = cmakeParams + ' ' + parsedPreset.getCMakeParams()
-    # print(cmakeParams)
+    print(cmakeParams)
 
     if os.path.isfile(os.environ['PHYSX_ROOT_DIR'] + '/compiler/internal/CMakeLists.txt'):
         cmakeMasterDir = 'internal'
@@ -272,9 +277,9 @@ def presetProvided(pName):
             cleanupCompilerDir(outputDir)
 
             # run the cmake script
-            #print('Cmake params:' + cmakeParams)
+            print('Cmake params:' + cmakeParams)
             os.chdir(os.path.join(os.environ['PHYSX_ROOT_DIR'], outputDir))
-            # print(cmakeExec + ' \"' + os.environ['PHYSX_ROOT_DIR'] + '/compiler/' + cmakeMasterDir + '\"' + cmakeParams + ' -DCMAKE_BUILD_TYPE=' + config)
+            print(cmakeExec + ' \"' + os.environ['PHYSX_ROOT_DIR'] + '/compiler/' + cmakeMasterDir + '\"' + cmakeParams + ' -DCMAKE_BUILD_TYPE=' + config)
             os.system(cmakeExec + ' \"' + os.environ['PHYSX_ROOT_DIR'] + '/compiler/' +
                       cmakeMasterDir + '\"' + cmakeParams + ' -DCMAKE_BUILD_TYPE=' + config)
             os.chdir(os.environ['PHYSX_ROOT_DIR'])

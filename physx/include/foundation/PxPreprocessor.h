@@ -101,6 +101,8 @@ Operating system defines, see http://sourceforge.net/p/predef/wiki/OperatingSyst
 	#define PX_OSX 1
 #elif defined(__NX__) || defined(__SWITCH__)
 	#define PX_SWITCH 1
+#elif defined(PSP)
+	#define PX_PSP 1
 #else
 	#error "Unknown operating system"
 #endif
@@ -118,6 +120,8 @@ Architecture defines, see http://sourceforge.net/p/predef/wiki/Architectures/
 	#define PX_ARM 1
 #elif defined(__ppc__) || defined(_M_PPC) || defined(__CELLOS_LV2__)
 	#define PX_PPC 1
+#elif defined (__mips__)
+	#define PX_MIPS 1
 #else
 	#error "Unknown architecture"
 #endif
@@ -164,6 +168,9 @@ define anything not defined on this platform to 0
 #ifndef PX_SWITCH
 	#define PX_SWITCH 0
 #endif
+#ifndef PX_PSP
+	#define PX_PSP 0
+#endif
 #ifndef PX_X64
 	#define PX_X64 0
 #endif
@@ -187,6 +194,9 @@ define anything not defined on this platform to 0
 #endif
 #ifndef PX_VMX
 	#define PX_VMX 0
+#endif
+#ifndef PX_MIPS
+	#define PX_MIPS 0
 #endif
 
 /*
@@ -428,8 +438,10 @@ General defines
 #define PX_OFFSET_OF_RT(Class, Member)	(reinterpret_cast<size_t>(&reinterpret_cast<Class*>(PX_OFFSETOF_BASE)->Member) - size_t(PX_OFFSETOF_BASE))
 
 // check that exactly one of NDEBUG and _DEBUG is defined
+#ifndef PX_PSP
 #if !defined(NDEBUG) ^ defined(_DEBUG)
 	#error Exactly one of NDEBUG and _DEBUG needs to be defined!
+#endif
 #endif
 
 // make sure PX_CHECKED is defined in all _DEBUG configurations as well

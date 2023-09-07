@@ -146,17 +146,30 @@ int32_t Pxvsnprintf(char* dst, size_t dstSize, const char* src, va_list arg)
 
 int32_t Pxstricmp(const char* str, const char* str1)
 {
-#if PX_VC
-	return (::_stricmp(str, str1));
-#else
-	return (::strcasecmp(str, str1));
-#endif
+	return Pxstrnicmp(str, str1, strlen(str));
 }
 
 int32_t Pxstrnicmp(const char* str, const char* str1, size_t n)
 {
 #if PX_VC
 	return (::_strnicmp(str, str1, n));
+#elif PX_PSP
+	size_t i = 0;
+
+	while (i < n && str[i] && str1[i])
+	{
+		char al = str[i] | 0b100000;
+		char bl = str1[i] | 0b100000;
+
+		if (al < bl)
+			return -1;
+		else if (al > bl)
+			return 1;
+
+		i++;
+	}
+
+	return 0;
 #else
 	return (::strncasecmp(str, str1, n));
 #endif

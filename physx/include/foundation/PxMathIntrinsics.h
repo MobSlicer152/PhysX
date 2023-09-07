@@ -37,6 +37,8 @@
 #include "foundation/unix/PxUnixMathIntrinsics.h"
 #elif PX_SWITCH
 #include "foundation/switch/PxSwitchMathIntrinsics.h"
+#elif PX_PSP
+#include "foundation/psp/PxPspMathIntrinsics.h"
 #else
 #error "Platform not supported!"
 #endif
