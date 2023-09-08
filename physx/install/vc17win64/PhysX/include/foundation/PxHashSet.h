@@ -50,8 +50,8 @@
 //		bool		insert(const T& k)						amortized O(1) (exponential resize policy)
 // 		bool		contains(const T& k)	const;			O(1)
 //		bool		erase(const T& k);						O(1)
-//		uint32_t		size()					const;			constant
-//		void		reserve(uint32_t size);					O(MAX(size, currentOccupancy))
+//		PxU32		size()					const;			constant
+//		void		reserve(PxU32 size);					O(MAX(size, currentOccupancy))
 //		void		clear();								O(currentOccupancy) (with zero constant for objects without
 // destructors)
 //      Iterator    getIterator();
@@ -79,10 +79,10 @@ class PxHashSet : public physx::PxHashSetBase<Key, HashFn, Allocator, false>
 	typedef physx::PxHashSetBase<Key, HashFn, Allocator, false> HashSetBase;
 	typedef typename HashSetBase::Iterator Iterator;
 
-	PxHashSet(uint32_t initialTableSize = 64, float loadFactor = 0.75f) : HashSetBase(initialTableSize, loadFactor)
+	PxHashSet(PxU32 initialTableSize = 64, float loadFactor = 0.75f) : HashSetBase(initialTableSize, loadFactor)
 	{
 	}
-	PxHashSet(uint32_t initialTableSize, float loadFactor, const Allocator& alloc)
+	PxHashSet(PxU32 initialTableSize, float loadFactor, const Allocator& alloc)
 	: HashSetBase(initialTableSize, loadFactor, alloc)
 	{
 	}
@@ -101,12 +101,12 @@ class PxCoalescedHashSet : public physx::PxHashSetBase<Key, HashFn, Allocator, t
   public:
 	typedef typename physx::PxHashSetBase<Key, HashFn, Allocator, true> HashSetBase;
 
-	PxCoalescedHashSet(uint32_t initialTableSize = 64, float loadFactor = 0.75f)
+	PxCoalescedHashSet(PxU32 initialTableSize = 64, float loadFactor = 0.75f)
 	: HashSetBase(initialTableSize, loadFactor)
 	{
 	}
 
-	PxCoalescedHashSet(uint32_t initialTableSize, float loadFactor, const Allocator& alloc)
+	PxCoalescedHashSet(PxU32 initialTableSize, float loadFactor, const Allocator& alloc)
 	: HashSetBase(initialTableSize, loadFactor, alloc)
 	{
 	}

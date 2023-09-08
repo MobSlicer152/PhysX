@@ -69,7 +69,7 @@ public:
     //! \brief Implemented by derived implementation classes
     virtual void		removeReference() = 0;
 	//! \brief Implemented by derived implementation classes
-	virtual int32_t		getReference() const = 0;
+	virtual PxI32		getReference() const = 0;
 
     /** \brief Implemented by derived implementation classes
 	 *
@@ -163,7 +163,7 @@ public:
 	/** 
 	 * \brief Return the ref-count for this task 
 	 */
-	virtual int32_t getReference() const PX_OVERRIDE
+	virtual PxI32 getReference() const PX_OVERRIDE
 	{
 		return mTm->getReference(mTaskID);
 	}
@@ -276,7 +276,7 @@ public:
 	}
 
 	/** \brief Return the ref-count for this task */
-	virtual int32_t getReference() const PX_OVERRIDE
+	virtual PxI32 getReference() const PX_OVERRIDE
 	{
 		return mRefCount;
 	}
@@ -304,7 +304,7 @@ public:
 protected:
 
 	PxBaseTask*			mCont;          //!< Continuation task, can be NULL
-	volatile int32_t	mRefCount;      //!< PxTask is dispatched when reaches 0
+	volatile PxI32	mRefCount;      //!< PxTask is dispatched when reaches 0
 
 	friend class PxTaskMgr;
 };

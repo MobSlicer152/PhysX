@@ -58,7 +58,7 @@ namespace physx { namespace profile {
 		/**
 		\brief Use this as a thread id for events that start on one thread and end on another
 		*/
-		static const uint32_t CrossThreadId = 99999789;
+		static const PxU32 CrossThreadId = 99999789;
 
 		/**
 		\brief Send a start profile event, optionally with a context. Events are sorted by thread
@@ -82,7 +82,7 @@ namespace physx { namespace profile {
 		\param contextId Context id.
 		\param threadId Thread id.
 		*/
-		virtual void startEvent( uint16_t inId, uint64_t contextId, uint32_t threadId) = 0;
+		virtual void startEvent( uint16_t inId, uint64_t contextId, PxU32 threadId) = 0;
 		/**
 		\brief Send a stop profile event, optionally with a context. Events are sorted by thread
 		and context in the client side.
@@ -90,9 +90,9 @@ namespace physx { namespace profile {
 		\param contextId Context id.
 		\param threadId Thread id.
 		*/
-		virtual void stopEvent( uint16_t inId, uint64_t contextId, uint32_t threadId ) = 0;
+		virtual void stopEvent( uint16_t inId, uint64_t contextId, PxU32 threadId ) = 0;
 
-		virtual void atEvent(uint16_t inId, uint64_t contextId, uint32_t threadId, uint64_t start, uint64_t stop) = 0;
+		virtual void atEvent(uint16_t inId, uint64_t contextId, PxU32 threadId, uint64_t start, uint64_t stop) = 0;
 
 		/**
 		\brief Set an specific events value. This is different than the profiling value

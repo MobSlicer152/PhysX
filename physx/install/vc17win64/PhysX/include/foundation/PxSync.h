@@ -47,7 +47,7 @@ Implementation notes:
 class PX_FOUNDATION_API PxSyncImpl
 {
   public:
-	static const uint32_t waitForever = 0xffffffff;
+	static const PxU32 waitForever = 0xffffffff;
 
 	PxSyncImpl();
 
@@ -58,7 +58,7 @@ class PX_FOUNDATION_API PxSyncImpl
 	*  or until the object is signaled.
 	*/
 
-	bool wait(uint32_t milliseconds = waitForever);
+	bool wait(PxU32 milliseconds = waitForever);
 
 	/** Signal the synchronization object, waking all threads waiting on it */
 
@@ -71,7 +71,7 @@ class PX_FOUNDATION_API PxSyncImpl
 	/**
 	Size of this class.
 	*/
-	static uint32_t getSize();
+	static PxU32 getSize();
 };
 
 /*!
@@ -87,7 +87,7 @@ template <typename Alloc = PxReflectionAllocator<PxSyncImpl> >
 class PxSyncT : protected Alloc
 {
   public:
-	static const uint32_t waitForever = PxSyncImpl::waitForever;
+	static const PxU32 waitForever = PxSyncImpl::waitForever;
 
 	PxSyncT(const Alloc& alloc = Alloc()) : Alloc(alloc)
 	{
@@ -106,7 +106,7 @@ class PxSyncT : protected Alloc
 	*  or until the object is signaled.
 	*/
 
-	bool wait(uint32_t milliseconds = PxSyncImpl::waitForever)
+	bool wait(PxU32 milliseconds = PxSyncImpl::waitForever)
 	{
 		return mImpl->wait(milliseconds);
 	}

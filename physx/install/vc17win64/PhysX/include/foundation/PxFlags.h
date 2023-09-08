@@ -68,7 +68,7 @@ This allows for type safe manipulation for bitfields.
     }
 */
 
-template <typename enumtype, typename storagetype = uint32_t>
+template <typename enumtype, typename storagetype = PxU32>
 class PxFlags
 {
   public:
@@ -111,7 +111,7 @@ class PxFlags
 	PX_CUDA_CALLABLE PX_INLINE operator bool(void) const;
 	PX_CUDA_CALLABLE PX_INLINE operator uint8_t(void) const;
 	PX_CUDA_CALLABLE PX_INLINE operator uint16_t(void) const;
-	PX_CUDA_CALLABLE PX_INLINE operator uint32_t(void) const;
+	PX_CUDA_CALLABLE PX_INLINE operator PxU32(void) const;
 
 	PX_CUDA_CALLABLE PX_INLINE void clear(enumtype e);
 	PX_CUDA_CALLABLE PX_INLINE void raise(enumtype e);
@@ -345,9 +345,9 @@ PX_CUDA_CALLABLE PX_INLINE PxFlags<enumtype, storagetype>::operator uint16_t(voi
 }
 
 template <typename enumtype, typename storagetype>
-PX_CUDA_CALLABLE PX_INLINE PxFlags<enumtype, storagetype>::operator uint32_t(void) const
+PX_CUDA_CALLABLE PX_INLINE PxFlags<enumtype, storagetype>::operator PxU32(void) const
 {
-	return static_cast<uint32_t>(mBits);
+	return static_cast<PxU32>(mBits);
 }
 
 template <typename enumtype, typename storagetype>

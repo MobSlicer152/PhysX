@@ -29,7 +29,7 @@
 
 #if !defined(__CYGWIN__)
 #include <fenv.h>
-PX_COMPILE_TIME_ASSERT(8 * sizeof(uint32_t) >= sizeof(fenv_t));
+PX_COMPILE_TIME_ASSERT(8 * sizeof(PxU32) >= sizeof(fenv_t));
 #endif
 
 #if PX_OSX
@@ -85,7 +85,7 @@ PX_FOUNDATION_API void physx::PxEnableFPExceptions()
 #elif PX_OSX
 	// clear any pending exceptions
 	// (setting exception state flags cause exceptions on the first following fp operation)
-	uint32_t control = _mm_getcsr() & ~_MM_EXCEPT_MASK;
+	PxU32 control = _mm_getcsr() & ~_MM_EXCEPT_MASK;
 
 	// enable all fp exceptions except inexact and underflow (common, benign)
 	// note: denorm has to be disabled as well because underflow can create denorms
@@ -101,7 +101,7 @@ PX_FOUNDATION_API void physx::PxDisableFPExceptions()
 #elif PX_OSX
 	// clear any pending exceptions
 	// (setting exception state flags cause exceptions on the first following fp operation)
-	uint32_t control = _mm_getcsr() & ~_MM_EXCEPT_MASK;
+	PxU32 control = _mm_getcsr() & ~_MM_EXCEPT_MASK;
 	_mm_setcsr(control | _MM_MASK_MASK);
 #endif
 }

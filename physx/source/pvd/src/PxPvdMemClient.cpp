@@ -105,7 +105,7 @@ void PvdMemClient::flush()
 	mMutex.unlock();
 }
 
-void PvdMemClient::handleBufferFlush(const uint8_t* inData, uint32_t inLength)
+void PvdMemClient::handleBufferFlush(const uint8_t* inData, PxU32 inLength)
 {
 	if(mPvdDataStream)
 	    mPvdDataStream->setPropertyValue(&mMemEventBuffer, "events", inData, inLength);

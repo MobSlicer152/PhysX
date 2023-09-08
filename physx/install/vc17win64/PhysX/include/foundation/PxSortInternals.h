@@ -43,7 +43,7 @@ namespace physx
 {
 #endif
 template <class T, class Predicate>
-PX_INLINE void PxMedian3(T* elements, int32_t first, int32_t last, Predicate& compare)
+PX_INLINE void PxMedian3(T* elements, PxI32 first, PxI32 last, Predicate& compare)
 {
 	/*
 	This creates sentinels because we know there is an element at the start minimum(or equal)
@@ -51,7 +51,7 @@ PX_INLINE void PxMedian3(T* elements, int32_t first, int32_t last, Predicate& co
 	median of 3 reduces the chance of degenerate behavour.
 	*/
 
-	int32_t mid = (first + last) / 2;
+	PxI32 mid = (first + last) / 2;
 
 	if(compare(elements[mid], elements[first]))
 		PxSwap(elements[first], elements[mid]);
@@ -67,7 +67,7 @@ PX_INLINE void PxMedian3(T* elements, int32_t first, int32_t last, Predicate& co
 }
 
 template <class T, class Predicate>
-PX_INLINE int32_t PxPartition(T* elements, int32_t first, int32_t last, Predicate& compare)
+PX_INLINE PxI32 PxPartition(T* elements, PxI32 first, PxI32 last, Predicate& compare)
 {
 	PxMedian3(elements, first, last, compare);
 
@@ -85,8 +85,8 @@ PX_INLINE int32_t PxPartition(T* elements, int32_t first, int32_t last, Predicat
 	then loads it as a single...:-(
 	*/
 
-	int32_t i = first;    // we know first is less than pivot(but i gets pre incremented)
-	int32_t j = last - 1; // pivot is in last-1 (but j gets pre decremented)
+	PxI32 i = first;    // we know first is less than pivot(but i gets pre incremented)
+	PxI32 j = last - 1; // pivot is in last-1 (but j gets pre decremented)
 
 	for(;;)
 	{
@@ -110,14 +110,14 @@ PX_INLINE int32_t PxPartition(T* elements, int32_t first, int32_t last, Predicat
 }
 
 template <class T, class Predicate>
-PX_INLINE void PxSmallSort(T* elements, int32_t first, int32_t last, Predicate& compare)
+PX_INLINE void PxSmallSort(T* elements, PxI32 first, PxI32 last, Predicate& compare)
 {
 	// selection sort - could reduce to fsel on 360 with floats.
 
-	for(int32_t i = first; i < last; i++)
+	for(PxI32 i = first; i < last; i++)
 	{
-		int32_t m = i;
-		for(int32_t j = i + 1; j <= last; j++)
+		PxI32 m = i;
+		for(PxI32 j = i + 1; j <= last; j++)
 			if(compare(elements[j], elements[m]))
 				m = j;
 
@@ -130,12 +130,12 @@ template <class PxAllocator>
 class PxStack
 {
 	PxAllocator mAllocator;
-	uint32_t mSize, mCapacity;
-	int32_t* mMemory;
+	PxU32 mSize, mCapacity;
+	PxI32* mMemory;
 	bool mRealloc;
 
   public:
-	PxStack(int32_t* memory, uint32_t capacity, const PxAllocator& inAllocator)
+	PxStack(PxI32* memory, PxU32 capacity, const PxAllocator& inAllocator)
 	: mAllocator(inAllocator), mSize(0), mCapacity(capacity), mMemory(memory), mRealloc(false)
 	{
 	}
@@ -148,16 +148,16 @@ class PxStack
 	void grow()
 	{
 		mCapacity *= 2;
-		int32_t* newMem =
-		    reinterpret_cast<int32_t*>(mAllocator.allocate(sizeof(int32_t) * mCapacity, __FILE__, __LINE__));
-		intrinsics::memCopy(newMem, mMemory, mSize * sizeof(int32_t));
+		PxI32* newMem =
+		    reinterpret_cast<PxI32*>(mAllocator.allocate(sizeof(PxI32) * mCapacity, __FILE__, __LINE__));
+		intrinsics::memCopy(newMem, mMemory, mSize * sizeof(PxI32));
 		if(mRealloc)
 			mAllocator.deallocate(mMemory);
 		mRealloc = true;
 		mMemory = newMem;
 	}
 
-	PX_INLINE void push(int32_t start, int32_t end)
+	PX_INLINE void push(PxI32 start, PxI32 end)
 	{
 		if(mSize >= mCapacity - 1)
 			grow();
@@ -165,7 +165,7 @@ class PxStack
 		mMemory[mSize++] = end;
 	}
 
-	PX_INLINE void pop(int32_t& start, int32_t& end)
+	PX_INLINE void pop(PxI32& start, PxI32& end)
 	{
 		PX_ASSERT(!empty());
 		end = mMemory[--mSize];

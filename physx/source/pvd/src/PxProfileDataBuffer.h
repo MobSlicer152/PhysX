@@ -52,7 +52,7 @@ namespace physx { namespace profile {
 		PxProfileAllocatorWrapper			mWrapper;
 		TMemoryBufferType					mDataArray;
 		TBufferClientArray					mBufferClients;
-		uint32_t							mBufferFullAmount;
+		PxU32							mBufferFullAmount;
 		EventContextInformation				mEventContextInformation;		
 		TMutexType*							mBufferMutex;
 		volatile bool						mHasClients;
@@ -61,7 +61,7 @@ namespace physx { namespace profile {
 	public:
 		
 		DataBuffer( PxAllocatorCallback* inFoundation
-					, uint32_t inBufferFullAmount
+					, PxU32 inBufferFullAmount
 					, TMutexType* inBufferMutex
 					, const char* inAllocationName )
 			: mWrapper( inFoundation )
@@ -99,7 +99,7 @@ namespace physx { namespace profile {
 		void removeClient( PxProfileEventBufferClient& inClient ) 
 		{
 			TScopedLockType lock( mBufferMutex );
-			for ( uint32_t idx =0; idx < mBufferClients.size(); ++idx )
+			for ( PxU32 idx =0; idx < mBufferClients.size(); ++idx )
 			{
 				if (mBufferClients[idx] == &inClient )
 				{
@@ -121,14 +121,14 @@ namespace physx { namespace profile {
 		{	
 			TScopedLockType lock(mBufferMutex);
 			const uint8_t* theData = mDataArray.begin();
-			uint32_t theDataSize = mDataArray.size();
+			PxU32 theDataSize = mDataArray.size();
 			sendDataToClients(theData, theDataSize);
 			mDataArray.clear();
 			clearCachedData();
 		}
 
 		//Used for chaining together event buffers.
-		virtual void handleBufferFlush( const uint8_t* inData, uint32_t inDataSize )
+		virtual void handleBufferFlush( const uint8_t* inData, PxU32 inDataSize )
 		{
 			TScopedLockType lock( mBufferMutex );
 			if ( inData && inDataSize )
@@ -150,10 +150,10 @@ namespace physx { namespace profile {
 
 	private:
 			
-		void sendDataToClients( const uint8_t* inData, uint32_t inDataSize )
+		void sendDataToClients( const uint8_t* inData, PxU32 inDataSize )
 		{
-			uint32_t clientCount = mBufferClients.size();
-			for( uint32_t idx =0; idx < clientCount; ++idx )
+			PxU32 clientCount = mBufferClients.size();
+			for( PxU32 idx =0; idx < clientCount; ++idx )
 				mBufferClients[idx]->handleBufferFlush( inData, inDataSize );
 		}
 

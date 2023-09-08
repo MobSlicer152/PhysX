@@ -53,6 +53,12 @@
 #include <pthread.h>
 #endif
 
+#if PX_PSP
+#include <pspkernel.h>
+#include <pspdebug.h>
+#include <pspthreadman.h>
+#endif
+
 #define PxSpinLockPause() asm("nop")
 
 namespace physx
@@ -73,14 +79,14 @@ class ThreadImpl
   public:
 	PxThreadImpl::ExecuteFn fn;
 	void* arg;
-	volatile int32_t quitNow;
-	volatile int32_t threadStarted;
-	volatile int32_t state;
+	volatile PxI32 quitNow;
+	volatile PxI32 threadStarted;
+	volatile PxI32 state;
 
 	pthread_t thread;
 	pid_t tid;
 
-	uint32_t affinityMask;
+	PxU32 affinityMask;
 	const char* name;
 };
 
@@ -97,6 +103,8 @@ static void setTid(ThreadImpl& threadImpl)
 	threadImpl.tid = syscall(SYS_gettid);
 #elif PX_EMSCRIPTEN
 	threadImpl.tid = pthread_self();
+#elif PX_PSP
+	threadImpl.tid = sceKernelGetThreadId();
 #else
 	threadImpl.tid = syscall(__NR_gettid);
 #endif
@@ -122,7 +130,7 @@ void* PxThreadStart(void* arg)
 }
 }
 
-uint32_t PxThreadImpl::getSize()
+PxU32 PxThreadImpl::getSize()
 {
 	return sizeof(ThreadImpl);
 }
@@ -166,7 +174,7 @@ PxThreadImpl::~PxThreadImpl()
 		kill();
 }
 
-void PxThreadImpl::start(uint32_t stackSize, PxRunnable* runnable)
+void PxThreadImpl::start(PxU32 stackSize, PxRunnable* runnable)
 {
 	if(getThread(this)->state != ePxThreadNotStarted)
 		return;
@@ -235,7 +243,7 @@ bool PxThreadImpl::quitIsSignalled()
 	return PxAtomicCompareExchange(&(getThread(this)->quitNow), 0, 0) != 0;
 }
 
-#if defined(PX_GCC_FAMILY)
+#if defined(PX_GCC_FAMILY) && !PX_PSP
 __attribute__((noreturn))
 #endif
     void PxThreadImpl::quit()
@@ -251,10 +259,10 @@ void PxThreadImpl::kill()
 	getThread(this)->state = ePxThreadStopped;
 }
 
-void PxThreadImpl::sleep(uint32_t ms)
+void PxThreadImpl::sleep(PxU32 ms)
 {
 	timespec sleepTime;
-	uint32_t remainder = ms % 1000;
+	PxU32 remainder = ms % 1000;
 	sleepTime.tv_sec = ms - remainder;
 	sleepTime.tv_nsec = remainder * 1000000L;
 
@@ -271,12 +279,14 @@ void PxThreadImpl::yieldProcessor()
 {
 #if (PX_ARM || PX_A64)
 	__asm__ __volatile__("yield");
+#elif PX_MIPS
+	__asm__ __volatile__("nop");
 #else
 	__asm__ __volatile__("pause");
 #endif
 }
 
-uint32_t PxThreadImpl::setAffinityMask(uint32_t mask)
+PxU32 PxThreadImpl::setAffinityMask(PxU32 mask)
 {
 	// Same as windows impl if mask is zero
 	if(!mask)
@@ -288,20 +298,20 @@ uint32_t PxThreadImpl::setAffinityMask(uint32_t mask)
 
 	if(getThread(this)->state == ePxThreadStarted)
 	{
-#if PX_EMSCRIPTEN
+#if PX_EMSCRIPTEN || PX_PSP
 		// not supported
 #elif !PX_APPLE_FAMILY // Apple doesn't support syscall with getaffinity and setaffinity
-		int32_t errGet = syscall(__NR_sched_getaffinity, getThread(this)->tid, sizeof(prevMask), &prevMask);
+		PxI32 errGet = syscall(__NR_sched_getaffinity, getThread(this)->tid, sizeof(prevMask), &prevMask);
 		if(errGet < 0)
 			return 0;
 
-		int32_t errSet = syscall(__NR_sched_setaffinity, getThread(this)->tid, sizeof(mask), &mask);
+		PxI32 errSet = syscall(__NR_sched_setaffinity, getThread(this)->tid, sizeof(mask), &mask);
 		if(errSet != 0)
 			return 0;
 #endif
 	}
 
-	return uint32_t(prevMask);
+	return PxU32(prevMask);
 }
 
 void PxThreadImpl::setName(const char* name)
@@ -321,7 +331,7 @@ void PxThreadImpl::setName(const char* name)
 }
 
 #if !PX_APPLE_FAMILY
-static PxThreadPriority::Enum convertPriorityFromLinux(uint32_t inPrio, int policy)
+static PxThreadPriority::Enum convertPriorityFromLinux(PxU32 inPrio, int policy)
 {
 	PX_COMPILE_TIME_ASSERT(PxThreadPriority::eLOW > PxThreadPriority::eHIGH);
 	PX_COMPILE_TIME_ASSERT(PxThreadPriority::eHIGH == 0);
@@ -385,7 +395,7 @@ PxThreadPriority::Enum PxThreadImpl::getPriority(Id pthread)
 #endif
 }
 
-uint32_t PxThreadImpl::getNbPhysicalCores()
+PxU32 PxThreadImpl::getNbPhysicalCores()
 {
 #if PX_APPLE_FAMILY
 	int count;

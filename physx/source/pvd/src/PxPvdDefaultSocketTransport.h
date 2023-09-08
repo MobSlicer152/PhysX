@@ -50,7 +50,7 @@ class PvdDefaultSocketTransport : public PxPvdTransport, public PxUserAllocated
 	virtual void disconnect();
 	virtual bool isConnected();
 
-	virtual bool write(const uint8_t* inBytes, uint32_t inLength);
+	virtual bool write(const uint8_t* inBytes, PxU32 inLength);
 
 	virtual void flush();
 

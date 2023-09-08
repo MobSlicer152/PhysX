@@ -52,8 +52,8 @@
 //		Value &			operator[](const Key& k)				O(1) for existing objects, else O(1) amortized
 //		const Entry *	find(const Key& k);						O(1)
 //		bool			erase(const T& k);						O(1)
-//		uint32_t			size();									constant
-//		void			reserve(uint32_t size);					O(MAX(currentOccupancy,size))
+//		PxU32			size();									constant
+//		void			reserve(PxU32 size);					O(MAX(currentOccupancy,size))
 //		void			clear();								O(currentOccupancy) (with zero constant for objects
 // without
 // destructors)
@@ -80,10 +80,10 @@ class PxHashMap : public physx::PxHashMapBase<Key, Value, HashFn, Allocator>
 	typedef physx::PxHashMapBase<Key, Value, HashFn, Allocator> HashMapBase;
 	typedef typename HashMapBase::Iterator Iterator;
 
-	PxHashMap(uint32_t initialTableSize = 64, float loadFactor = 0.75f) : HashMapBase(initialTableSize, loadFactor)
+	PxHashMap(PxU32 initialTableSize = 64, float loadFactor = 0.75f) : HashMapBase(initialTableSize, loadFactor)
 	{
 	}
-	PxHashMap(uint32_t initialTableSize, float loadFactor, const Allocator& alloc)
+	PxHashMap(PxU32 initialTableSize, float loadFactor, const Allocator& alloc)
 	: HashMapBase(initialTableSize, loadFactor, alloc)
 	{
 	}
@@ -102,7 +102,7 @@ class PxCoalescedHashMap : public physx::PxHashMapBase<Key, Value, HashFn, Alloc
   public:
 	typedef physx::PxHashMapBase<Key, Value, HashFn, Allocator> HashMapBase;
 
-	PxCoalescedHashMap(uint32_t initialTableSize = 64, float loadFactor = 0.75f)
+	PxCoalescedHashMap(PxU32 initialTableSize = 64, float loadFactor = 0.75f)
 	: HashMapBase(initialTableSize, loadFactor)
 	{
 	}

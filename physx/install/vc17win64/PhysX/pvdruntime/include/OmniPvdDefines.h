@@ -67,10 +67,10 @@
 
 typedef uint64_t OmniPvdObjectHandle;
 typedef uint64_t OmniPvdContextHandle;
-typedef uint32_t OmniPvdClassHandle;
-typedef uint32_t OmniPvdAttributeHandle;
+typedef PxU32 OmniPvdClassHandle;
+typedef PxU32 OmniPvdAttributeHandle;
 typedef uint16_t OmniPvdAttributeDataType;
-typedef uint32_t OmniPvdVersionType;
+typedef PxU32 OmniPvdVersionType;
 
 typedef void (OMNI_PVD_CALL *OmniPvdLogFunction)(char *logLine);
 

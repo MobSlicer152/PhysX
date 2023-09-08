@@ -46,33 +46,33 @@ namespace physx { namespace profile {
 		EventSerializer( TArrayType* inA ) : mArray( inA ) {}
 
 		template<typename TDataType>
-		uint32_t streamify( const char*, const TDataType& inType )
+		PxU32 streamify( const char*, const TDataType& inType )
 		{
 			return mArray->write( inType );
 		}
 
-		uint32_t streamify( const char*, const char*& inType )
+		PxU32 streamify( const char*, const char*& inType )
 		{
 			PX_ASSERT( inType != NULL );
-			uint32_t len( static_cast<uint32_t>( strlen( inType ) ) );
+			PxU32 len( static_cast<PxU32>( strlen( inType ) ) );
 			++len; //include the null terminator
-			uint32_t writtenSize = 0;
+			PxU32 writtenSize = 0;
 			writtenSize = mArray->write(len);
 			writtenSize += mArray->write(inType, len);
 			return writtenSize;
 		}
 		
-		uint32_t streamify( const char*, const uint8_t* inData, uint32_t len )
+		PxU32 streamify( const char*, const uint8_t* inData, PxU32 len )
 		{
-			uint32_t writtenSize = mArray->write(len);
+			PxU32 writtenSize = mArray->write(len);
 			if ( len )
 				writtenSize += mArray->write(inData, len);
 			return writtenSize;
 		}
 
-		uint32_t streamify( const char* nm, const uint64_t& inType, EventStreamCompressionFlags::Enum inFlags )
+		PxU32 streamify( const char* nm, const uint64_t& inType, EventStreamCompressionFlags::Enum inFlags )
 		{
-			uint32_t writtenSize = 0;
+			PxU32 writtenSize = 0;
 			switch( inFlags )
 			{
 			case EventStreamCompressionFlags::U8:
@@ -82,7 +82,7 @@ namespace physx { namespace profile {
 					writtenSize = streamify(nm, static_cast<uint16_t>(inType));
 					break;
 			case EventStreamCompressionFlags::U32:
-					writtenSize = streamify(nm, static_cast<uint32_t>(inType));
+					writtenSize = streamify(nm, static_cast<PxU32>(inType));
 					break;
 			case EventStreamCompressionFlags::U64:
 				writtenSize = streamify(nm, inType);
@@ -91,9 +91,9 @@ namespace physx { namespace profile {
 			return writtenSize;
 		}
 		
-		uint32_t streamify( const char* nm, const uint32_t& inType, EventStreamCompressionFlags::Enum inFlags )
+		PxU32 streamify( const char* nm, const PxU32& inType, EventStreamCompressionFlags::Enum inFlags )
 		{
-			uint32_t writtenSize = 0;
+			PxU32 writtenSize = 0;
 			switch( inFlags )
 			{
 			case EventStreamCompressionFlags::U8:
@@ -119,10 +119,10 @@ namespace physx { namespace profile {
 	struct EventDeserializer
 	{
 		const uint8_t* mData;
-		uint32_t		mLength;
+		PxU32		mLength;
 		bool		mFail;
 
-		EventDeserializer( const uint8_t* inData,  uint32_t inLength )
+		EventDeserializer( const uint8_t* inData,  PxU32 inLength )
 			: mData( inData )
 			, mLength( inLength )
 			, mFail( false )
@@ -133,7 +133,7 @@ namespace physx { namespace profile {
 
 		bool val() { return TSwapBytes; }
 
-		uint32_t streamify( const char* , uint8_t& inType )
+		PxU32 streamify( const char* , uint8_t& inType )
 		{
 			uint8_t* theData = reinterpret_cast<uint8_t*>( &inType ); //type punned pointer...
 			if ( mFail || sizeof( inType ) > mLength )
@@ -143,7 +143,7 @@ namespace physx { namespace profile {
 			}
 			else
 			{
-				for( uint32_t idx = 0; idx < sizeof( uint8_t ); ++idx, ++mData, --mLength )
+				for( PxU32 idx = 0; idx < sizeof( uint8_t ); ++idx, ++mData, --mLength )
 					theData[idx] = *mData;
 			}
 			return 0;
@@ -151,7 +151,7 @@ namespace physx { namespace profile {
 
 		//default streamify reads things natively as bytes.
 		template<typename TDataType>
-		uint32_t streamify( const char* , TDataType& inType )
+		PxU32 streamify( const char* , TDataType& inType )
 		{
 			uint8_t* theData = reinterpret_cast<uint8_t*>( &inType ); //type punned pointer...
 			if ( mFail || sizeof( inType ) > mLength )
@@ -161,7 +161,7 @@ namespace physx { namespace profile {
 			}
 			else
 			{
-				for( uint32_t idx = 0; idx < sizeof( TDataType ); ++idx, ++mData, --mLength )
+				for( PxU32 idx = 0; idx < sizeof( TDataType ); ++idx, ++mData, --mLength )
 					theData[idx] = *mData;
 				bool temp = val();
 				if ( temp ) 
@@ -170,9 +170,9 @@ namespace physx { namespace profile {
 			return 0;
 		}
 
-		uint32_t streamify( const char*, const char*& inType )
+		PxU32 streamify( const char*, const char*& inType )
 		{
-			uint32_t theLen;
+			PxU32 theLen;
 			streamify( "", theLen );
 			theLen = PxMin( theLen, mLength );
 			inType = reinterpret_cast<const char*>( mData );
@@ -181,9 +181,9 @@ namespace physx { namespace profile {
 			return 0;
 		}
 		
-		uint32_t streamify( const char*, const uint8_t*& inData, uint32_t& len )
+		PxU32 streamify( const char*, const uint8_t*& inData, PxU32& len )
 		{
-			uint32_t theLen;
+			PxU32 theLen;
 			streamify( "", theLen );
 			theLen = PxMin( theLen, mLength );
 			len = theLen;
@@ -193,7 +193,7 @@ namespace physx { namespace profile {
 			return 0;
 		}
 
-		uint32_t streamify( const char* nm, uint64_t& inType, EventStreamCompressionFlags::Enum inFlags )
+		PxU32 streamify( const char* nm, uint64_t& inType, EventStreamCompressionFlags::Enum inFlags )
 		{
 			switch( inFlags )
 			{
@@ -213,7 +213,7 @@ namespace physx { namespace profile {
 					break;
 			case EventStreamCompressionFlags::U32:
 				{
-					uint32_t val;
+					PxU32 val;
 					streamify( nm, val );
 					inType = val;
 				}
@@ -225,7 +225,7 @@ namespace physx { namespace profile {
 			return 0;
 		}
 		
-		uint32_t streamify( const char* nm, uint32_t& inType, EventStreamCompressionFlags::Enum inFlags )
+		PxU32 streamify( const char* nm, PxU32& inType, EventStreamCompressionFlags::Enum inFlags )
 		{
 			switch( inFlags )
 			{

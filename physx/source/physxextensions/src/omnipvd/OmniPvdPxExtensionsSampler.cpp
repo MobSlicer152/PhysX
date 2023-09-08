@@ -39,7 +39,7 @@ using namespace physx;
 #define UNNECESSARY_SCENE_HANDLE 1
 
 //array to hold PVD type to size conversion table.  Should be large enough for all basic PVD types.
-static uint32_t sizeOfOmniPvdTypes[32];
+static PxU32 sizeOfOmniPvdTypes[32];
 
 //create a class for each SDK type and attribute -- the primary thing is to allocate handle storage, the rest is just fluff.
 #define OMNI_PVD_FAKE_CLASS(c, classT, classStr) OmniPvdClassHandle OmniPvdPxExtensionsSampler::classHandle_##c;

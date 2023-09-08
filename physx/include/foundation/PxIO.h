@@ -58,7 +58,7 @@ class PxInputStream
 	\return the number of bytes read from the stream.
 	*/
 
-	virtual uint32_t read(void* dest, uint32_t count) = 0;
+	virtual PxU32 read(void* dest, PxU32 count) = 0;
 
 	virtual ~PxInputStream()
 	{
@@ -80,7 +80,7 @@ class PxInputData : public PxInputStream
 	\return size in bytes of the input data
 	*/
 
-	virtual uint32_t getLength() const = 0;
+	virtual PxU32 getLength() const = 0;
 
 	/**
 	\brief seek to the given offset from the start of the data.
@@ -89,7 +89,7 @@ class PxInputData : public PxInputStream
 	seek(length);
 	*/
 
-	virtual void seek(uint32_t offset) = 0;
+	virtual void seek(PxU32 offset) = 0;
 
 	/**
 	\brief return the current offset from the start of the data
@@ -97,7 +97,7 @@ class PxInputData : public PxInputStream
 	\return the offset to seek to.
 	*/
 
-	virtual uint32_t tell() const = 0;
+	virtual PxU32 tell() const = 0;
 
 	virtual ~PxInputData()
 	{
@@ -122,7 +122,7 @@ class PxOutputStream
 	\return the number of bytes written to the stream by this call.
 	*/
 
-	virtual uint32_t write(const void* src, uint32_t count) = 0;
+	virtual PxU32 write(const void* src, PxU32 count) = 0;
 
 	virtual ~PxOutputStream()
 	{

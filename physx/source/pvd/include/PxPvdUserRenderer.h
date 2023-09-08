@@ -66,17 +66,17 @@ class PvdUserRenderer : public PxUserAllocated
 	// Instance to associate the further rendering with.
 	virtual void setInstanceId(const void* instanceId) = 0;
 	// Draw these points associated with this instance
-	virtual void drawPoints(const PxDebugPoint* points, uint32_t count) = 0;
+	virtual void drawPoints(const PxDebugPoint* points, PxU32 count) = 0;
 	// Draw these lines associated with this instance
-	virtual void drawLines(const PxDebugLine* lines, uint32_t count) = 0;
+	virtual void drawLines(const PxDebugLine* lines, PxU32 count) = 0;
 	// Draw these triangles associated with this instance
-	virtual void drawTriangles(const PxDebugTriangle* triangles, uint32_t count) = 0;
+	virtual void drawTriangles(const PxDebugTriangle* triangles, PxU32 count) = 0;
 	// Draw this text associated with this instance
 	virtual void drawText(const PxDebugText& text) = 0;
 
 	// Draw SDK debug render
-	virtual void drawRenderbuffer(const PxDebugPoint* pointData, uint32_t pointCount, const PxDebugLine* lineData,
-	                              uint32_t lineCount, const PxDebugTriangle* triangleData, uint32_t triangleCount) = 0;
+	virtual void drawRenderbuffer(const PxDebugPoint* pointData, PxU32 pointCount, const PxDebugLine* lineData,
+	                              PxU32 lineCount, const PxDebugTriangle* triangleData, PxU32 triangleCount) = 0;
 
 	// Constraint visualization routines
 	virtual void visualizeJointFrames(const PxTransform& parent, const PxTransform& child) = 0;
@@ -88,7 +88,7 @@ class PvdUserRenderer : public PxUserAllocated
 	// Clear the immedate buffer.
 	virtual void flushRenderEvents() = 0;
 
-	static PvdUserRenderer* create(uint32_t bufferSize = 0x2000);
+	static PvdUserRenderer* create(PxU32 bufferSize = 0x2000);
 };
 
 class RendererEventClient 
@@ -96,7 +96,7 @@ class RendererEventClient
  public:
 	virtual ~RendererEventClient(){}
 
-	virtual void handleBufferFlush(const uint8_t* inData, uint32_t inLength) = 0;
+	virtual void handleBufferFlush(const uint8_t* inData, PxU32 inLength) = 0;
 };
 
 #if !PX_DOXYGEN

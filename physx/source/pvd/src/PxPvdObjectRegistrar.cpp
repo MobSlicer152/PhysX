@@ -39,7 +39,7 @@ bool ObjectRegistrar::addItem(const void* inItem)
 
 	if(mRefCountMap.find(inItem))
 	{
-		uint32_t& counter = mRefCountMap[inItem];
+		PxU32& counter = mRefCountMap[inItem];
 		counter++;
 		return false;
 	}
@@ -53,13 +53,13 @@ bool ObjectRegistrar::addItem(const void* inItem)
 bool ObjectRegistrar::decItem(const void* inItem)
 {
 	physx::PxMutex::ScopedLock lock(mRefCountMapLock);
-	const physx::PxHashMap<const void*, uint32_t>::Entry* entry = mRefCountMap.find(inItem);
+	const physx::PxHashMap<const void*, PxU32>::Entry* entry = mRefCountMap.find(inItem);
 	if(entry)
 	{
-		uint32_t& retval(const_cast<uint32_t&>(entry->second));
+		PxU32& retval(const_cast<PxU32&>(entry->second));
 		if(retval)
 			--retval;
-		uint32_t theValue = retval;
+		PxU32 theValue = retval;
 		if(theValue == 0)
 		{
 			mRefCountMap.erase(inItem);

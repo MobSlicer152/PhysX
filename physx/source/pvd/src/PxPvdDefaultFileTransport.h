@@ -51,7 +51,7 @@ class PvdDefaultFileTransport : public physx::PxPvdTransport, public physx::PxUs
 	virtual void disconnect();
 	virtual bool isConnected();
 
-	virtual bool write(const uint8_t* inBytes, uint32_t inLength);
+	virtual bool write(const uint8_t* inBytes, PxU32 inLength);
 
 	virtual PxPvdTransport& lock();
 	virtual void unlock();

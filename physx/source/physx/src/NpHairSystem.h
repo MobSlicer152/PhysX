@@ -53,7 +53,7 @@ namespace physx
 				deallocate();
 			}
 
-			void allocate(uint32_t size)
+			void allocate(PxU32 size)
 			{
 				if (size == mSize)
 					return;
@@ -96,18 +96,18 @@ namespace physx
 				physx::PxSwap(mAlloc, other.mAlloc);
 			}
 
-			uint32_t size() const
+			PxU32 size() const
 			{
 				return mSize;
 			}
 
-			const T& operator[](uint32_t i) const
+			const T& operator[](PxU32 i) const
 			{
 				PX_ASSERT(i < mSize);
 				return mData[i];
 			}
 
-			T& operator[](uint32_t i)
+			T& operator[](PxU32 i)
 			{
 				PX_ASSERT(i < mSize);
 				return mData[i];
@@ -135,7 +135,7 @@ namespace physx
 
 		private:
 			T* mData;
-			uint32_t mSize;
+			PxU32 mSize;
 			physx::PxVirtualAllocatorCallback* mAlloc;
 		};
 

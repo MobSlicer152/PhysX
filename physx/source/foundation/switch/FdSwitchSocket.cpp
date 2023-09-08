@@ -49,7 +49,7 @@
 namespace physx
 {
 
-const uint32_t PxSocket::DEFAULT_BUFFER_SIZE = 32768;
+const PxU32 PxSocket::DEFAULT_BUFFER_SIZE = 32768;
 
 class SocketImpl
 {
@@ -57,16 +57,16 @@ class SocketImpl
 	SocketImpl(bool isBlocking);
 	virtual ~SocketImpl();
 
-	bool connect(const char* host, uint16_t port, uint32_t timeout);
+	bool connect(const char* host, uint16_t port, PxU32 timeout);
 	bool listen(uint16_t port);
 	bool accept(bool block);
 	void disconnect();
 
 	void setBlocking(bool blocking);
 
-	virtual uint32_t write(const uint8_t* data, uint32_t length);
+	virtual PxU32 write(const uint8_t* data, PxU32 length);
 	virtual bool flush();
-	uint32_t read(uint8_t* data, uint32_t length);
+	PxU32 read(uint8_t* data, PxU32 length);
 
 	PX_FORCE_INLINE bool isBlocking() const
 	{
@@ -88,8 +88,8 @@ class SocketImpl
   protected:
 	bool nonBlockingTimeout() const;
 
-	int32_t mSocket;
-	int32_t mListenSocket;
+	PxI32 mSocket;
+	PxI32 mListenSocket;
 	const char* mHost;
 	uint16_t mPort;
 	bool mIsConnected;
@@ -97,7 +97,7 @@ class SocketImpl
 	bool mListenMode;
 };
 
-void socketSetBlockingInternal(int32_t socket, bool blocking);
+void socketSetBlockingInternal(PxI32 socket, bool blocking);
 
 SocketImpl::SocketImpl(bool isBlocking)
 : mSocket(INVALID_SOCKET)
@@ -114,7 +114,7 @@ SocketImpl::~SocketImpl()
 {
 }
 
-bool SocketImpl::connect(const char* host, uint16_t port, uint32_t timeout)
+bool SocketImpl::connect(const char* host, uint16_t port, PxU32 timeout)
 {
 	sockaddr_in socketAddress;
 	intrinsics::memSet(&socketAddress, 0, sizeof(sockaddr_in));
@@ -234,7 +234,7 @@ bool SocketImpl::accept(bool block)
 
 	// set the listen socket to be non-blocking.
 	socketSetBlockingInternal(mListenSocket, block);
-	int32_t clientSocket = ::accept(mListenSocket, 0, 0);
+	PxI32 clientSocket = ::accept(mListenSocket, 0, 0);
 	if(clientSocket == INVALID_SOCKET)
 		return false;
 
@@ -273,7 +273,7 @@ bool SocketImpl::nonBlockingTimeout() const
 	return !mIsBlocking && errno == EWOULDBLOCK;
 }
 
-void socketSetBlockingInternal(int32_t socket, bool blocking)
+void socketSetBlockingInternal(PxI32 socket, bool blocking)
 {
 	int mode = fcntl(socket, F_GETFL, 0);
 	if(!blocking)
@@ -300,30 +300,30 @@ bool SocketImpl::flush()
 	return true;
 }
 
-uint32_t SocketImpl::write(const uint8_t* data, uint32_t length)
+PxU32 SocketImpl::write(const uint8_t* data, PxU32 length)
 {
 	if(length == 0)
 		return 0;
 
-	int sent = send(mSocket, reinterpret_cast<const char*>(data), int32_t(length), 0);
+	int sent = send(mSocket, reinterpret_cast<const char*>(data), PxI32(length), 0);
 
 	if(sent <= 0 && !nonBlockingTimeout())
 		disconnect();
 
-	return uint32_t(sent > 0 ? sent : 0);
+	return PxU32(sent > 0 ? sent : 0);
 }
 
-uint32_t SocketImpl::read(uint8_t* data, uint32_t length)
+PxU32 SocketImpl::read(uint8_t* data, PxU32 length)
 {
 	if(length == 0)
 		return 0;
 
-	int32_t received = recv(mSocket, reinterpret_cast<char*>(data), int32_t(length), 0);
+	PxI32 received = recv(mSocket, reinterpret_cast<char*>(data), PxI32(length), 0);
 
 	if(received <= 0 && !nonBlockingTimeout())
 		disconnect();
 
-	return uint32_t(received > 0 ? received : 0);
+	return PxU32(received > 0 ? received : 0);
 }
 
 class BufferedSocketImpl : public SocketImpl
@@ -336,36 +336,36 @@ class BufferedSocketImpl : public SocketImpl
 	{
 	}
 	bool flush();
-	uint32_t write(const uint8_t* data, uint32_t length);
+	PxU32 write(const uint8_t* data, PxU32 length);
 
   private:
-	uint32_t mBufferPos;
+	PxU32 mBufferPos;
 	uint8_t mBuffer[PxSocket::DEFAULT_BUFFER_SIZE];
 };
 
 bool BufferedSocketImpl::flush()
 {
-	uint32_t totalBytesWritten = 0;
+	PxU32 totalBytesWritten = 0;
 
 	while(totalBytesWritten < mBufferPos && mIsConnected)
-		totalBytesWritten += int32_t(SocketImpl::write(mBuffer + totalBytesWritten, mBufferPos - totalBytesWritten));
+		totalBytesWritten += PxI32(SocketImpl::write(mBuffer + totalBytesWritten, mBufferPos - totalBytesWritten));
 
 	bool ret = (totalBytesWritten == mBufferPos);
 	mBufferPos = 0;
 	return ret;
 }
 
-uint32_t BufferedSocketImpl::write(const uint8_t* data, uint32_t length)
+PxU32 BufferedSocketImpl::write(const uint8_t* data, PxU32 length)
 {
-	uint32_t bytesWritten = 0;
+	PxU32 bytesWritten = 0;
 	while(mBufferPos + length >= PxSocket::DEFAULT_BUFFER_SIZE)
 	{
-		uint32_t currentChunk = PxSocket::DEFAULT_BUFFER_SIZE - mBufferPos;
+		PxU32 currentChunk = PxSocket::DEFAULT_BUFFER_SIZE - mBufferPos;
 		intrinsics::memCopy(mBuffer + mBufferPos, data + bytesWritten, currentChunk);
-		bytesWritten += uint32_t(currentChunk); // for the user, this is consumed even if we fail to shove it down a
+		bytesWritten += PxU32(currentChunk); // for the user, this is consumed even if we fail to shove it down a
 		// non-blocking socket
 
-		uint32_t sent = SocketImpl::write(mBuffer, PxSocket::DEFAULT_BUFFER_SIZE);
+		PxU32 sent = SocketImpl::write(mBuffer, PxSocket::DEFAULT_BUFFER_SIZE);
 		mBufferPos = PxSocket::DEFAULT_BUFFER_SIZE - sent;
 
 		if(sent < PxSocket::DEFAULT_BUFFER_SIZE) // non-blocking or error
@@ -410,7 +410,7 @@ PxSocket::~PxSocket()
 	PX_FREE(mImpl);
 }
 
-bool PxSocket::connect(const char* host, uint16_t port, uint32_t timeout)
+bool PxSocket::connect(const char* host, uint16_t port, PxU32 timeout)
 {
 	return mImpl->connect(host, port, timeout);
 }
@@ -452,14 +452,14 @@ bool PxSocket::flush()
 	return mImpl->flush();
 }
 
-uint32_t PxSocket::write(const uint8_t* data, uint32_t length)
+PxU32 PxSocket::write(const uint8_t* data, PxU32 length)
 {
 	if(!mImpl->isConnected())
 		return 0;
 	return mImpl->write(data, length);
 }
 
-uint32_t PxSocket::read(uint8_t* data, uint32_t length)
+PxU32 PxSocket::read(uint8_t* data, PxU32 length)
 {
 	if(!mImpl->isConnected())
 		return 0;

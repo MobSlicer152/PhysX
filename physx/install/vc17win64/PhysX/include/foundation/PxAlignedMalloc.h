@@ -49,7 +49,7 @@ namespace physx
 	// SCS: AlignedMalloc with 3 params not found, seems not used on PC either
 	// disabled for now to avoid GCC error
 
-	template <uint32_t N, typename BaseAllocator = PxAllocator>
+	template <PxU32 N, typename BaseAllocator = PxAllocator>
 	class PxAlignedAllocator : public BaseAllocator
 	{
 	public:

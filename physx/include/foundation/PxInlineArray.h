@@ -38,7 +38,7 @@ namespace physx
 #endif
 
 // array that pre-allocates for N elements
-template <typename T, uint32_t N, typename Alloc = typename PxAllocatorTraits<T>::Type>
+template <typename T, PxU32 N, typename Alloc = typename PxAllocatorTraits<T>::Type>
 class PxInlineArray : public PxArray<T, PxInlineAllocator<N * sizeof(T), Alloc> >
 {
 	typedef PxInlineAllocator<N * sizeof(T), Alloc> Allocator;

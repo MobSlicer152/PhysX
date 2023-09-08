@@ -78,7 +78,7 @@ void physx::PxEnableFPExceptions()
 	_clearfp();
 
 	// enable all fp exceptions except inexact and underflow (common, benign)
-	_controlfp_s(NULL, uint32_t(~_MCW_EM) | _EM_INEXACT | _EM_UNDERFLOW, _MCW_EM);
+	_controlfp_s(NULL, PxU32(~_MCW_EM) | _EM_INEXACT | _EM_UNDERFLOW, _MCW_EM);
 }
 
 void physx::PxDisableFPExceptions()

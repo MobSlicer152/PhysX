@@ -75,7 +75,7 @@ class PxPvdTransport
 	 *	write bytes to the other endpoint of the connection. should lock before witre. If an error occurs
 	 *	this connection will assume to be dead.
 	 */
-	virtual bool write(const uint8_t* inBytes, uint32_t inLength) = 0;
+	virtual bool write(const uint8_t* inBytes, PxU32 inLength) = 0;
 
 	/*
 	    lock this transport and return it

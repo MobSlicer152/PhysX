@@ -62,22 +62,22 @@ class FastXml
 			return argc / 2;
 		}
 
-		const char* getKey(uint32_t index) const
+		const char* getKey(PxU32 index) const
 		{
-			PX_ASSERT((index * 2) < uint32_t(argc));
+			PX_ASSERT((index * 2) < PxU32(argc));
 			return argv[index * 2];
 		}
 
-		const char* getValue(uint32_t index) const
+		const char* getValue(PxU32 index) const
 		{
-			PX_ASSERT((index * 2 + 1) < uint32_t(argc));
+			PX_ASSERT((index * 2 + 1) < PxU32(argc));
 			return argv[index * 2 + 1];
 		}
 
 		const char* get(const char* attr) const
 		{
-			int32_t count = argc / 2;
-			for(int32_t i = 0; i < count; ++i)
+			PxI32 count = argc / 2;
+			for(PxI32 i = 0; i < count; ++i)
 			{
 				const char* key = argv[i * 2], *value = argv[i * 2 + 1];
 				if(strcmp(key, attr) == 0)
@@ -105,7 +105,7 @@ class FastXml
 		// Return false to stop processing the XML file; leaves the read pointer of the stream right after this close
 		// tag.
 		// The bool 'isError' indicates whether processing was stopped due to an error, or intentionally canceled early.
-		virtual bool processClose(const char* element, uint32_t depth, bool& isError) = 0; // process the 'close'
+		virtual bool processClose(const char* element, PxU32 depth, bool& isError) = 0; // process the 'close'
 		// indicator for a previously
 		// encountered element
 
@@ -113,11 +113,11 @@ class FastXml
 		virtual bool processElement(const char* elementName,    // name of the element
 		                            const char* elementData,    // element data, null if none
 		                            const AttributePairs& attr, // attributes
-		                            int32_t lineno) = 0;        // line number in the source XML file
+		                            PxI32 lineno) = 0;        // line number in the source XML file
 
 		// process the XML declaration header
 		virtual bool processXmlDeclaration(const AttributePairs&, // attributes
-		                                   const char* /*elementData*/, int32_t /*lineno*/)
+		                                   const char* /*elementData*/, PxI32 /*lineno*/)
 		{
 			return true;
 		}
@@ -130,7 +130,7 @@ class FastXml
 			return true;
 		}
 
-		virtual void* allocate(uint32_t size)
+		virtual void* allocate(PxU32 size)
 		{
 			return PxGetBroadcastAllocator()->allocate(size, "FastXml", __FILE__, __LINE__);
 		}
@@ -143,7 +143,7 @@ class FastXml
 
 	virtual bool processXml(PxInputData& buff, bool streamFromMemory = false) = 0;
 
-	virtual const char* getError(int32_t& lineno) = 0; // report the reason for a parsing error, and the line number
+	virtual const char* getError(PxI32& lineno) = 0; // report the reason for a parsing error, and the line number
 	// where it occurred.
 
 	FastXml()

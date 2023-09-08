@@ -44,7 +44,7 @@ namespace physx
 {
 #endif
 
-typedef uint32_t PxU32;
+typedef PxU32 PxU32;
 
 class PxAllocatorCallback;
 class PxErrorCallback;

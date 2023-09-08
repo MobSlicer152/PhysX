@@ -263,7 +263,7 @@ PX_FORCE_INLINE void printVec(const float32x2_t& v, const char* name)
 
 PX_FORCE_INLINE void printVec(const uint32x4_t& v, const char* name)
 {
-	PX_ALIGN(16, uint32_t) data[4];
+	PX_ALIGN(16, PxU32) data[4];
 	vst1q_u32(data, v);
 	printf("%s: (0x%x, 0x%x, 0x%x, 0x%x)\n", name, data[0], data[1], data[2], data[3]);
 }
@@ -278,7 +278,7 @@ PX_FORCE_INLINE void printVec(const uint16x8_t& v, const char* name)
 
 PX_FORCE_INLINE void printVec(const int32x4_t& v, const char* name)
 {
-	PX_ALIGN(16, int32_t) data[4];
+	PX_ALIGN(16, PxI32) data[4];
 	vst1q_s32(data, v);
 	printf("%s: (0x%x, 0x%x, 0x%x, 0x%x)\n", name, data[0], data[1], data[2], data[3]);
 }
@@ -300,7 +300,7 @@ PX_FORCE_INLINE void printVec(const uint16x4_t& v, const char* name)
 
 PX_FORCE_INLINE void printVec(const uint32x2_t& v, const char* name)
 {
-	PX_ALIGN(16, uint32_t) data[2];
+	PX_ALIGN(16, PxU32) data[2];
 	vst1_u32(data, v);
 	printf("%s: (0x%x, 0x%x)\n", name, data[0], data[1]);
 }
@@ -507,19 +507,19 @@ PX_FORCE_INLINE void V4StoreU(const Vec4V a, PxF32* f)
 PX_FORCE_INLINE void BStoreA(const BoolV a, PxU32* u)
 {
 	ASSERT_ISALIGNED16(u);
-	vst1q_u32(reinterpret_cast<uint32_t*>(u), a);
+	vst1q_u32(reinterpret_cast<PxU32*>(u), a);
 }
 
 PX_FORCE_INLINE void U4StoreA(const VecU32V uv, PxU32* u)
 {
 	ASSERT_ISALIGNED16(u);
-	vst1q_u32(reinterpret_cast<uint32_t*>(u), uv);
+	vst1q_u32(reinterpret_cast<PxU32*>(u), uv);
 }
 
 PX_FORCE_INLINE void I4StoreA(const VecI32V iv, PxI32* i)
 {
 	ASSERT_ISALIGNED16(i);
-	vst1q_s32(reinterpret_cast<int32_t*>(i), iv);
+	vst1q_s32(reinterpret_cast<PxI32*>(i), iv);
 }
 
 PX_FORCE_INLINE Vec4V V4LoadU(const PxF32* const f)
@@ -2066,7 +2066,7 @@ PX_FORCE_INLINE Vec4V V4PermZWXY(const Vec4V a)
 template <PxU8 E0, PxU8 E1, PxU8 E2, PxU8 E3>
 PX_FORCE_INLINE Vec4V V4Perm(const Vec4V V)
 {
-	static const uint32_t ControlElement[4] =
+	static const PxU32 ControlElement[4] =
 	{
 #if 1
 		0x03020100, // XM_SWIZZLE_X
@@ -3396,7 +3396,7 @@ PX_FORCE_INLINE void V4U16StoreAligned(VecU16V val, VecU16V* address)
 
 PX_FORCE_INLINE void V4U32StoreAligned(VecU32V val, VecU32V* address)
 {
-	vst1q_u32(reinterpret_cast<uint32_t*>(address), val);
+	vst1q_u32(reinterpret_cast<PxU32*>(address), val);
 }
 
 PX_FORCE_INLINE Vec4V V4LoadAligned(Vec4V* addr)

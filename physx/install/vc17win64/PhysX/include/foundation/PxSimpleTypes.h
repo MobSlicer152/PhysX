@@ -68,8 +68,8 @@ namespace physx
 #endif
 typedef int64_t PxI64;
 typedef uint64_t PxU64;
-typedef int32_t PxI32;
-typedef uint32_t PxU32;
+typedef PxI32 PxI32;
+typedef PxU32 PxU32;
 typedef int16_t PxI16;
 typedef uint16_t PxU16;
 typedef int8_t PxI8;

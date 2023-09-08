@@ -186,7 +186,7 @@ protected:
 
 	virtual void addReference(PxTaskID taskID) = 0;
 	virtual void decrReference(PxTaskID taskID) = 0;
-	virtual int32_t getReference(PxTaskID taskID) const = 0;
+	virtual PxI32 getReference(PxTaskID taskID) const = 0;
 
 	virtual void decrReference(PxLightCpuTask&) = 0;
 	virtual void addReference(PxLightCpuTask&) = 0;

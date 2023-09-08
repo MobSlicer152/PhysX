@@ -67,7 +67,7 @@ class PvdPropertyDefinitionHelper
 	 */
 	virtual const char* getTopName() = 0;
 
-	virtual void addNamedValue(const char* name, uint32_t value) = 0;
+	virtual void addNamedValue(const char* name, PxU32 value) = 0;
 	virtual void clearNamedValues() = 0;
 	virtual DataRef<NamedValue> getNamedValues() = 0;
 
@@ -86,20 +86,20 @@ class PvdPropertyDefinitionHelper
 
 	// The datatype used for instances needs to be pointer unless you actually have pvdsdk::InstanceId members on your
 	// value structs.
-	virtual void addPropertyMessageArg(const NamespacedName& inDatatype, uint32_t inOffset, uint32_t inSize) = 0;
+	virtual void addPropertyMessageArg(const NamespacedName& inDatatype, PxU32 inOffset, PxU32 inSize) = 0;
 
 	template <typename TDataType>
-	void addPropertyMessageArg(uint32_t offset)
+	void addPropertyMessageArg(PxU32 offset)
 	{
-		addPropertyMessageArg(getPvdNamespacedNameForType<TDataType>(), offset, static_cast<uint32_t>(sizeof(TDataType)));
+		addPropertyMessageArg(getPvdNamespacedNameForType<TDataType>(), offset, static_cast<PxU32>(sizeof(TDataType)));
 	}
 	virtual void addPropertyMessage(const NamespacedName& clsName, const NamespacedName& msgName,
-	                                uint32_t inStructSizeInBytes) = 0;
+	                                PxU32 inStructSizeInBytes) = 0;
 	template <typename TClsType, typename TMsgType>
 	void addPropertyMessage()
 	{
 		addPropertyMessage(getPvdNamespacedNameForType<TClsType>(), getPvdNamespacedNameForType<TMsgType>(),
-		                   static_cast<uint32_t>(sizeof(TMsgType)));
+		                   static_cast<PxU32>(sizeof(TMsgType)));
 	}
 	virtual void clearPropertyMessageArgs() = 0;
 

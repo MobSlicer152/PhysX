@@ -125,7 +125,7 @@ namespace physx { namespace profile {
 
 	public:
 		EventBuffer(PxAllocatorCallback* inFoundation
-					, uint32_t inBufferFullAmount
+					, PxU32 inBufferFullAmount
 					, const TContextProvider& inProvider
 					, TMutexType* inBufferMutex
 					, const TEventFilterType& inEventFilter )
@@ -139,7 +139,7 @@ namespace physx { namespace profile {
 
 		TContextProvider& getContextProvider() { return mContextProvider; }
 
-		PX_FORCE_INLINE void startEvent(uint16_t inId, uint32_t threadId, uint64_t contextId, uint8_t cpuId, uint8_t threadPriority, uint64_t inTimestamp)
+		PX_FORCE_INLINE void startEvent(uint16_t inId, PxU32 threadId, uint64_t contextId, uint8_t cpuId, uint8_t threadPriority, uint64_t inTimestamp)
 		{			
 			TScopedLockType lock(TBaseType::mBufferMutex);
 			if ( mEventFilter.isEventEnabled( inId ) )
@@ -156,12 +156,12 @@ namespace physx { namespace profile {
 			startEvent( inId, ctx.mThreadId, contextId, ctx.mCpuId, static_cast<uint8_t>(ctx.mThreadPriority), PxTime::getCurrentCounterValue() );
 		}
 
-		PX_FORCE_INLINE void startEvent(uint16_t inId, uint64_t contextId, uint32_t threadId)
+		PX_FORCE_INLINE void startEvent(uint16_t inId, uint64_t contextId, PxU32 threadId)
 		{
 			startEvent( inId, threadId, contextId, 0, 0, PxTime::getCurrentCounterValue() );
 		}
 
-		PX_FORCE_INLINE void stopEvent(uint16_t inId, uint32_t threadId, uint64_t contextId, uint8_t cpuId, uint8_t threadPriority, uint64_t inTimestamp)
+		PX_FORCE_INLINE void stopEvent(uint16_t inId, PxU32 threadId, uint64_t contextId, uint8_t cpuId, uint8_t threadPriority, uint64_t inTimestamp)
 		{			
 			TScopedLockType lock(TBaseType::mBufferMutex);
 			if ( mEventFilter.isEventEnabled( inId ) )
@@ -178,7 +178,7 @@ namespace physx { namespace profile {
 			stopEvent( inId, ctx.mThreadId, contextId, ctx.mCpuId, static_cast<uint8_t>(ctx.mThreadPriority), PxTime::getCurrentCounterValue() );
 		}
 
-		PX_FORCE_INLINE void stopEvent(uint16_t inId, uint64_t contextId, uint32_t threadId)
+		PX_FORCE_INLINE void stopEvent(uint16_t inId, uint64_t contextId, PxU32 threadId)
 		{
 			stopEvent( inId, threadId, contextId, 0, 0, PxTime::getCurrentCounterValue() );
 		}
@@ -188,7 +188,7 @@ namespace physx { namespace profile {
 			eventValue( inId, mContextProvider.getThreadId(), contextId, inValue );
 		}
 
-		inline void eventValue( uint16_t inId, uint32_t threadId, uint64_t contextId, int64_t inValue )
+		inline void eventValue( uint16_t inId, PxU32 threadId, uint64_t contextId, int64_t inValue )
 		{
 			TScopedLockType lock( TBaseType::mBufferMutex );
 			EventValue theEvent;
@@ -247,10 +247,10 @@ namespace physx { namespace profile {
 		template<typename TDataType>
 		PX_FORCE_INLINE void sendEvent( EventHeader& inHeader, TDataType& inType )
 		{			
-			uint32_t sizeToWrite = sizeof(inHeader) + inType.getEventSize(inHeader);
+			PxU32 sizeToWrite = sizeof(inHeader) + inType.getEventSize(inHeader);
 			PX_UNUSED(sizeToWrite);
 
-			uint32_t writtenSize = inHeader.streamify( TBaseType::mSerializer );
+			PxU32 writtenSize = inHeader.streamify( TBaseType::mSerializer );
 			writtenSize += inType.streamify(TBaseType::mSerializer, inHeader);
 
 			PX_ASSERT(writtenSize == sizeToWrite);

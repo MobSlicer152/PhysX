@@ -81,7 +81,7 @@ class PX_FOUNDATION_API PxMutexImpl
 	/**
 	Size of this class.
 	*/
-	static uint32_t getSize();
+	static PxU32 getSize();
 };
 
 template <typename Alloc = PxReflectionAllocator<PxMutexImpl> >

@@ -47,7 +47,7 @@ namespace physx
 #ifdef PX_PSP
 typedef unsigned int PxU32;
 #else
-typedef uint32_t PxU32;
+typedef PxU32 PxU32;
 #endif
 
 class PxAllocatorCallback;

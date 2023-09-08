@@ -108,7 +108,7 @@ OmniPvdClassHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerClass(const char* cl
 	}	
 }
 
-OmniPvdAttributeHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerAttribute(const OmniPvdClassHandle classHandle, const char* attributeName, const OmniPvdAttributeDataType attributeDataType, const uint32_t nbrFields)
+OmniPvdAttributeHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerAttribute(const OmniPvdClassHandle classHandle, const char* attributeName, const OmniPvdAttributeDataType attributeDataType, const PxU32 nbrFields)
 {
 	setVersionHelper();
 	if (mStream) {
@@ -122,7 +122,7 @@ OmniPvdAttributeHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerAttribute(const 
 		mStream->writeBytes((unsigned char*)&classHandle, sizeof(OmniPvdClassHandle));
 		mStream->writeBytes((unsigned char*)&mLastAttributeHandle, sizeof(OmniPvdAttributeHandle));
 		mStream->writeBytes((unsigned char*)&attributeDataType, sizeof(OmniPvdAttributeDataType));
-		mStream->writeBytes((unsigned char*)&nbrFields, sizeof(uint32_t));
+		mStream->writeBytes((unsigned char*)&nbrFields, sizeof(PxU32));
 		mStream->writeBytes((unsigned char*)&attribNameLen, sizeof(uint16_t));
 		mStream->writeBytes((unsigned char*)attributeName, attribNameLen);
 		return mLastAttributeHandle;
@@ -147,7 +147,7 @@ OmniPvdAttributeHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerFlagsAttribute(c
 		mStream->writeBytes((unsigned char*)&classHandle, sizeof(OmniPvdClassHandle));
 		mStream->writeBytes((unsigned char*)&mLastAttributeHandle, sizeof(OmniPvdAttributeHandle));
 		mStream->writeBytes((unsigned char*)&attributeDataType, sizeof(OmniPvdAttributeDataType));
-		mStream->writeBytes((unsigned char*)&enumClassHandle, sizeof(uint32_t));
+		mStream->writeBytes((unsigned char*)&enumClassHandle, sizeof(PxU32));
 		mStream->writeBytes((unsigned char*)&attribNameLen, sizeof(uint16_t));
 		mStream->writeBytes((unsigned char*)attributeName, attribNameLen);
 		return mLastAttributeHandle;
@@ -157,7 +157,7 @@ OmniPvdAttributeHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerFlagsAttribute(c
 	}
 }
 
-OmniPvdAttributeHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerEnumValue(const OmniPvdClassHandle classHandle, const char* attributeName, uint32_t value)
+OmniPvdAttributeHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerEnumValue(const OmniPvdClassHandle classHandle, const char* attributeName, PxU32 value)
 {
 	setVersionHelper();
 	if (mStream) {
@@ -169,7 +169,7 @@ OmniPvdAttributeHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerEnumValue(const 
 		mStream->writeBytes((unsigned char*)&classHandle, sizeof(OmniPvdClassHandle));
 		mStream->writeBytes((unsigned char*)&mLastAttributeHandle, sizeof(OmniPvdAttributeHandle));
 		mStream->writeBytes((unsigned char*)&attributeDataType, sizeof(OmniPvdAttributeDataType));
-		mStream->writeBytes((unsigned char*)&value, sizeof(uint32_t));
+		mStream->writeBytes((unsigned char*)&value, sizeof(PxU32));
 		mStream->writeBytes((unsigned char*)&attribNameLen, sizeof(uint16_t));
 		mStream->writeBytes((unsigned char*)attributeName, attribNameLen);
 		return mLastAttributeHandle;
@@ -222,7 +222,7 @@ OmniPvdAttributeHandle OMNI_PVD_CALL OmniPvdWriterImpl::registerSetAttribute(con
 	}
 }
 
-void OMNI_PVD_CALL OmniPvdWriterImpl::setAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const uint32_t nbrBytes)
+void OMNI_PVD_CALL OmniPvdWriterImpl::setAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const PxU32 nbrBytes)
 {
 	setVersionHelper();
 	if (mStream)
@@ -237,18 +237,18 @@ void OMNI_PVD_CALL OmniPvdWriterImpl::setAttribute(const OmniPvdContextHandle co
 			mStream->writeBytes((unsigned char*)attributeHandles, sizeof(OmniPvdAttributeHandle));
 			attributeHandles++;
 		}
-		mStream->writeBytes((unsigned char*)&nbrBytes, sizeof(uint32_t));
+		mStream->writeBytes((unsigned char*)&nbrBytes, sizeof(PxU32));
 		mStream->writeBytes((unsigned char*)data, nbrBytes);
 	}
 }
 
-void OMNI_PVD_CALL OmniPvdWriterImpl::setAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t *data, const uint32_t nbrBytes)
+void OMNI_PVD_CALL OmniPvdWriterImpl::setAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t *data, const PxU32 nbrBytes)
 {
 	const uint8_t handleDepth = 1;
 	setAttribute(contextHandle, objectHandle, handleDepth, &attributeHandle, data, nbrBytes);
 }
 
-void OMNI_PVD_CALL OmniPvdWriterImpl::addToSetAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const uint32_t nbrBytes)
+void OMNI_PVD_CALL OmniPvdWriterImpl::addToSetAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const PxU32 nbrBytes)
 {
 	setVersionHelper();
 	if (mStream)
@@ -263,18 +263,18 @@ void OMNI_PVD_CALL OmniPvdWriterImpl::addToSetAttribute(const OmniPvdContextHand
 			mStream->writeBytes((unsigned char*)attributeHandles, sizeof(OmniPvdAttributeHandle));
 			attributeHandles++;
 		}
-		mStream->writeBytes((unsigned char*)&nbrBytes, sizeof(uint32_t));
+		mStream->writeBytes((unsigned char*)&nbrBytes, sizeof(PxU32));
 		mStream->writeBytes((unsigned char*)data, nbrBytes);
 	}
 }
 
-void OMNI_PVD_CALL OmniPvdWriterImpl::addToSetAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t* data, const uint32_t nbrBytes)
+void OMNI_PVD_CALL OmniPvdWriterImpl::addToSetAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t* data, const PxU32 nbrBytes)
 {
 	const uint8_t handleDepth = 1;
 	addToSetAttribute(contextHandle, objectHandle, handleDepth, &attributeHandle, data, nbrBytes);
 }
 
-void OMNI_PVD_CALL OmniPvdWriterImpl::removeFromSetAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const uint32_t nbrBytes)
+void OMNI_PVD_CALL OmniPvdWriterImpl::removeFromSetAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const PxU32 nbrBytes)
 {
 	setVersionHelper();
 	if (mStream)
@@ -289,12 +289,12 @@ void OMNI_PVD_CALL OmniPvdWriterImpl::removeFromSetAttribute(const OmniPvdContex
 			mStream->writeBytes((unsigned char*)attributeHandles, sizeof(OmniPvdAttributeHandle));
 			attributeHandles++;
 		}
-		mStream->writeBytes((unsigned char*)&nbrBytes, sizeof(uint32_t));
+		mStream->writeBytes((unsigned char*)&nbrBytes, sizeof(PxU32));
 		mStream->writeBytes((unsigned char*)data, nbrBytes);
 	}
 }
 
-void OMNI_PVD_CALL OmniPvdWriterImpl::removeFromSetAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t* data, const uint32_t nbrBytes)
+void OMNI_PVD_CALL OmniPvdWriterImpl::removeFromSetAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t* data, const PxU32 nbrBytes)
 {
 	const uint8_t handleDepth = 1;
 	removeFromSetAttribute(contextHandle, objectHandle, handleDepth, &attributeHandle, data, nbrBytes);

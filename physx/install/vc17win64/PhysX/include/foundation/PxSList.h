@@ -82,7 +82,7 @@ struct PX_FOUNDATION_API PxSListImpl
 	void push(PxSListEntry* entry);
 	PxSListEntry* pop();
 	PxSListEntry* flush();
-	static uint32_t getSize();
+	static PxU32 getSize();
 };
 
 template <typename Alloc = PxReflectionAllocator<PxSListImpl> >

@@ -34,9 +34,9 @@ namespace physx
 namespace pvdsdk
 {
 
-static inline uint32_t strLen(const char* inStr)
+static inline PxU32 strLen(const char* inStr)
 {
-	uint32_t len = 0;
+	PxU32 len = 0;
 	if(inStr)
 	{
 		while(*inStr)
@@ -58,13 +58,13 @@ class PvdInputStream
   public:
 	// Return false if you can't write the number of bytes requested
 	// But make an absolute best effort to read the data...
-	virtual bool read(uint8_t* buffer, uint32_t& len) = 0;
+	virtual bool read(uint8_t* buffer, PxU32& len) = 0;
 
 	template <typename TDataType>
-	bool read(TDataType* buffer, uint32_t numItems)
+	bool read(TDataType* buffer, PxU32 numItems)
 	{
-		uint32_t expected = numItems;
-		uint32_t amountToRead = numItems * sizeof(TDataType);
+		PxU32 expected = numItems;
+		PxU32 amountToRead = numItems * sizeof(TDataType);
 		read(reinterpret_cast<uint8_t*>(buffer), amountToRead);
 		numItems = amountToRead / sizeof(TDataType);
 		PX_ASSERT(numItems == expected);
@@ -74,7 +74,7 @@ class PvdInputStream
 	template <typename TDataType>
 	PvdInputStream& operator>>(TDataType& data)
 	{
-		uint32_t dataSize = static_cast<uint32_t>(sizeof(TDataType));
+		PxU32 dataSize = static_cast<PxU32>(sizeof(TDataType));
 		bool success = read(reinterpret_cast<uint8_t*>(&data), dataSize);
 		// PX_ASSERT( success );
 		// PX_ASSERT( dataSize == sizeof( data ) );
@@ -93,11 +93,11 @@ class PvdOutputStream
   public:
 	// Return false if you can't write the number of bytes requested
 	// But make an absolute best effort to write the data...
-	virtual bool write(const uint8_t* buffer, uint32_t len) = 0;
-	virtual bool directCopy(PvdInputStream& inStream, uint32_t len) = 0;
+	virtual bool write(const uint8_t* buffer, PxU32 len) = 0;
+	virtual bool directCopy(PvdInputStream& inStream, PxU32 len) = 0;
 
 	template <typename TDataType>
-	bool write(const TDataType* buffer, uint32_t numItems)
+	bool write(const TDataType* buffer, PxU32 numItems)
 	{
 		return write(reinterpret_cast<const uint8_t*>(buffer), numItems * sizeof(TDataType));
 	}
@@ -115,7 +115,7 @@ class PvdOutputStream
 	{
 		if(inString && *inString)
 		{
-			uint32_t len(strLen(inString));
+			PxU32 len(strLen(inString));
 			write(inString, len);
 		}
 		return *this;

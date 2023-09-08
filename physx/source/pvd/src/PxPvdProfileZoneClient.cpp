@@ -65,7 +65,7 @@ struct ProfileZoneClient : public profile::PxProfileZoneClient, public PxUserAll
 		mStream.addProfileZoneEvent(&mZone, inName.name, inName.eventId.eventId, inName.eventId.compileTimeEnabled);
 	}
 
-	virtual void handleBufferFlush(const uint8_t* inData, uint32_t inLength)
+	virtual void handleBufferFlush(const uint8_t* inData, PxU32 inLength)
 	{
 		mStream.setPropertyValue(&mZone, "events", inData, inLength);
 	}
@@ -145,7 +145,7 @@ void PvdProfileZoneClient::onZoneAdded(profile::PxProfileZone& zone)
 
 void PvdProfileZoneClient::onZoneRemoved(profile::PxProfileZone& zone)
 {
-	for(uint32_t i = 0; i < mProfileZoneClients.size(); i++)
+	for(PxU32 i = 0; i < mProfileZoneClients.size(); i++)
 	{
 		if(&zone == &mProfileZoneClients[i]->mZone)
 		{

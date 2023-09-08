@@ -43,7 +43,7 @@
 namespace physx {
 	namespace profile {
 
-		static const uint32_t LOCAL_BUFFER_SIZE = 512;
+		static const PxU32 LOCAL_BUFFER_SIZE = 512;
 
 		/**
 		*	An event buffer maintains an in-memory buffer of events.  When this buffer is full
@@ -127,12 +127,12 @@ namespace physx {
 		private:						
 			TContextProvider					mContextProvider;
 			TEventFilterType					mEventFilter;
-			volatile int32_t					mReserved;
-			volatile int32_t					mWritten;
+			volatile PxI32					mReserved;
+			volatile PxI32					mWritten;
 			
 		public:
 			EventBufferAtomic(PxAllocatorCallback* inFoundation
-				, uint32_t inBufferFullAmount
+				, PxU32 inBufferFullAmount
 				, const TContextProvider& inProvider
 				, TMutexType* inBufferMutex
 				, const TEventFilterType& inEventFilter)
@@ -146,7 +146,7 @@ namespace physx {
 
 			TContextProvider& getContextProvider() { return mContextProvider; }
 
-			PX_FORCE_INLINE void startEvent(uint16_t inId, uint32_t threadId, uint64_t contextId, uint8_t cpuId, uint8_t threadPriority, uint64_t inTimestamp)
+			PX_FORCE_INLINE void startEvent(uint16_t inId, PxU32 threadId, uint64_t contextId, uint8_t cpuId, uint8_t threadPriority, uint64_t inTimestamp)
 			{
 				if (mEventFilter.isEventEnabled(inId))
 				{
@@ -162,12 +162,12 @@ namespace physx {
 				startEvent(inId, ctx.mThreadId, contextId, ctx.mCpuId, static_cast<uint8_t>(ctx.mThreadPriority), PxTime::getCurrentCounterValue());
 			}
 
-			PX_FORCE_INLINE void startEvent(uint16_t inId, uint64_t contextId, uint32_t threadId)
+			PX_FORCE_INLINE void startEvent(uint16_t inId, uint64_t contextId, PxU32 threadId)
 			{
 				startEvent(inId, threadId, contextId, 0, 0, PxTime::getCurrentCounterValue());
 			}
 
-			PX_FORCE_INLINE void stopEvent(uint16_t inId, uint32_t threadId, uint64_t contextId, uint8_t cpuId, uint8_t threadPriority, uint64_t inTimestamp)
+			PX_FORCE_INLINE void stopEvent(uint16_t inId, PxU32 threadId, uint64_t contextId, uint8_t cpuId, uint8_t threadPriority, uint64_t inTimestamp)
 			{
 				if (mEventFilter.isEventEnabled(inId))
 				{
@@ -183,7 +183,7 @@ namespace physx {
 				stopEvent(inId, ctx.mThreadId, contextId, ctx.mCpuId, static_cast<uint8_t>(ctx.mThreadPriority), PxTime::getCurrentCounterValue());
 			}
 
-			PX_FORCE_INLINE void stopEvent(uint16_t inId, uint64_t contextId, uint32_t threadId)
+			PX_FORCE_INLINE void stopEvent(uint16_t inId, uint64_t contextId, PxU32 threadId)
 			{
 				stopEvent(inId, threadId, contextId, 0, 0, PxTime::getCurrentCounterValue());
 			}
@@ -193,7 +193,7 @@ namespace physx {
 				eventValue(inId, mContextProvider.getThreadId(), contextId, inValue);
 			}
 
-			inline void eventValue(uint16_t inId, uint32_t threadId, uint64_t contextId, int64_t inValue)
+			inline void eventValue(uint16_t inId, PxU32 threadId, uint64_t contextId, int64_t inValue)
 			{
 				EventValue theEvent;
 				theEvent.init(inValue, contextId, threadId);
@@ -202,17 +202,17 @@ namespace physx {
 				EventValue& theType(theEvent);
 				theType.setupHeader(theHeader);
 
-				int32_t sizeToWrite = int32_t(sizeof(theHeader) + theType.getEventSize(theHeader));
-				int32_t reserved = PxAtomicAdd(&mReserved, sizeToWrite);
+				PxI32 sizeToWrite = PxI32(sizeof(theHeader) + theType.getEventSize(theHeader));
+				PxI32 reserved = PxAtomicAdd(&mReserved, sizeToWrite);
 				sendEvent(theHeader, theType, reserved, sizeToWrite);
 			}
 
-			void flushProfileEvents(int32_t reserved = -1)
+			void flushProfileEvents(PxI32 reserved = -1)
 			{
 				TScopedLockType lock(TBaseType::mBufferMutex);
 
 				// set the buffer full to lock additional writes
-				int32_t reservedOld = PxAtomicExchange(&mReserved, int32_t(TBaseType::mBufferFullAmount + 1));
+				PxI32 reservedOld = PxAtomicExchange(&mReserved, PxI32(TBaseType::mBufferFullAmount + 1));
 				if (reserved == -1)
 					reserved = reservedOld;
 
@@ -260,30 +260,30 @@ namespace physx {
 				TDataType& theType(const_cast<TDataType&>(inType));				
 				theType.setupHeader(theHeader, 0);
 
-				const int32_t sizeToWrite = int32_t(sizeof(theHeader) + theType.getEventSize(theHeader));
+				const PxI32 sizeToWrite = PxI32(sizeof(theHeader) + theType.getEventSize(theHeader));
 
-				int32_t reserved = PxAtomicAdd(&mReserved, sizeToWrite);
+				PxI32 reserved = PxAtomicAdd(&mReserved, sizeToWrite);
 				sendEvent(theHeader, theType, reserved, sizeToWrite);				
 			}
 
 			template<typename TDataType>
-			PX_FORCE_INLINE void sendEvent(EventHeader& inHeader, TDataType& inType, int32_t reserved, int32_t sizeToWrite)
+			PX_FORCE_INLINE void sendEvent(EventHeader& inHeader, TDataType& inType, PxI32 reserved, PxI32 sizeToWrite)
 			{
 				// if we don't fit to the buffer, we wait till it is flushed
-				if (reserved - sizeToWrite >= int32_t(TBaseType::mBufferFullAmount))
+				if (reserved - sizeToWrite >= PxI32(TBaseType::mBufferFullAmount))
 				{
-					while (reserved - sizeToWrite >= int32_t(TBaseType::mBufferFullAmount))
+					while (reserved - sizeToWrite >= PxI32(TBaseType::mBufferFullAmount))
 					{
 						// I32 overflow 
-						if (mReserved < int32_t(TBaseType::mBufferFullAmount))
+						if (mReserved < PxI32(TBaseType::mBufferFullAmount))
 						{							
 							reserved = PxAtomicAdd(&mReserved, sizeToWrite);
 						}
 					}
 				}
 
-				int32_t writeIndex = reserved - sizeToWrite;
-				uint32_t writtenSize = 0;
+				PxI32 writeIndex = reserved - sizeToWrite;
+				PxU32 writtenSize = 0;
 
 				PX_ASSERT(writeIndex >= 0);
 				
@@ -297,10 +297,10 @@ namespace physx {
 				TBaseType::mSerializer.mArray->reserve(writeIndex + writtenSize);
 				TBaseType::mSerializer.mArray->write(&tempBuffer[0], writtenSize, writeIndex);
 				
-				PX_ASSERT(writtenSize == uint32_t(sizeToWrite));					
+				PX_ASSERT(writtenSize == PxU32(sizeToWrite));					
 				PxAtomicAdd(&mWritten, sizeToWrite);
 
-				if (reserved >= int32_t(TBaseType::mBufferFullAmount))
+				if (reserved >= PxI32(TBaseType::mBufferFullAmount))
 				{	
 					TScopedLockType lock(TBaseType::mBufferMutex);
 					// we flush the buffer if its full and we did not flushed him in the meantime

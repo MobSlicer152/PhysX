@@ -119,7 +119,7 @@ public:
 		return other.mRef0 == mRef0 && other.mRef1 == mRef1 && other.mRef2 == mRef2;
 	}
 
-	static uint32_t hash(const SortedTriangleInds key)
+	static PxU32 hash(const SortedTriangleInds key)
 	{
 		uint64_t k0 = (key.mRef0 & 0xffff);
 		uint64_t k1 = (key.mRef1 & 0xffff);
@@ -134,7 +134,7 @@ public:
 		k ^= (k >> 15);
 		k += ~(k << 27);
 		k ^= (k >> 31);
-		return uint32_t(UINT32_MAX & k);
+		return PxU32(UINT32_MAX & k);
 	}
 
 	void setTetIndex(const PxU32 tetIndex)
@@ -158,7 +158,7 @@ public:
 
 struct SortedTriangleIndsHash
 {
-	uint32_t operator()(const SortedTriangleInds& k) const
+	PxU32 operator()(const SortedTriangleInds& k) const
 	{
 		return SortedTriangleInds::hash(k);
 	}

@@ -46,7 +46,7 @@ namespace physx
 template <class Entry, class Key, class HashFn, class GetKey, class PxAllocator, bool compacting>
 class PxHashBase : private PxAllocator
 {
-	void init(uint32_t initialTableSize, float loadFactor)
+	void init(PxU32 initialTableSize, float loadFactor)
 	{
 		mBuffer = NULL;
 		mEntries = NULL;
@@ -55,7 +55,7 @@ class PxHashBase : private PxAllocator
 		mEntriesCapacity = 0;
 		mHashSize = 0;
 		mLoadFactor = loadFactor;
-		mFreeList = uint32_t(EOL);
+		mFreeList = PxU32(EOL);
 		mTimestamp = 0;
 		mEntriesCount = 0;
 
@@ -66,12 +66,12 @@ class PxHashBase : private PxAllocator
   public:
 	typedef Entry EntryType;
 
-	PxHashBase(uint32_t initialTableSize = 64, float loadFactor = 0.75f) : PxAllocator("hashBase")
+	PxHashBase(PxU32 initialTableSize = 64, float loadFactor = 0.75f) : PxAllocator("hashBase")
 	{
 		init(initialTableSize, loadFactor);
 	}
 
-	PxHashBase(uint32_t initialTableSize, float loadFactor, const PxAllocator& alloc) : PxAllocator(alloc)
+	PxHashBase(PxU32 initialTableSize, float loadFactor, const PxAllocator& alloc) : PxAllocator(alloc)
 	{
 		init(initialTableSize, loadFactor);
 	}
@@ -89,15 +89,15 @@ class PxHashBase : private PxAllocator
 			PxAllocator::deallocate(mBuffer);
 	}
 
-	static const uint32_t EOL = 0xffffffff;
+	static const PxU32 EOL = 0xffffffff;
 
 	PX_INLINE Entry* create(const Key& k, bool& exists)
 	{
-		uint32_t h = 0;
+		PxU32 h = 0;
 		if(mHashSize)
 		{
 			h = hash(k);
-			uint32_t index = mHash[h];
+			PxU32 index = mHash[h];
 			while(index != EOL && !HashFn().equal(GetKey()(mEntries[index]), k))
 				index = mEntriesNext[index];
 			exists = index != EOL;
@@ -113,7 +113,7 @@ class PxHashBase : private PxAllocator
 			h = hash(k);
 		}
 
-		uint32_t entryIndex = freeListGetNext();
+		PxU32 entryIndex = freeListGetNext();
 
 		mEntriesNext[entryIndex] = mHash[h];
 		mHash[h] = entryIndex;
@@ -129,8 +129,8 @@ class PxHashBase : private PxAllocator
 		if(!mEntriesCount)
 			return NULL;
 
-		const uint32_t h = hash(k);
-		uint32_t index = mHash[h];
+		const PxU32 h = hash(k);
+		PxU32 index = mHash[h];
 		while(index != EOL && !HashFn().equal(GetKey()(mEntries[index]), k))
 			index = mEntriesNext[index];
 		return index != EOL ? mEntries + index : NULL;
@@ -141,8 +141,8 @@ class PxHashBase : private PxAllocator
 		if(!mEntriesCount)
 			return false;
 
-		const uint32_t h = hash(k);
-		uint32_t* ptr = mHash + h;
+		const PxU32 h = hash(k);
+		PxU32* ptr = mHash + h;
 		while(*ptr != EOL && !HashFn().equal(GetKey()(mEntries[*ptr]), k))
 			ptr = mEntriesNext + *ptr;
 
@@ -159,8 +159,8 @@ class PxHashBase : private PxAllocator
 		if(!mEntriesCount)
 			return false;
 
-		const uint32_t h = hash(k);
-		uint32_t* ptr = mHash + h;
+		const PxU32 h = hash(k);
+		PxU32* ptr = mHash + h;
 		while(*ptr != EOL && !HashFn().equal(GetKey()(mEntries[*ptr]), k))
 			ptr = mEntriesNext + *ptr;
 
@@ -170,12 +170,12 @@ class PxHashBase : private PxAllocator
 		return eraseInternal(ptr);
 	}
 
-	PX_INLINE uint32_t size() const
+	PX_INLINE PxU32 size() const
 	{
 		return mEntriesCount;
 	}
 
-	PX_INLINE uint32_t capacity() const
+	PX_INLINE PxU32 capacity() const
 	{
 		return mHashSize;
 	}
@@ -187,20 +187,20 @@ class PxHashBase : private PxAllocator
 
 		destroy();
 
-		intrinsics::memSet(mHash, EOL, mHashSize * sizeof(uint32_t));
+		intrinsics::memSet(mHash, EOL, mHashSize * sizeof(PxU32));
 
-		const uint32_t sizeMinus1 = mEntriesCapacity - 1;
-		for(uint32_t i = 0; i < sizeMinus1; i++)
+		const PxU32 sizeMinus1 = mEntriesCapacity - 1;
+		for(PxU32 i = 0; i < sizeMinus1; i++)
 		{
 			PxPrefetchLine(mEntriesNext + i, 128);
 			mEntriesNext[i] = i + 1;
 		}
-		mEntriesNext[mEntriesCapacity - 1] = uint32_t(EOL);
+		mEntriesNext[mEntriesCapacity - 1] = PxU32(EOL);
 		mFreeList = 0;
 		mEntriesCount = 0;
 	}
 
-	void reserve(uint32_t size)
+	void reserve(PxU32 size)
 	{
 		if(size > mHashSize)
 			reserveInternal(size);
@@ -214,9 +214,9 @@ class PxHashBase : private PxAllocator
 	PX_INLINE Entry* insertUnique(const Key& k)
 	{
 		PX_ASSERT(find(k) == NULL);
-		uint32_t h = hash(k);
+		PxU32 h = hash(k);
 
-		uint32_t entryIndex = freeListGetNext();
+		PxU32 entryIndex = freeListGetNext();
 
 		mEntriesNext[entryIndex] = mHash[h];
 		mHash[h] = entryIndex;
@@ -230,9 +230,9 @@ class PxHashBase : private PxAllocator
   private:
 	void destroy()
 	{
-		for(uint32_t i = 0; i < mHashSize; i++)
+		for(PxU32 i = 0; i < mHashSize; i++)
 		{
-			for(uint32_t j = mHash[i]; j != EOL; j = mEntriesNext[j])
+			for(PxU32 j = mHash[i]; j != EOL; j = mEntriesNext[j])
 				mEntries[j].~Entry();
 		}
 	}
@@ -244,7 +244,7 @@ class PxHashBase : private PxAllocator
 	// the top of the free list and it should always be equal to size(). Otherwise,
 	// we build a free list in the next() pointers.
 
-	PX_INLINE void freeListAdd(uint32_t index)
+	PX_INLINE void freeListAdd(PxU32 index)
 	{
 		if(compacting)
 		{
@@ -258,11 +258,11 @@ class PxHashBase : private PxAllocator
 		}
 	}
 
-	PX_INLINE void freeListAdd(uint32_t start, uint32_t end)
+	PX_INLINE void freeListAdd(PxU32 start, PxU32 end)
 	{
 		if(!compacting)
 		{
-			for(uint32_t i = start; i < end - 1; i++) // add the new entries to the free list
+			for(PxU32 i = start; i < end - 1; i++) // add the new entries to the free list
 				mEntriesNext[i] = i + 1;
 
 			// link in old free list
@@ -274,7 +274,7 @@ class PxHashBase : private PxAllocator
 			mFreeList = start;
 	}
 
-	PX_INLINE uint32_t freeListGetNext()
+	PX_INLINE PxU32 freeListGetNext()
 	{
 		PX_ASSERT(!freeListEmpty());
 		if(compacting)
@@ -284,7 +284,7 @@ class PxHashBase : private PxAllocator
 		}
 		else
 		{
-			uint32_t entryIndex = mFreeList;
+			PxU32 entryIndex = mFreeList;
 			mFreeList = mEntriesNext[mFreeList];
 			return entryIndex;
 		}
@@ -298,32 +298,32 @@ class PxHashBase : private PxAllocator
 			return mFreeList == EOL;
 	}
 
-	PX_INLINE void replaceWithLast(uint32_t index)
+	PX_INLINE void replaceWithLast(PxU32 index)
 	{
 		PX_PLACEMENT_NEW(mEntries + index, Entry)(mEntries[mEntriesCount]);
 		mEntries[mEntriesCount].~Entry();
 		mEntriesNext[index] = mEntriesNext[mEntriesCount];
 
-		uint32_t h = hash(GetKey()(mEntries[index]));
-		uint32_t* ptr;
+		PxU32 h = hash(GetKey()(mEntries[index]));
+		PxU32* ptr;
 		for(ptr = mHash + h; *ptr != mEntriesCount; ptr = mEntriesNext + *ptr)
 			PX_ASSERT(*ptr != EOL);
 		*ptr = index;
 	}
 
-	PX_INLINE uint32_t hash(const Key& k, uint32_t hashSize) const
+	PX_INLINE PxU32 hash(const Key& k, PxU32 hashSize) const
 	{
 		return HashFn()(k) & (hashSize - 1);
 	}
 
-	PX_INLINE uint32_t hash(const Key& k) const
+	PX_INLINE PxU32 hash(const Key& k) const
 	{
 		return hash(k, mHashSize);
 	}
 
-	PX_INLINE bool eraseInternal(uint32_t* ptr)
+	PX_INLINE bool eraseInternal(PxU32* ptr)
 	{
-		const uint32_t index = *ptr;
+		const PxU32 index = *ptr;
 
 		*ptr = mEntriesNext[index];
 
@@ -339,7 +339,7 @@ class PxHashBase : private PxAllocator
 		return true;
 	}
 
-	PX_NOINLINE void reserveInternal(uint32_t size)
+	PX_NOINLINE void reserveInternal(PxU32 size)
 	{
 		if(!PxIsPowerOfTwo(size))
 			size = PxNextPowerOfTwo(size);
@@ -350,32 +350,32 @@ class PxHashBase : private PxAllocator
 		bool resizeCompact = compacting || freeListEmpty();
 
 		// define new table sizes
-		uint32_t oldEntriesCapacity = mEntriesCapacity;
-		uint32_t newEntriesCapacity = uint32_t(float(size) * mLoadFactor);
-		uint32_t newHashSize = size;
+		PxU32 oldEntriesCapacity = mEntriesCapacity;
+		PxU32 newEntriesCapacity = PxU32(float(size) * mLoadFactor);
+		PxU32 newHashSize = size;
 
 		// allocate new common buffer and setup pointers to new tables
 		uint8_t* newBuffer;
-		uint32_t* newHash;
-		uint32_t* newEntriesNext;
+		PxU32* newHash;
+		PxU32* newEntriesNext;
 		Entry* newEntries;
 		{
-			uint32_t newHashByteOffset = 0;
-			uint32_t newEntriesNextBytesOffset = newHashByteOffset + newHashSize * sizeof(uint32_t);
-			uint32_t newEntriesByteOffset = newEntriesNextBytesOffset + newEntriesCapacity * sizeof(uint32_t);
+			PxU32 newHashByteOffset = 0;
+			PxU32 newEntriesNextBytesOffset = newHashByteOffset + newHashSize * sizeof(PxU32);
+			PxU32 newEntriesByteOffset = newEntriesNextBytesOffset + newEntriesCapacity * sizeof(PxU32);
 			newEntriesByteOffset += (16 - (newEntriesByteOffset & 15)) & 15;
-			uint32_t newBufferByteSize = newEntriesByteOffset + newEntriesCapacity * sizeof(Entry);
+			PxU32 newBufferByteSize = newEntriesByteOffset + newEntriesCapacity * sizeof(Entry);
 
 			newBuffer = reinterpret_cast<uint8_t*>(PxAllocator::allocate(newBufferByteSize, __FILE__, __LINE__));
 			PX_ASSERT(newBuffer);
 
-			newHash = reinterpret_cast<uint32_t*>(newBuffer + newHashByteOffset);
-			newEntriesNext = reinterpret_cast<uint32_t*>(newBuffer + newEntriesNextBytesOffset);
+			newHash = reinterpret_cast<PxU32*>(newBuffer + newHashByteOffset);
+			newEntriesNext = reinterpret_cast<PxU32*>(newBuffer + newEntriesNextBytesOffset);
 			newEntries = reinterpret_cast<Entry*>(newBuffer + newEntriesByteOffset);
 		}
 
 		// initialize new hash table
-		intrinsics::memSet(newHash, uint32_t(EOL), newHashSize * sizeof(uint32_t));
+		intrinsics::memSet(newHash, PxU32(EOL), newHashSize * sizeof(PxU32));
 
 		// iterate over old entries, re-hash and create new entries
 		if(resizeCompact)
@@ -383,9 +383,9 @@ class PxHashBase : private PxAllocator
 			// check that old free list is empty - we don't need to copy the next entries
 			PX_ASSERT(compacting || mFreeList == EOL);
 
-			for(uint32_t index = 0; index < mEntriesCount; ++index)
+			for(PxU32 index = 0; index < mEntriesCount; ++index)
 			{
-				uint32_t h = hash(GetKey()(mEntries[index]), newHashSize);
+				PxU32 h = hash(GetKey()(mEntries[index]), newHashSize);
 				newEntriesNext[index] = newHash[h];
 				newHash[h] = index;
 
@@ -396,14 +396,14 @@ class PxHashBase : private PxAllocator
 		else
 		{
 			// copy old free list, only required for non compact resizing
-			intrinsics::memCopy(newEntriesNext, mEntriesNext, mEntriesCapacity * sizeof(uint32_t));
+			intrinsics::memCopy(newEntriesNext, mEntriesNext, mEntriesCapacity * sizeof(PxU32));
 
-			for(uint32_t bucket = 0; bucket < mHashSize; bucket++)
+			for(PxU32 bucket = 0; bucket < mHashSize; bucket++)
 			{
-				uint32_t index = mHash[bucket];
+				PxU32 index = mHash[bucket];
 				while(index != EOL)
 				{
-					uint32_t h = hash(GetKey()(mEntries[index]), newHashSize);
+					PxU32 h = hash(GetKey()(mEntries[index]), newHashSize);
 					newEntriesNext[index] = newHash[h];
 					PX_ASSERT(index != newHash[h]);
 
@@ -433,26 +433,26 @@ class PxHashBase : private PxAllocator
 	{
 		PX_ASSERT((mFreeList == EOL) || (compacting && (mEntriesCount == mEntriesCapacity)));
 
-		uint32_t size = mHashSize == 0 ? 16 : mHashSize * 2;
+		PxU32 size = mHashSize == 0 ? 16 : mHashSize * 2;
 		reserve(size);
 	}
 
 	uint8_t* mBuffer;
 	Entry* mEntries;
-	uint32_t* mEntriesNext; // same size as mEntries
-	uint32_t* mHash;
-	uint32_t mEntriesCapacity;
-	uint32_t mHashSize;
+	PxU32* mEntriesNext; // same size as mEntries
+	PxU32* mHash;
+	PxU32 mEntriesCapacity;
+	PxU32 mHashSize;
 	float mLoadFactor;
-	uint32_t mFreeList;
-	uint32_t mTimestamp;
-	uint32_t mEntriesCount; // number of entries
+	PxU32 mFreeList;
+	PxU32 mTimestamp;
+	PxU32 mEntriesCount; // number of entries
 
   public:
 	class Iter
 	{
 	  public:
-		PX_INLINE Iter(PxHashBase& b) : mBucket(0), mEntry(uint32_t(b.EOL)), mTimestamp(b.mTimestamp), mBase(b)
+		PX_INLINE Iter(PxHashBase& b) : mBucket(0), mEntry(PxU32(b.EOL)), mTimestamp(b.mTimestamp), mBase(b)
 		{
 			if(mBase.mEntriesCapacity > 0)
 			{
@@ -522,9 +522,9 @@ class PxHashBase : private PxAllocator
 
 		Iter& operator=(const Iter&);
 
-		uint32_t mBucket;
-		uint32_t mEntry;
-		uint32_t mTimestamp;
+		PxU32 mBucket;
+		PxU32 mEntry;
+		PxU32 mTimestamp;
 		PxHashBase& mBase;
 	};
 
@@ -555,7 +555,7 @@ class PxHashBase : private PxAllocator
 			if(mCurrentEntryIndexPtr == NULL)
 				return traverseHashEntries();
 			
-			const uint32_t index = *mCurrentEntryIndexPtr;			
+			const PxU32 index = *mCurrentEntryIndexPtr;			
 			if(mBase.mEntriesNext[index] == mBase.EOL)
 			{
 				return traverseHashEntries();
@@ -595,8 +595,8 @@ class PxHashBase : private PxAllocator
 
 		PxEraseIterator& operator=(const PxEraseIterator&);
 	private:
-		uint32_t*	mCurrentEntryIndexPtr;
-		uint32_t	mCurrentHashIndex;		
+		PxU32*	mCurrentEntryIndexPtr;
+		PxU32	mCurrentHashIndex;		
 		PxHashBase&	mBase;
 	};
 };
@@ -608,9 +608,9 @@ PxHashBase<Entry, Key, HashFn, GetKey, PxAllocator, compacting>::copy(const PxHa
 {
 	reserve(other.mEntriesCount);
 
-	for(uint32_t i = 0; i < other.mEntriesCount; i++)
+	for(PxU32 i = 0; i < other.mEntriesCount; i++)
 	{
-		for(uint32_t j = other.mHash[i]; j != EOL; j = other.mEntriesNext[j])
+		for(PxU32 j = other.mHash[i]; j != EOL; j = other.mEntriesNext[j])
 		{
 			const Entry& otherEntry = other.mEntries[j];
 
@@ -639,7 +639,7 @@ class PxHashSetBase
 	typedef PxHashBase<Key, Key, HashFn, GetKey, PxAllocator, Coalesced> BaseMap;
 	typedef typename BaseMap::Iter Iterator;
 
-	PxHashSetBase(uint32_t initialTableSize, float loadFactor, const PxAllocator& alloc)
+	PxHashSetBase(PxU32 initialTableSize, float loadFactor, const PxAllocator& alloc)
 	: mBase(initialTableSize, loadFactor, alloc)
 	{
 	}
@@ -648,7 +648,7 @@ class PxHashSetBase
 	{
 	}
 
-	PxHashSetBase(uint32_t initialTableSize = 64, float loadFactor = 0.75f) : mBase(initialTableSize, loadFactor)
+	PxHashSetBase(PxU32 initialTableSize = 64, float loadFactor = 0.75f) : mBase(initialTableSize, loadFactor)
 	{
 	}
 
@@ -669,15 +669,15 @@ class PxHashSetBase
 	{
 		return mBase.erase(k);
 	}
-	PX_INLINE uint32_t size() const
+	PX_INLINE PxU32 size() const
 	{
 		return mBase.size();
 	}
-	PX_INLINE uint32_t capacity() const
+	PX_INLINE PxU32 capacity() const
 	{
 		return mBase.capacity();
 	}
-	PX_INLINE void reserve(uint32_t size)
+	PX_INLINE void reserve(PxU32 size)
 	{
 		mBase.reserve(size);
 	}
@@ -709,7 +709,7 @@ class PxHashMapBase
 	typedef typename BaseMap::Iter Iterator;
 	typedef typename BaseMap::PxEraseIterator EraseIterator;
 
-	PxHashMapBase(uint32_t initialTableSize, float loadFactor, const PxAllocator& alloc)
+	PxHashMapBase(PxU32 initialTableSize, float loadFactor, const PxAllocator& alloc)
 	: mBase(initialTableSize, loadFactor, alloc)
 	{
 	}
@@ -718,7 +718,7 @@ class PxHashMapBase
 	{
 	}
 
-	PxHashMapBase(uint32_t initialTableSize = 64, float loadFactor = 0.75f) : mBase(initialTableSize, loadFactor)
+	PxHashMapBase(PxU32 initialTableSize = 64, float loadFactor = 0.75f) : mBase(initialTableSize, loadFactor)
 	{
 	}
 
@@ -753,11 +753,11 @@ class PxHashMapBase
 	{		
 		return mBase.erase(k, e);
 	}
-	PX_INLINE uint32_t size() const
+	PX_INLINE PxU32 size() const
 	{
 		return mBase.size();
 	}
-	PX_INLINE uint32_t capacity() const
+	PX_INLINE PxU32 capacity() const
 	{
 		return mBase.capacity();
 	}
@@ -769,7 +769,7 @@ class PxHashMapBase
 	{
 		return EraseIterator(mBase);
 	}
-	PX_INLINE void reserve(uint32_t size)
+	PX_INLINE void reserve(PxU32 size)
 	{
 		mBase.reserve(size);
 	}

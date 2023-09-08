@@ -133,7 +133,7 @@ PX_CUDA_CALLABLE PX_FORCE_INLINE double PxAbs(double a)
 /**
 \brief abs returns the absolute value of its argument.
 */
-PX_CUDA_CALLABLE PX_FORCE_INLINE int32_t PxAbs(int32_t a)
+PX_CUDA_CALLABLE PX_FORCE_INLINE PxI32 PxAbs(PxI32 a)
 {
 	return ::abs(a);
 }

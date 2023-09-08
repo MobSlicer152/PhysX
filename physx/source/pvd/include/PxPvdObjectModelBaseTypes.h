@@ -59,20 +59,20 @@ inline bool isMeaningful(const char* str)
 	return *(nonNull(str)) > 0;
 }
 
-inline uint32_t safeStrLen(const char* str)
+inline PxU32 safeStrLen(const char* str)
 {
 	str = nonNull(str);
-	return static_cast<uint32_t>(strlen(str));
+	return static_cast<PxU32>(strlen(str));
 }
 
 struct ObjectRef
 {
-	int32_t mInstanceId;
+	PxI32 mInstanceId;
 
-	ObjectRef(int32_t iid = -1) : mInstanceId(iid)
+	ObjectRef(PxI32 iid = -1) : mInstanceId(iid)
 	{
 	}
-	operator int32_t() const
+	operator PxI32() const
 	{
 		return mInstanceId;
 	}
@@ -84,11 +84,11 @@ struct ObjectRef
 
 struct U32Array4
 {
-	uint32_t mD0;
-	uint32_t mD1;
-	uint32_t mD2;
-	uint32_t mD3;
-	U32Array4(uint32_t d0, uint32_t d1, uint32_t d2, uint32_t d3) : mD0(d0), mD1(d1), mD2(d2), mD3(d3)
+	PxU32 mD0;
+	PxU32 mD1;
+	PxU32 mD2;
+	PxU32 mD3;
+	U32Array4(PxU32 d0, PxU32 d1, PxU32 d2, PxU32 d3) : mD0(d0), mD1(d1), mD2(d2), mD3(d3)
 	{
 	}
 	U32Array4() : mD0(0), mD1(0), mD2(0), mD3(0)
@@ -103,8 +103,8 @@ typedef double				PvdF64;
 typedef float				PvdF32;
 typedef int64_t				PvdI64;
 typedef uint64_t			PvdU64;
-typedef int32_t				PvdI32;
-typedef uint32_t			PvdU32;
+typedef PxI32				PvdI32;
+typedef PxU32			PvdU32;
 typedef int16_t				PvdI16;
 typedef uint16_t			PvdU16;
 typedef int8_t				PvdI8;
@@ -122,7 +122,7 @@ struct PvdColor
 	PvdColor() : r(0), g(0), b(0), a(255)
 	{
 	}
-	PvdColor(uint32_t abgr)
+	PvdColor(PxU32 abgr)
 	{
 		uint8_t* valPtr = reinterpret_cast<uint8_t*>(&abgr);
 		r = valPtr[0];
@@ -134,11 +134,11 @@ struct PvdColor
 
 struct StringHandle
 {
-	uint32_t mHandle;
-	StringHandle(uint32_t val = 0) : mHandle(val)
+	PxU32 mHandle;
+	StringHandle(PxU32 val = 0) : mHandle(val)
 	{
 	}
-	operator uint32_t() const
+	operator PxU32() const
 	{
 		return mHandle;
 	}
@@ -203,8 +203,8 @@ struct NamespacedName
 struct NamedValue
 {
 	String mName;
-	uint32_t mValue;
-	NamedValue(String nm = "", uint32_t val = 0) : mName(nm), mValue(val)
+	PxU32 mValue;
+	NamedValue(String nm = "", PxU32 val = 0) : mName(nm), mValue(val)
 	{
 	}
 };
@@ -271,7 +271,7 @@ DECLARE_TYPES
 #undef DECLARE_BASE_PVD_TYPE
 
 template <typename TDataType>
-inline int32_t getPvdTypeForType()
+inline PxI32 getPvdTypeForType()
 {
 	return static_cast<PvdBaseType::Enum>(BaseDataTypeToTypeMap<TDataType>::BaseTypeEnum);
 }
@@ -319,15 +319,15 @@ struct ArrayData
 	{
 		return mEnd;
 	}
-	uint32_t byteCapacity()
+	PxU32 byteCapacity()
 	{
-		return static_cast<uint32_t>(mCapacity - mBegin);
+		return static_cast<PxU32>(mCapacity - mBegin);
 	}
-	uint32_t byteSize() const
+	PxU32 byteSize() const
 	{
-		return static_cast<uint32_t>(mEnd - mBegin);
+		return static_cast<PxU32>(mEnd - mBegin);
 	} // in bytes
-	uint32_t numberOfItems(uint32_t objectByteSize)
+	PxU32 numberOfItems(PxU32 objectByteSize)
 	{
 		if(objectByteSize)
 			return byteSize() / objectByteSize;
@@ -347,7 +347,7 @@ class DataRef
 	const T* mEnd;
 
   public:
-	DataRef(const T* b, uint32_t count) : mBegin(b), mEnd(b + count)
+	DataRef(const T* b, PxU32 count) : mBegin(b), mEnd(b + count)
 	{
 	}
 	DataRef(const T* b = NULL, const T* e = NULL) : mBegin(b), mEnd(e)
@@ -362,9 +362,9 @@ class DataRef
 		mEnd = o.mEnd;
 		return *this;
 	}
-	uint32_t size() const
+	PxU32 size() const
 	{
-		return static_cast<uint32_t>(mEnd - mBegin);
+		return static_cast<PxU32>(mEnd - mBegin);
 	}
 	const T* begin() const
 	{
@@ -374,7 +374,7 @@ class DataRef
 	{
 		return mEnd;
 	}
-	const T& operator[](uint32_t idx) const
+	const T& operator[](PxU32 idx) const
 	{
 		PX_ASSERT(idx < size());
 		return mBegin[idx];
@@ -402,11 +402,11 @@ struct PropertyMessageArg
 	String mPropertyName;
 	NamespacedName mDatatypeName;
 	// where in the message this property starts.
-	uint32_t mMessageOffset;
+	PxU32 mMessageOffset;
 	// size of this entry object
-	uint32_t mByteSize;
+	PxU32 mByteSize;
 
-	PropertyMessageArg(String propName, NamespacedName dtype, uint32_t msgOffset, uint32_t byteSize)
+	PropertyMessageArg(String propName, NamespacedName dtype, PxU32 msgOffset, PxU32 byteSize)
 	: mPropertyName(propName), mDatatypeName(dtype), mMessageOffset(msgOffset), mByteSize(byteSize)
 	{
 	}

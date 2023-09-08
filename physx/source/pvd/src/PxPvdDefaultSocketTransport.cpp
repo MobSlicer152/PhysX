@@ -66,15 +66,15 @@ bool PvdDefaultSocketTransport::isConnected()
 	return mSocket.isConnected();
 }
 
-bool PvdDefaultSocketTransport::write(const uint8_t* inBytes, uint32_t inLength)
+bool PvdDefaultSocketTransport::write(const uint8_t* inBytes, PxU32 inLength)
 {
 	if(mConnected)
 	{
 		if(inLength == 0)
 			return true;
 
-		uint32_t amountWritten = 0;
-		uint32_t totalWritten = 0;
+		PxU32 amountWritten = 0;
+		PxU32 totalWritten = 0;
 		do
 		{
 			// Sockets don't have to write as much as requested, so we need

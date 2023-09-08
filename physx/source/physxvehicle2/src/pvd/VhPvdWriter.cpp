@@ -48,9 +48,9 @@ PX_FORCE_INLINE void writeFloatArrayAttribute
 }
 
 PX_FORCE_INLINE void writeUInt32ArrayAttribute
-(OmniPvdWriter* omniWriter, OmniPvdContextHandle ch, OmniPvdObjectHandle oh, OmniPvdAttributeHandle ah, const uint32_t* val, const PxU32 nbVals)
+(OmniPvdWriter* omniWriter, OmniPvdContextHandle ch, OmniPvdObjectHandle oh, OmniPvdAttributeHandle ah, const PxU32* val, const PxU32 nbVals)
 {
-	omniWriter->setAttributeShallow(ch, oh, ah, reinterpret_cast<const uint8_t*>(val), sizeof(uint32_t) * nbVals);
+	omniWriter->setAttributeShallow(ch, oh, ah, reinterpret_cast<const uint8_t*>(val), sizeof(PxU32) * nbVals);
 }
 
 
@@ -81,13 +81,13 @@ PX_FORCE_INLINE void writeUInt8Attribute
 }
 
 PX_FORCE_INLINE void writeUInt32Attribute
-(OmniPvdWriter* omniWriter, OmniPvdContextHandle ch, OmniPvdObjectHandle oh, OmniPvdAttributeHandle ah, uint32_t val)
+(OmniPvdWriter* omniWriter, OmniPvdContextHandle ch, OmniPvdObjectHandle oh, OmniPvdAttributeHandle ah, PxU32 val)
 {
-	omniWriter->setAttributeShallow(ch, oh, ah, reinterpret_cast<const uint8_t*>(&val), sizeof(uint32_t));
+	omniWriter->setAttributeShallow(ch, oh, ah, reinterpret_cast<const uint8_t*>(&val), sizeof(PxU32));
 }
 
 PX_FORCE_INLINE void writeFlagAttribute
-(OmniPvdWriter* omniWriter, OmniPvdContextHandle ch, OmniPvdObjectHandle oh, OmniPvdAttributeHandle ah, uint32_t val)
+(OmniPvdWriter* omniWriter, OmniPvdContextHandle ch, OmniPvdObjectHandle oh, OmniPvdAttributeHandle ah, PxU32 val)
 {
 	writeUInt32Attribute(omniWriter, ch, oh, ah, val);
 }

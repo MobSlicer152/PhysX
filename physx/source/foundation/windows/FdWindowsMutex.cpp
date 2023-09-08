@@ -96,7 +96,7 @@ void PxMutexImpl::unlock()
 	LeaveCriticalSection(&getMutex(this)->mLock);
 }
 
-uint32_t PxMutexImpl::getSize()
+PxU32 PxMutexImpl::getSize()
 {
 	return sizeof(MutexWinImpl);
 }

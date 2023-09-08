@@ -72,13 +72,13 @@ class RawMemoryBuffer
 	{
 		PX_FREE(mBegin);
 	}
-	uint32_t size() const
+	PxU32 size() const
 	{
-		return static_cast<uint32_t>(mEnd - mBegin);
+		return static_cast<PxU32>(mEnd - mBegin);
 	}
-	uint32_t capacity() const
+	PxU32 capacity() const
 	{
-		return static_cast<uint32_t>(mCapacityEnd - mBegin);
+		return static_cast<PxU32>(mCapacityEnd - mBegin);
 	}
 	uint8_t* begin()
 	{
@@ -106,26 +106,26 @@ class RawMemoryBuffer
 			write(0);
 		return reinterpret_cast<const char*>(mBegin);
 	}
-	uint32_t write(uint8_t inValue)
+	PxU32 write(uint8_t inValue)
 	{
 		*growBuf(1) = inValue;
 		return 1;
 	}
 
 	template <typename TDataType>
-	uint32_t write(const TDataType& inValue)
+	PxU32 write(const TDataType& inValue)
 	{
 		const uint8_t* __restrict readPtr = reinterpret_cast<const uint8_t*>(&inValue);
 		uint8_t* __restrict writePtr = growBuf(sizeof(TDataType));
-		for(uint32_t idx = 0; idx < sizeof(TDataType); ++idx)
+		for(PxU32 idx = 0; idx < sizeof(TDataType); ++idx)
 			writePtr[idx] = readPtr[idx];
 		return sizeof(TDataType);
 	}
 
 	template <typename TDataType>
-	uint32_t write(const TDataType* inValue, uint32_t inLength)
+	PxU32 write(const TDataType* inValue, PxU32 inLength)
 	{
-		uint32_t writeSize = inLength * sizeof(TDataType);
+		PxU32 writeSize = inLength * sizeof(TDataType);
 		if(inValue && inLength)
 		{
 			physx::intrinsics::memCopy(growBuf(writeSize), inValue, writeSize);
@@ -135,32 +135,32 @@ class RawMemoryBuffer
 			PX_ASSERT(false);
 			// You can't not write something, because that will cause
 			// the receiving end to crash.
-			for(uint32_t idx = 0; idx < writeSize; ++idx)
+			for(PxU32 idx = 0; idx < writeSize; ++idx)
 				write(0);
 		}
 		return writeSize;
 	}
 
-	uint8_t* growBuf(uint32_t inAmount)
+	uint8_t* growBuf(PxU32 inAmount)
 	{
-		uint32_t offset = size();
-		uint32_t newSize = offset + inAmount;
+		PxU32 offset = size();
+		PxU32 newSize = offset + inAmount;
 		reserve(newSize);
 		mEnd += inAmount;
 		return mBegin + offset;
 	}
-	void writeZeros(uint32_t inAmount)
+	void writeZeros(PxU32 inAmount)
 	{
-		uint32_t offset = size();
+		PxU32 offset = size();
 		growBuf(inAmount);
 		physx::intrinsics::memZero(begin() + offset, inAmount);
 	}
-	void reserve(uint32_t newSize)
+	void reserve(PxU32 newSize)
 	{
-		uint32_t currentSize = size();
+		PxU32 currentSize = size();
 		if(newSize && newSize >= capacity())
 		{
-			uint32_t newDataSize = newSize > 4096 ? newSize + (newSize >> 2) : newSize*2;
+			PxU32 newDataSize = newSize > 4096 ? newSize + (newSize >> 2) : newSize*2;
 			uint8_t* newData = static_cast<uint8_t*>(PX_ALLOC(newDataSize, mBufDataName));
 			if(mBegin)
 			{
@@ -184,7 +184,7 @@ struct ForwardingMemoryBuffer : public RawMemoryBuffer
 	{
 		if(inString && *inString)
 		{
-			uint32_t len = static_cast<uint32_t>(strlen(inString));
+			PxU32 len = static_cast<PxU32>(strlen(inString));
 			write(inString, len);
 		}
 		return *this;
@@ -204,23 +204,23 @@ struct ForwardingMemoryBuffer : public RawMemoryBuffer
 		*this << (inData ? "true" : "false");
 		return *this;
 	}
-	inline ForwardingMemoryBuffer& operator<<(int32_t inData)
+	inline ForwardingMemoryBuffer& operator<<(PxI32 inData)
 	{
 		return toStream("%d", inData);
 	}
 	inline ForwardingMemoryBuffer& operator<<(uint16_t inData)
 	{
-		return toStream("%u", uint32_t(inData));
+		return toStream("%u", PxU32(inData));
 	}
 	inline ForwardingMemoryBuffer& operator<<(uint8_t inData)
 	{
-		return toStream("%u", uint32_t(inData));
+		return toStream("%u", PxU32(inData));
 	}
 	inline ForwardingMemoryBuffer& operator<<(char inData)
 	{
 		return toStream("%c", inData);
 	}
-	inline ForwardingMemoryBuffer& operator<<(uint32_t inData)
+	inline ForwardingMemoryBuffer& operator<<(PxU32 inData)
 	{
 		return toStream("%u", inData);
 	}
@@ -308,7 +308,7 @@ inline void PvdDeleteAndDeallocate(TDataType* inDType)
 #define PVD_DELETE(obj) PvdDeleteAndDeallocate(obj);
 //#define PVD_NEW(dtype) PX_NEW(dtype)
 //#define PVD_DELETE(obj) PX_DELETE(obj)
-#define PVD_FOREACH(varname, stop) for(uint32_t varname = 0; varname < stop; ++varname)
+#define PVD_FOREACH(varname, stop) for(PxU32 varname = 0; varname < stop; ++varname)
 #define PVD_POINTER_TO_U64(ptr) static_cast<uint64_t>(reinterpret_cast<size_t>(ptr))
 
 #endif

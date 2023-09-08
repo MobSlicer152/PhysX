@@ -88,7 +88,7 @@ namespace physx { namespace profile {
 			}
 			mZones.pushBack( &inSDK );
 			inSDK.setProfileZoneManager( this );
-			for ( uint32_t idx =0; idx < mHandlers.size(); ++idx )
+			for ( PxU32 idx =0; idx < mHandlers.size(); ++idx )
 				mHandlers[idx]->onZoneAdded( inSDK );
 		}
 
@@ -106,11 +106,11 @@ namespace physx { namespace profile {
 			}
 
 			inSDK.setProfileZoneManager( NULL );
-			for ( uint32_t idx = 0; idx < mZones.size(); ++idx )
+			for ( PxU32 idx = 0; idx < mZones.size(); ++idx )
 			{
 				if ( mZones[idx] == &inSDK )
 				{
-					for ( uint32_t handler =0; handler < mHandlers.size(); ++handler )
+					for ( PxU32 handler =0; handler < mHandlers.size(); ++handler )
 						mHandlers[handler]->onZoneRemoved( inSDK );
 					mZones.replaceWithLast( idx );
 				}
@@ -119,8 +119,8 @@ namespace physx { namespace profile {
 
 		virtual void flushProfileEvents()
 		{
-			uint32_t sdkCount = mZones.size();
-			for ( uint32_t idx = 0; idx < sdkCount; ++idx )
+			PxU32 sdkCount = mZones.size();
+			for ( PxU32 idx = 0; idx < sdkCount; ++idx )
 				mZones[idx]->flushProfileEvents();
 		}
 
@@ -128,23 +128,23 @@ namespace physx { namespace profile {
 		{
 			TScopedLockType lock( &mMutex );
 			mHandlers.pushBack( &inHandler );
-			for ( uint32_t idx = 0; idx < mZones.size(); ++idx )
+			for ( PxU32 idx = 0; idx < mZones.size(); ++idx )
 				inHandler.onZoneAdded( *mZones[idx] );
 		}
 
 		virtual void removeProfileZoneHandler( PxProfileZoneHandler& inHandler )
 		{
 			TScopedLockType lock( &mMutex );
-			for( uint32_t idx = 0; idx < mZones.size(); ++idx )
+			for( PxU32 idx = 0; idx < mZones.size(); ++idx )
 				inHandler.onZoneRemoved( *mZones[idx] );
-			for( uint32_t idx = 0; idx < mHandlers.size(); ++idx )
+			for( PxU32 idx = 0; idx < mHandlers.size(); ++idx )
 			{
 				if ( mHandlers[idx] == &inHandler )
 					mHandlers.replaceWithLast( idx );
 			}
 		}
 		
-		virtual PxProfileZone& createProfileZone( const char* inSDKName, PxProfileNameProvider* inProvider, uint32_t inEventBufferByteSize )
+		virtual PxProfileZone& createProfileZone( const char* inSDKName, PxProfileNameProvider* inProvider, PxU32 inEventBufferByteSize )
 		{
 			NullEventNameProvider nullProvider;
 			if ( inProvider == NULL )
@@ -153,7 +153,7 @@ namespace physx { namespace profile {
 		}
 		
 		
-		virtual PxProfileZone& createProfileZone( const char* inSDKName, PxProfileNames inNames, uint32_t inEventBufferByteSize )
+		virtual PxProfileZone& createProfileZone( const char* inSDKName, PxProfileNames inNames, PxU32 inEventBufferByteSize )
 		{
 			PxProfileZone& retval( PxProfileZone::createProfileZone( &mWrapper.getAllocator(), inSDKName, inNames, inEventBufferByteSize ) );
 			addProfileZone( retval );

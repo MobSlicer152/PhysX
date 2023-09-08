@@ -77,7 +77,7 @@ namespace physx { namespace profile {
 		\param inAllocator Allocation callback.
 		\param inBufferSize Internal buffer size.
 		*/
-		static PxProfileMemoryEventBuffer& createMemoryEventBuffer(PxAllocatorCallback& inAllocator, uint32_t inBufferSize = 0x1000);
+		static PxProfileMemoryEventBuffer& createMemoryEventBuffer(PxAllocatorCallback& inAllocator, PxU32 inBufferSize = 0x1000);
 	};
 
 

@@ -72,12 +72,12 @@ namespace physx
 {
 namespace Bp
 {
-static PX_FORCE_INLINE uint32_t PxComputeHash(const Pair& p)
+static PX_FORCE_INLINE PxU32 PxComputeHash(const Pair& p)
 {
 	return PxU32(physx::PxComputeHash( (p.mID0&0xffff)|(p.mID1<<16)) );
 }
 
-static PX_FORCE_INLINE uint32_t PxComputeHash(const AggPair& p)
+static PX_FORCE_INLINE PxU32 PxComputeHash(const AggPair& p)
 {
 	return PxU32(physx::PxComputeHash( (p.mIndex0&0xffff)|(p.mIndex1<<16)) );
 }

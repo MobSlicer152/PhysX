@@ -72,7 +72,7 @@ class PvdMemClient : public PvdClient,
 	// mem profile
 	PxMutex mMutex; // mem onallocation can called from different threads
 	profile::PxProfileMemoryEventBuffer& mMemEventBuffer;
-	void handleBufferFlush(const uint8_t* inData, uint32_t inLength);
+	void handleBufferFlush(const uint8_t* inData, PxU32 inLength);
 	void handleClientRemoved();
 };
 

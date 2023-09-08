@@ -65,7 +65,7 @@ PxSListEntry* PxSListImpl::flush()
 	return reinterpret_cast<PxSListEntry*>(InterlockedFlushSList(getDetail(this)));
 }
 
-uint32_t PxSListImpl::getSize()
+PxU32 PxSListImpl::getSize()
 {
 	return sizeof(SLIST_HEADER);
 }

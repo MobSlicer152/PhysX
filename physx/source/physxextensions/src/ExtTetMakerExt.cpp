@@ -56,11 +56,11 @@ PX_FORCE_INLINE PxReal computeTetrahedronVolume(const PxVec3& x0, const PxVec3& 
 //Remove tets with small volume
 void removeSmallVolumeTetrahedra(PxArray<::physx::PxVec3>& vertices, PxArray<PxU32>& indices, PxReal volumeThreshold = 1e-8f)
 {
-	uint32_t indexer = 0;
+	PxU32 indexer = 0;
 
-	for (uint32_t i = 0; i < indices.size(); i += 4)
+	for (PxU32 i = 0; i < indices.size(); i += 4)
 	{
-		for (uint32_t j = 0; j < 4; ++j)
+		for (PxU32 j = 0; j < 4; ++j)
 		{
 			indices[indexer + j] = indices[i + j];
 		}

@@ -255,7 +255,7 @@ namespace
 			mStream->release();
 		}
 
-		virtual void handleBufferFlush(const uint8_t* inData, uint32_t inLength)
+		virtual void handleBufferFlush(const uint8_t* inData, PxU32 inLength)
 		{
 			mStream->setPropertyValue(mRenderer, "events", inData, inLength);
 		}

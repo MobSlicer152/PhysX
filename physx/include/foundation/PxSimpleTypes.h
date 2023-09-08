@@ -66,7 +66,7 @@
 namespace physx
 {
 #endif
-// PSP defines int32_t as long, this fucks up literally everything
+// PSP defines PxI32 as long, this fucks up literally everything
 #ifdef PX_PSP
 typedef long long PxI64;
 typedef unsigned long long PxU64;
@@ -83,8 +83,8 @@ typedef float PxReal;
 #else
 typedef int64_t PxI64;
 typedef uint64_t PxU64;
-typedef int32_t PxI32;
-typedef uint32_t PxU32;
+typedef PxI32 PxI32;
+typedef PxU32 PxU32;
 typedef int16_t PxI16;
 typedef uint16_t PxU16;
 typedef int8_t PxI8;

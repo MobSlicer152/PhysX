@@ -84,14 +84,14 @@ class MyFastXml : public physx::shdfnd::FastXml
 		mReadBufferSize = DEFAULT_READ_BUFFER_SIZE;
 		mOpenCount = 0;
 		mLastReadLoc = 0;
-		for(uint32_t i = 0; i < (MAX_STACK + 1); i++)
+		for(PxU32 i = 0; i < (MAX_STACK + 1); i++)
 		{
 			mStack[i] = NULL;
 			mStackAllocated[i] = false;
 		}
 	}
 
-	char* processClose(char c, const char* element, char* scan, int32_t argc, const char** argv,
+	char* processClose(char c, const char* element, char* scan, PxI32 argc, const char** argv,
 	                   FastXml::Callback* iface, bool& isError)
 	{
 		AttributePairs attr(argc, argv);
@@ -332,8 +332,8 @@ class MyFastXml : public physx::shdfnd::FastXml
 		if(!iface->processClose(close, mStackIndex, isError))
 		{
 			// we need to set the read pointer!
-			uint32_t offset = uint32_t(mReadBufferEnd - scan) - 1;
-			uint32_t readLoc = mLastReadLoc - offset;
+			PxU32 offset = PxU32(mReadBufferEnd - scan) - 1;
+			PxU32 readLoc = mLastReadLoc - offset;
 			mFileBuf->seek(readLoc);
 			return NULL;
 		}
@@ -353,14 +353,14 @@ class MyFastXml : public physx::shdfnd::FastXml
 	// if we have finished processing the data we had pending..
 	char* readData(char* scan)
 	{
-		for(uint32_t i = 0; i < (mStackIndex + 1); i++)
+		for(PxU32 i = 0; i < (mStackIndex + 1); i++)
 		{
 			if(!mStackAllocated[i])
 			{
 				const char* text = mStack[i];
 				if(text)
 				{
-					uint32_t tlen = uint32_t(strlen(text));
+					PxU32 tlen = PxU32(strlen(text));
 					mStack[i] = static_cast<const char*>(mCallback->allocate(tlen + 1));
 					PxMemCopy(const_cast<void*>(static_cast<const void*>(mStack[i])), text, tlen + 1);
 					mStackAllocated[i] = true;
@@ -372,7 +372,7 @@ class MyFastXml : public physx::shdfnd::FastXml
 		{
 			if(scan == NULL)
 			{
-				uint32_t seekLoc = mFileBuf->tell();
+				PxU32 seekLoc = mFileBuf->tell();
 				mReadBufferSize = (mFileBuf->getLength() - seekLoc);
 			}
 			else
@@ -385,13 +385,13 @@ class MyFastXml : public physx::shdfnd::FastXml
 		{
 			mReadBuffer = static_cast<char*>(mCallback->allocate(mReadBufferSize + 1));
 		}
-		uint32_t offset = 0;
-		uint32_t readLen = mReadBufferSize;
+		PxU32 offset = 0;
+		PxU32 readLen = mReadBufferSize;
 
 		if(scan)
 		{
-			offset = uint32_t(scan - mReadBuffer);
-			uint32_t copyLen = mReadBufferSize - offset;
+			offset = PxU32(scan - mReadBuffer);
+			PxU32 copyLen = mReadBufferSize - offset;
 			if(copyLen)
 			{
 				PX_ASSERT(scan >= mReadBuffer);
@@ -402,7 +402,7 @@ class MyFastXml : public physx::shdfnd::FastXml
 			offset = copyLen;
 		}
 
-		uint32_t readCount = mFileBuf->read(&mReadBuffer[offset], readLen);
+		PxU32 readCount = mFileBuf->read(&mReadBuffer[offset], readLen);
 
 		while(readCount > 0)
 		{
@@ -422,14 +422,14 @@ class MyFastXml : public physx::shdfnd::FastXml
 
 			if(mOpenCount < MIN_CLOSE_COUNT)
 			{
-				uint32_t oldSize = uint32_t(mReadBufferEnd - mReadBuffer);
+				PxU32 oldSize = PxU32(mReadBufferEnd - mReadBuffer);
 				mReadBufferSize = mReadBufferSize * 2;
 				char* oldReadBuffer = mReadBuffer;
 				mReadBuffer = static_cast<char*>(mCallback->allocate(mReadBufferSize + 1));
 				PxMemCopy(mReadBuffer, oldReadBuffer, oldSize);
 				mCallback->deallocate(oldReadBuffer);
 				offset = oldSize;
-				uint32_t readSize = mReadBufferSize - oldSize;
+				PxU32 readSize = mReadBufferSize - oldSize;
 				readCount = mFileBuf->read(&mReadBuffer[offset], readSize);
 				if(readCount == 0)
 					break;
@@ -555,7 +555,7 @@ class MyFastXml : public physx::shdfnd::FastXml
 				if(*scan == '?')
 					scan++;
 				element = scan;
-				int32_t argc = 0;
+				PxI32 argc = 0;
 				const char* argv[MAX_ATTRIBUTE];
 				bool close;
 				scan = nextSoftOrClose(scan, close);
@@ -691,7 +691,7 @@ class MyFastXml : public physx::shdfnd::FastXml
 		return ret;
 	}
 
-	const char* getError(int32_t& lineno)
+	const char* getError(PxI32& lineno)
 	{
 		const char* ret = mError;
 		lineno = mLineNo;
@@ -723,7 +723,7 @@ class MyFastXml : public physx::shdfnd::FastXml
 		mOpenCount = 0;
 		mLastReadLoc = 0;
 		mError = NULL;
-		for(uint32_t i = 0; i < (mStackIndex + 1); i++)
+		for(PxU32 i = 0; i < (mStackIndex + 1); i++)
 		{
 			if(mStackAllocated[i])
 			{
@@ -768,8 +768,8 @@ class MyFastXml : public physx::shdfnd::FastXml
 
 	void pushElement(const char* element)
 	{
-		PX_ASSERT(mStackIndex < uint32_t(MAX_STACK));
-		if(mStackIndex < uint32_t(MAX_STACK))
+		PX_ASSERT(mStackIndex < PxU32(MAX_STACK));
+		if(mStackIndex < PxU32(MAX_STACK))
 		{
 			if(mStackAllocated[mStackIndex])
 			{
@@ -801,13 +801,13 @@ class MyFastXml : public physx::shdfnd::FastXml
 	char* mReadBuffer;
 	char* mReadBufferEnd;
 
-	uint32_t mOpenCount;
-	uint32_t mReadBufferSize;
-	uint32_t mLastReadLoc;
+	PxU32 mOpenCount;
+	PxU32 mReadBufferSize;
+	PxU32 mLastReadLoc;
 
-	int32_t mLineNo;
+	PxI32 mLineNo;
 	const char* mError;
-	uint32_t mStackIndex;
+	PxU32 mStackIndex;
 	const char* mStack[MAX_STACK + 1];
 	bool mStreamFromMemory;
 	bool mStackAllocated[MAX_STACK + 1];

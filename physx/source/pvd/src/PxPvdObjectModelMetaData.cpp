@@ -100,7 +100,7 @@ struct ClassDescImpl : public ClassDescription, public PxUserAllocated
 		mPropImps.pushBack(prop);
 	}
 
-	void addPtrOffset(PtrOffsetType::Enum type, uint32_t offset32, uint32_t offset64)
+	void addPtrOffset(PtrOffsetType::Enum type, PxU32 offset32, PxU32 offset64)
 	{
 		m32OffsetArray.pushBack(PtrOffset(type, offset32));
 		m64OffsetArray.pushBack(PtrOffset(type, offset64));
@@ -135,9 +135,9 @@ struct ClassDescImpl : public ClassDescription, public PxUserAllocated
 class StringTableImpl : public StringTable, public PxUserAllocated
 {
 	PxHashMap<const char*, char*> mStrings;
-	uint32_t mNextStrHandle;
-	PxHashMap<uint32_t, char*> mHandleToStr;
-	PxHashMap<const char*, uint32_t> mStrToHandle;
+	PxU32 mNextStrHandle;
+	PxHashMap<PxU32, char*> mHandleToStr;
+	PxHashMap<const char*, PxU32> mStrToHandle;
 
   public:
 	StringTableImpl()
@@ -147,7 +147,7 @@ class StringTableImpl : public StringTable, public PxUserAllocated
 	, mStrToHandle("StringTableImpl::mStrToHandle")
 	{
 	}
-	uint32_t nextHandleValue()
+	PxU32 nextHandleValue()
 	{
 		return mNextStrHandle++;
 	}
@@ -157,30 +157,30 @@ class StringTableImpl : public StringTable, public PxUserAllocated
 			PX_FREE(iter->second);
 		mStrings.clear();
 	}
-	virtual uint32_t getNbStrs()
+	virtual PxU32 getNbStrs()
 	{
 		return mStrings.size();
 	}
-	virtual uint32_t getStrs(const char** outStrs, uint32_t bufLen, uint32_t startIdx = 0)
+	virtual PxU32 getStrs(const char** outStrs, PxU32 bufLen, PxU32 startIdx = 0)
 	{
 		startIdx = PxMin(getNbStrs(), startIdx);
-		uint32_t numStrs(PxMin(getNbStrs() - startIdx, bufLen));
+		PxU32 numStrs(PxMin(getNbStrs() - startIdx, bufLen));
 		PxHashMap<const char*, char*>::Iterator iter(mStrings.getIterator());
-		for(uint32_t idx = 0; idx < startIdx; ++idx, ++iter)
+		for(PxU32 idx = 0; idx < startIdx; ++idx, ++iter)
 			;
-		for(uint32_t idx = 0; idx < numStrs && !iter.done(); ++idx, ++iter)
+		for(PxU32 idx = 0; idx < numStrs && !iter.done(); ++idx, ++iter)
 			outStrs[idx] = iter->second;
 		return numStrs;
 	}
-	void addStringHandle(char* str, uint32_t hdl)
+	void addStringHandle(char* str, PxU32 hdl)
 	{
 		mHandleToStr.insert(hdl, str);
 		mStrToHandle.insert(str, hdl);
 	}
 
-	uint32_t addStringHandle(char* str)
+	PxU32 addStringHandle(char* str)
 	{
-		uint32_t theNewHandle = nextHandleValue();
+		PxU32 theNewHandle = nextHandleValue();
 		addStringHandle(str, theNewHandle);
 		return theNewHandle;
 	}
@@ -222,22 +222,22 @@ class StringTableImpl : public StringTable, public PxUserAllocated
 	{
 		if(isMeaningful(str) == false)
 			return 0;
-		const PxHashMap<const char*, uint32_t>::Entry* entry(mStrToHandle.find(str));
+		const PxHashMap<const char*, PxU32>::Entry* entry(mStrToHandle.find(str));
 		if(entry)
 			return entry->second;
 		bool added = false;
 		const char* registeredStr = doRegisterStr(str, added);
-		uint32_t theNewHandle = addStringHandle(const_cast<char*>(registeredStr));
+		PxU32 theNewHandle = addStringHandle(const_cast<char*>(registeredStr));
 		PX_ASSERT(mStrToHandle.find(str));
 		PX_ASSERT(added);
 		return theNewHandle;
 	}
 
-	virtual const char* handleToStr(uint32_t hdl)
+	virtual const char* handleToStr(PxU32 hdl)
 	{
 		if(hdl == 0)
 			return "";
-		const PxHashMap<uint32_t, char*>::Entry* entry(mHandleToStr.find(hdl));
+		const PxHashMap<PxU32, char*>::Entry* entry(mHandleToStr.find(hdl));
 		if(entry)
 			return entry->second;
 		// unregistered handle...
@@ -246,13 +246,13 @@ class StringTableImpl : public StringTable, public PxUserAllocated
 
 	void write(PvdOutputStream& stream)
 	{
-		uint32_t numStrs = static_cast<uint32_t>(mHandleToStr.size());
+		PxU32 numStrs = static_cast<PxU32>(mHandleToStr.size());
 		stream << numStrs;
 		stream << mNextStrHandle;
-		for(PxHashMap<uint32_t, char*>::Iterator iter = mHandleToStr.getIterator(); !iter.done(); ++iter)
+		for(PxHashMap<PxU32, char*>::Iterator iter = mHandleToStr.getIterator(); !iter.done(); ++iter)
 		{
 			stream << iter->first;
-			uint32_t len = static_cast<uint32_t>(strlen(iter->second) + 1);
+			PxU32 len = static_cast<PxU32>(strlen(iter->second) + 1);
 			stream << len;
 			stream.write(reinterpret_cast<uint8_t*>(iter->second), len);
 		}
@@ -263,15 +263,15 @@ class StringTableImpl : public StringTable, public PxUserAllocated
 	{
 		mHandleToStr.clear();
 		mStrToHandle.clear();
-		uint32_t numStrs;
+		PxU32 numStrs;
 		stream >> numStrs;
 		stream >> mNextStrHandle;
 		PxArray<uint8_t> readBuffer("StringTable::read::readBuffer");
-		uint32_t bufSize = 0;
-		for(uint32_t idx = 0; idx < numStrs; ++idx)
+		PxU32 bufSize = 0;
+		for(PxU32 idx = 0; idx < numStrs; ++idx)
 		{
-			uint32_t handleValue;
-			uint32_t bufLen;
+			PxU32 handleValue;
+			PxU32 bufLen;
 			stream >> handleValue;
 			stream >> bufLen;
 			if(bufSize < bufLen)
@@ -295,7 +295,7 @@ class StringTableImpl : public StringTable, public PxUserAllocated
 
 struct NamespacedNameHasher
 {
-	uint32_t operator()(const NamespacedName& nm)
+	PxU32 operator()(const NamespacedName& nm)
 	{
 		return PxHash<const char*>()(nm.mNamespace) ^ PxHash<const char*>()(nm.mName);
 	}
@@ -317,7 +317,7 @@ struct ClassPropertyName
 
 struct ClassPropertyNameHasher
 {
-	uint32_t operator()(const ClassPropertyName& nm)
+	PxU32 operator()(const ClassPropertyName& nm)
 	{
 		return NamespacedNameHasher()(nm.mName) ^ PxHash<const char*>()(nm.mPropName);
 	}
@@ -351,7 +351,7 @@ struct PropertyMessageDescriptionImpl : public PropertyMessageDescription, publi
 {
 	PxArray<PropertyMessageEntryImpl> mEntryImpls;
 	PxArray<PropertyMessageEntry> mEntries;
-	PxArray<uint32_t> mStringOffsetArray;
+	PxArray<PxU32> mStringOffsetArray;
 	PropertyMessageDescriptionImpl(const PropertyMessageDescription& data)
 	: PropertyMessageDescription(data)
 	, mEntryImpls("PropertyMessageDescriptionImpl::mEntryImpls")
@@ -390,12 +390,12 @@ struct PropertyMessageDescriptionImpl : public PropertyMessageDescription, publi
 		if(mEntries.size() != mEntryImpls.size())
 		{
 			mEntries.clear();
-			uint32_t numEntries = static_cast<uint32_t>(mEntryImpls.size());
-			for(uint32_t idx = 0; idx < numEntries; ++idx)
+			PxU32 numEntries = static_cast<PxU32>(mEntryImpls.size());
+			for(PxU32 idx = 0; idx < numEntries; ++idx)
 				mEntries.pushBack(mEntryImpls[idx]);
 		}
 		mProperties = DataRef<PropertyMessageEntry>(mEntries.begin(), mEntries.end());
-		mStringOffsets = DataRef<uint32_t>(mStringOffsetArray.begin(), mStringOffsetArray.end());
+		mStringOffsets = DataRef<PxU32>(mStringOffsetArray.begin(), mStringOffsetArray.end());
 	}
 
   private:
@@ -415,8 +415,8 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
     StringTableImpl* mStringTable;
 	TNameToPropertyMessageMap mPropertyMessageMap;
 	PxArray<PropertyMessageDescriptionImpl*> mPropertyMessages;
-	int32_t mNextClassId;
-	uint32_t mRefCount;
+	PxI32 mNextClassId;
+	PxU32 mRefCount;
 
 	PvdObjectModelMetaDataImpl()
 	: mNameToClasses("NamespacedName->ClassDescImpl*")
@@ -435,7 +435,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 	PvdObjectModelMetaDataImpl& operator=(const PvdObjectModelMetaDataImpl&);
 
   public:
-	int32_t nextClassId()
+	PxI32 nextClassId()
 	{
 		return mNextClassId++;
 	}
@@ -467,9 +467,9 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		CREATE_BASIC_PVD_CLASS(bool)
 		CREATE_BASIC_PVD_CLASS(int16_t)
 		CREATE_BASIC_PVD_CLASS(uint16_t)
-		CREATE_BASIC_PVD_CLASS(int32_t)
-		CREATE_BASIC_PVD_CLASS(uint32_t)
-		// CREATE_BASIC_PVD_CLASS(uint32_t)
+		CREATE_BASIC_PVD_CLASS(PxI32)
+		CREATE_BASIC_PVD_CLASS(PxU32)
+		// CREATE_BASIC_PVD_CLASS(PxU32)
 		CREATE_BASIC_PVD_CLASS(int64_t)
 		CREATE_BASIC_PVD_CLASS(uint64_t)
 		CREATE_BASIC_PVD_CLASS(float)
@@ -494,11 +494,11 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 
 #undef CREATE_64BIT_ADJUST_PVD_CLASS
 
-		int32_t fltClassType = getPvdTypeForType<float>();
-		int32_t u32ClassType = getPvdTypeForType<uint32_t>();
-		int32_t v3ClassType = getPvdTypeForType<PxVec3>();
-		int32_t v4ClassType = getPvdTypeForType<PxVec4>();
-		int32_t qtClassType = getPvdTypeForType<PxQuat>();
+		PxI32 fltClassType = getPvdTypeForType<float>();
+		PxI32 u32ClassType = getPvdTypeForType<PxU32>();
+		PxI32 v3ClassType = getPvdTypeForType<PxVec3>();
+		PxI32 v4ClassType = getPvdTypeForType<PxVec4>();
+		PxI32 qtClassType = getPvdTypeForType<PxQuat>();
 		{
 			ClassDescImpl& cls =
 			    getOrCreateClassImpl(getPvdNamespacedNameForType<PvdColor>(), getPvdTypeForType<PvdColor>());
@@ -646,18 +646,18 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		mPropertyMessages.clear();
 	}
 
-	ClassDescImpl& getOrCreateClassImpl(const NamespacedName& nm, int32_t idx)
+	ClassDescImpl& getOrCreateClassImpl(const NamespacedName& nm, PxI32 idx)
 	{
 		ClassDescImpl* impl(getClassImpl(idx));
 		if(impl)
 			return *impl;
         NamespacedName safeName(mStringTable->registerStr(nm.mNamespace), mStringTable->registerStr(nm.mName));
-		while(idx >= int32_t(mClasses.size()))
+		while(idx >= PxI32(mClasses.size()))
 			mClasses.pushBack(NULL);
-		mClasses[uint32_t(idx)] = PVD_NEW(ClassDescImpl)(ClassDescription(safeName, idx));
-		mNameToClasses.insert(nm, mClasses[uint32_t(idx)]);
+		mClasses[PxU32(idx)] = PVD_NEW(ClassDescImpl)(ClassDescription(safeName, idx));
+		mNameToClasses.insert(nm, mClasses[PxU32(idx)]);
 		mNextClassId = PxMax(mNextClassId, idx + 1);
-		return *mClasses[uint32_t(idx)];
+		return *mClasses[PxU32(idx)];
 	}
 
 	ClassDescImpl& getOrCreateClassImpl(const NamespacedName& nm)
@@ -718,17 +718,17 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return Option<ClassDescription>();
 	}
 
-	ClassDescImpl* getClassImpl(int32_t classId) const
+	ClassDescImpl* getClassImpl(PxI32 classId) const
 	{
 		if(classId < 0)
             return NULL;
-		uint32_t idx = uint32_t(classId);
+		PxU32 idx = PxU32(classId);
 		if(idx < mClasses.size())
 			return mClasses[idx];
         return NULL;
 	}
 
-	virtual Option<ClassDescription> getClass(int32_t classId) const
+	virtual Option<ClassDescription> getClass(PxI32 classId) const
 	{
 		ClassDescImpl* impl(getClassImpl(classId));
 		if(impl)
@@ -736,12 +736,12 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return None();
 	}
 
-	virtual ClassDescription* getClassPtr(int32_t classId) const
+	virtual ClassDescription* getClassPtr(PxI32 classId) const
 	{
 		return getClassImpl(classId);
 	}
 
-	virtual Option<ClassDescription> getParentClass(int32_t classId) const
+	virtual Option<ClassDescription> getParentClass(PxI32 classId) const
 	{
 		ClassDescImpl* impl(getClassImpl(classId));
 		if(impl == NULL)
@@ -749,27 +749,27 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return getClass(impl->mBaseClass);
 	}
 
-	virtual void lockClass(int32_t classId)
+	virtual void lockClass(PxI32 classId)
 	{
 		ClassDescImpl* impl(getClassImpl(classId));
 		PX_ASSERT(impl);
 		if(impl)
 			impl->mLocked = true;
 	}
-	virtual uint32_t getNbClasses() const
+	virtual PxU32 getNbClasses() const
 	{
-		uint32_t total = 0;
+		PxU32 total = 0;
 		PVD_FOREACH(idx, mClasses.size()) if(mClasses[idx])++ total;
 		return total;
 	}
 
-	virtual uint32_t getClasses(ClassDescription* outClasses, uint32_t requestCount, uint32_t startIndex = 0) const
+	virtual PxU32 getClasses(ClassDescription* outClasses, PxU32 requestCount, PxU32 startIndex = 0) const
 	{
-		uint32_t classCount(getNbClasses());
+		PxU32 classCount(getNbClasses());
 		startIndex = PxMin(classCount, startIndex);
-		uint32_t retAmount = PxMin(requestCount, classCount - startIndex);
+		PxU32 retAmount = PxMin(requestCount, classCount - startIndex);
 
-		uint32_t idx = 0;
+		PxU32 idx = 0;
 		while(startIndex)
 		{
 			if(mClasses[idx] != NULL)
@@ -777,8 +777,8 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 			++idx;
 		}
 
-		uint32_t inserted = 0;
-		uint32_t classesSize = static_cast<uint32_t>(mClasses.size());
+		PxU32 inserted = 0;
+		PxU32 classesSize = static_cast<PxU32>(mClasses.size());
 		while(inserted < retAmount && idx < classesSize)
 		{
 			if(mClasses[idx] != NULL)
@@ -791,25 +791,25 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return inserted;
 	}
 
-	uint32_t updateByteSizeAndGetPropertyAlignment(ClassDescriptionSizeInfo& dest, const ClassDescriptionSizeInfo& src)
+	PxU32 updateByteSizeAndGetPropertyAlignment(ClassDescriptionSizeInfo& dest, const ClassDescriptionSizeInfo& src)
 	{
-		uint32_t alignment = src.mAlignment;
+		PxU32 alignment = src.mAlignment;
 		dest.mAlignment = PxMax(dest.mAlignment, alignment);
-		uint32_t offset = align(dest.mDataByteSize, alignment);
+		PxU32 offset = align(dest.mDataByteSize, alignment);
 		dest.mDataByteSize = offset + src.mByteSize;
 		dest.mByteSize = align(dest.mDataByteSize, dest.mAlignment);
 		return offset;
 	}
 
 	void transferPtrOffsets(ClassDescriptionSizeInfo& destInfo, PxArray<PtrOffset>& destArray,
-	                        const PxArray<PtrOffset>& src, uint32_t offset)
+	                        const PxArray<PtrOffset>& src, PxU32 offset)
 	{
 		PVD_FOREACH(idx, src.size())
 		destArray.pushBack(PtrOffset(src[idx].mOffsetType, src[idx].mOffset + offset));
 		destInfo.mPtrOffsets = DataRef<PtrOffset>(destArray.begin(), destArray.end());
 	}
 
-	virtual Option<PropertyDescription> createProperty(int32_t classId, String name, String semantic, int32_t datatype,
+	virtual Option<PropertyDescription> createProperty(PxI32 classId, String name, String semantic, PxI32 datatype,
 	                                                   PropertyType::Enum propertyType)
 	{
 		ClassDescImpl* cls(getClassImpl(classId));
@@ -839,8 +839,8 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		if(!propDType)
 			return None();
 		NamespacedName propClsName(propDType->mName);
-		int32_t propPackedWidth = propDType->mPackedUniformWidth;
-		int32_t propPackedType = propDType->mPackedClassType;
+		PxI32 propPackedWidth = propDType->mPackedUniformWidth;
+		PxI32 propPackedType = propDType->mPackedClassType;
 		// The implications of properties being complex types aren't major
 		//*until* you start trying to undue a property event that set values
 		// of those complex types.  Then things just get too complex.
@@ -853,20 +853,20 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 
 		if(propertyType == PropertyType::Array)
 		{
-			int32_t tempId = DataTypeToPvdTypeMap<ArrayData>::BaseTypeEnum;
+			PxI32 tempId = DataTypeToPvdTypeMap<ArrayData>::BaseTypeEnum;
 			propDType = getClassImpl(tempId);
 			PX_ASSERT(propDType);
 			if(!propDType)
 				return None();
 			requiresDestruction = true;
 		}
-		uint32_t offset32 = updateByteSizeAndGetPropertyAlignment(cls->get32BitSizeInfo(), propDType->get32BitSizeInfo());
-		uint32_t offset64 = updateByteSizeAndGetPropertyAlignment(cls->get64BitSizeInfo(), propDType->get64BitSizeInfo());
+		PxU32 offset32 = updateByteSizeAndGetPropertyAlignment(cls->get32BitSizeInfo(), propDType->get32BitSizeInfo());
+		PxU32 offset64 = updateByteSizeAndGetPropertyAlignment(cls->get64BitSizeInfo(), propDType->get64BitSizeInfo());
 		transferPtrOffsets(cls->get32BitSizeInfo(), cls->m32OffsetArray, propDType->m32OffsetArray, offset32);
 		transferPtrOffsets(cls->get64BitSizeInfo(), cls->m64OffsetArray, propDType->m64OffsetArray, offset64);
 		propDType->mLocked = true; // Can't add members to the property type.
 		cls->mRequiresDestruction = requiresDestruction;
-		int32_t propId = int32_t(mProperties.size());
+		PxI32 propId = PxI32(mProperties.size());
 		PropertyDescription newDesc(cls->mName, cls->mClassId, name, semantic, datatype, propClsName, propertyType,
 		                            propId, offset32, offset64);
         mProperties.pushBack(PVD_NEW(PropDescImpl)(newDesc, *mStringTable));
@@ -925,7 +925,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return None();
 	}
 
-	virtual Option<PropertyDescription> findProperty(int32_t clsId, String propName) const
+	virtual Option<PropertyDescription> findProperty(PxI32 clsId, String propName) const
 	{
 		ClassDescImpl* cls(getClassImpl(clsId));
 		PX_ASSERT(cls);
@@ -937,12 +937,12 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return None();
 	}
 
-	PropDescImpl* getPropertyImpl(int32_t propId) const
+	PropDescImpl* getPropertyImpl(PxI32 propId) const
 	{
 		PX_ASSERT(propId >= 0);
 		if(propId < 0)
             return NULL;
-		uint32_t val = uint32_t(propId);
+		PxU32 val = PxU32(propId);
 		if(val >= mProperties.size())
 		{
 			PX_ASSERT(false);
@@ -951,7 +951,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return mProperties[val];
 	}
 
-	virtual Option<PropertyDescription> getProperty(int32_t propId) const
+	virtual Option<PropertyDescription> getProperty(PxI32 propId) const
 	{
 		PropDescImpl* impl(getPropertyImpl(propId));
 		if(impl)
@@ -959,7 +959,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return None();
 	}
 
-	virtual void setNamedPropertyValues(DataRef<NamedValue> values, int32_t propId)
+	virtual void setNamedPropertyValues(DataRef<NamedValue> values, PxI32 propId)
 	{
 		PropDescImpl* impl(getPropertyImpl(propId));
 		if(impl)
@@ -969,7 +969,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		}
 	}
 
-	virtual DataRef<NamedValue> getNamedPropertyValues(int32_t propId) const
+	virtual DataRef<NamedValue> getNamedPropertyValues(PxI32 propId) const
 	{
 		PropDescImpl* impl(getPropertyImpl(propId));
 		if(impl)
@@ -979,9 +979,9 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return DataRef<NamedValue>();
 	}
 
-	virtual uint32_t getNbProperties(int32_t classId) const
+	virtual PxU32 getNbProperties(PxI32 classId) const
 	{
-		uint32_t retval = 0;
+		PxU32 retval = 0;
 		for(ClassDescImpl* impl(getClassImpl(classId)); impl; impl = getClassImpl(impl->mBaseClass))
 		{
 			retval += impl->mPropImps.size();
@@ -992,18 +992,18 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 	}
 
 	// Properties need to be returned in base class order, so this requires a recursive function.
-	uint32_t getPropertiesImpl(int32_t classId, PropertyDescription*& outBuffer, uint32_t& numItems,
-	                           uint32_t& startIdx) const
+	PxU32 getPropertiesImpl(PxI32 classId, PropertyDescription*& outBuffer, PxU32& numItems,
+	                           PxU32& startIdx) const
 	{
 		ClassDescImpl* impl = getClassImpl(classId);
 		if(impl)
 		{
-			uint32_t retval = 0;
+			PxU32 retval = 0;
 			if(impl->mBaseClass >= 0)
 				retval = getPropertiesImpl(impl->mBaseClass, outBuffer, numItems, startIdx);
 
-			uint32_t localStart = PxMin(impl->mPropImps.size(), startIdx);
-			uint32_t localNumItems = PxMin(numItems, impl->mPropImps.size() - localStart);
+			PxU32 localStart = PxMin(impl->mPropImps.size(), startIdx);
+			PxU32 localNumItems = PxMin(numItems, impl->mPropImps.size() - localStart);
 			PVD_FOREACH(idx, localNumItems)
 			{
 				outBuffer[idx] = *impl->mPropImps[localStart + idx];
@@ -1017,13 +1017,13 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return 0;
 	}
 
-	virtual uint32_t getProperties(int32_t classId, PropertyDescription* outBuffer, uint32_t numItems,
-	                               uint32_t startIdx) const
+	virtual PxU32 getProperties(PxI32 classId, PropertyDescription* outBuffer, PxU32 numItems,
+	                               PxU32 startIdx) const
 	{
 		return getPropertiesImpl(classId, outBuffer, numItems, startIdx);
 	}
 
-	virtual MarshalQueryResult checkMarshalling(int32_t srcClsId, int32_t dstClsId) const
+	virtual MarshalQueryResult checkMarshalling(PxI32 srcClsId, PxI32 dstClsId) const
 	{
 		Option<ClassDescription> propTypeOpt(getClass(dstClsId));
 		if(propTypeOpt.hasValue() == false)
@@ -1054,11 +1054,11 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 				return MarshalQueryResult();
 			}
 
-			int32_t srcType = incomingType.mPackedClassType;
-			int32_t dstType = propType.mPackedClassType;
+			PxI32 srcType = incomingType.mPackedClassType;
+			PxI32 dstType = propType.mPackedClassType;
 
-			int32_t srcWidth = incomingType.mPackedUniformWidth;
-			int32_t dstWidth = propType.mPackedUniformWidth;
+			PxI32 srcWidth = incomingType.mPackedUniformWidth;
+			PxI32 dstWidth = propType.mPackedUniformWidth;
 			canMarshal = getMarshalOperators(single, block, srcType, dstType);
 			if(srcWidth == dstWidth)
 				needsMarshalling = canMarshal; // If the types are the same width, we assume we can convert between some
@@ -1087,18 +1087,18 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return NULL;
 	}
 
-	PropertyMessageDescriptionImpl* getPropertyMessageImpl(int32_t msg) const
+	PropertyMessageDescriptionImpl* getPropertyMessageImpl(PxI32 msg) const
 	{
-		int32_t msgCount = int32_t(mPropertyMessages.size());
+		PxI32 msgCount = PxI32(mPropertyMessages.size());
 		if(msg >= 0 && msg < msgCount)
-			return mPropertyMessages[uint32_t(msg)];
+			return mPropertyMessages[PxU32(msg)];
 		return NULL;
 	}
 
 	virtual Option<PropertyMessageDescription> createPropertyMessage(const NamespacedName& clsName,
 	                                                                 const NamespacedName& messageName,
 	                                                                 DataRef<PropertyMessageArg> entries,
-	                                                                 uint32_t messageSize)
+	                                                                 PxU32 messageSize)
 	{
 		PropertyMessageDescriptionImpl* existing(findPropertyMessageImpl(messageName));
 		if(existing)
@@ -1110,11 +1110,11 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		PX_ASSERT(cls);
 		if(!cls)
 			return None();
-		int32_t msgId = int32_t(mPropertyMessages.size());
+		PxI32 msgId = PxI32(mPropertyMessages.size());
 		PropertyMessageDescriptionImpl* newMessage = PVD_NEW(PropertyMessageDescriptionImpl)(
             PropertyMessageDescription(mStringTable->registerName(clsName), cls->mClassId,
                                        mStringTable->registerName(messageName), msgId, messageSize));
-		uint32_t calculatedSize = 0;
+		PxU32 calculatedSize = 0;
 		PVD_FOREACH(idx, entries.size())
 		{
 			PropertyMessageArg entry(entries[idx]);
@@ -1125,7 +1125,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 				goto DestroyNewMessage;
 			}
 			ClassDescriptionSizeInfo dtypeInfo(dtypeCls->get32BitSizeInfo());
-			uint32_t incomingSize = dtypeInfo.mByteSize;
+			PxU32 incomingSize = dtypeInfo.mByteSize;
 			if(entry.mByteSize < incomingSize)
 			{
 				PX_ASSERT(false);
@@ -1175,7 +1175,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		if(newMessage)
 		{
 			newMessage->mStringOffsets =
-			    DataRef<uint32_t>(newMessage->mStringOffsetArray.begin(), newMessage->mStringOffsetArray.end());
+			    DataRef<PxU32>(newMessage->mStringOffsetArray.begin(), newMessage->mStringOffsetArray.end());
 			mPropertyMessages.pushBack(newMessage);
 			mPropertyMessageMap.insert(messageName, newMessage);
 			return *newMessage;
@@ -1195,7 +1195,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return None();
 	}
 
-	virtual Option<PropertyMessageDescription> getPropertyMessage(int32_t msgId) const
+	virtual Option<PropertyMessageDescription> getPropertyMessage(PxI32 msgId) const
 	{
 		PropertyMessageDescriptionImpl* desc(getPropertyMessageImpl(msgId));
 		if(desc)
@@ -1203,12 +1203,12 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		return None();
 	}
 
-	virtual uint32_t getNbPropertyMessages() const
+	virtual PxU32 getNbPropertyMessages() const
 	{
 		return mPropertyMessages.size();
 	}
 
-	virtual uint32_t getPropertyMessages(PropertyMessageDescription* msgBuf, uint32_t bufLen, uint32_t startIdx = 0) const
+	virtual PxU32 getPropertyMessages(PropertyMessageDescription* msgBuf, PxU32 bufLen, PxU32 startIdx = 0) const
 	{
 		startIdx = PxMin(startIdx, getNbPropertyMessages());
 		bufLen = PxMin(bufLen, getNbPropertyMessages() - startIdx);
@@ -1234,11 +1234,11 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		{
             mStream << mMetaData.mStringTable->strToHandle(type);
 		}
-		void streamify(int32_t& type)
+		void streamify(PxI32& type)
 		{
 			mStream << type;
 		}
-		void streamify(uint32_t& type)
+		void streamify(PxU32& type)
 		{
 			mStream << type;
 		}
@@ -1252,7 +1252,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		}
 		void streamify(PropertyType::Enum type)
 		{
-			uint32_t val = static_cast<uint32_t>(type);
+			PxU32 val = static_cast<PxU32>(type);
 			mStream << val;
 		}
 		void streamify(NamedValue& type)
@@ -1274,14 +1274,14 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		}
 		void streamify(PtrOffset& off)
 		{
-			uint32_t type = off.mOffsetType;
+			PxU32 type = off.mOffsetType;
 			mStream << type;
 			mStream << off.mOffset;
 		}
 		template <typename TDataType>
 		void streamify(TDataType* type)
 		{
-			int32_t existMarker = type ? 1 : 0;
+			PxI32 existMarker = type ? 1 : 0;
 			mStream << existMarker;
 			if(type)
 				type->serialize(*this);
@@ -1289,13 +1289,13 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		template <typename TArrayType>
 		void streamify(const PxArray<TArrayType>& type)
 		{
-			mStream << static_cast<uint32_t>(type.size());
+			mStream << static_cast<PxU32>(type.size());
 			PVD_FOREACH(idx, type.size()) streamify(const_cast<TArrayType&>(type[idx]));
 		}
 		template <typename TArrayType>
 		void streamifyLinks(const PxArray<TArrayType>& type)
 		{
-			mStream << static_cast<uint32_t>(type.size());
+			mStream << static_cast<PxU32>(type.size());
 			PVD_FOREACH(idx, type.size()) streamifyLinks(const_cast<TArrayType&>(type[idx]));
 		}
 
@@ -1320,15 +1320,15 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 
 		void streamify(String& type)
 		{
-			uint32_t handle;
+			PxU32 handle;
 			mStream >> handle;
             type = mMetaData.mStringTable->handleToStr(handle);
 		}
-		void streamify(int32_t& type)
+		void streamify(PxI32& type)
 		{
 			mStream >> type;
 		}
-		void streamify(uint32_t& type)
+		void streamify(PxU32& type)
 		{
 			mStream >> type;
 		}
@@ -1341,7 +1341,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 
 		void streamify(PropertyType::Enum& type)
 		{
-			uint32_t val;
+			PxU32 val;
 			mStream >> val;
 			type = static_cast<PropertyType::Enum>(val);
 		}
@@ -1356,14 +1356,14 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		}
 		void streamify(PtrOffset& off)
 		{
-			uint32_t type;
+			PxU32 type;
 			mStream >> type;
 			mStream >> off.mOffset;
 			off.mOffsetType = static_cast<PtrOffsetType::Enum>(type);
 		}
 		void streamifyLinks(PropDescImpl*& prop)
 		{
-			int32_t propId;
+			PxI32 propId;
 			streamify(propId);
 			prop = mMetaData.getPropertyImpl(propId);
 		}
@@ -1375,7 +1375,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		template <typename TDataType>
 		void streamify(TDataType*& type)
 		{
-			uint32_t existMarker;
+			PxU32 existMarker;
 			mStream >> existMarker;
 			if(existMarker)
 			{
@@ -1389,7 +1389,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		template <typename TArrayType>
 		void streamify(PxArray<TArrayType>& type)
 		{
-			uint32_t typeSize;
+			PxU32 typeSize;
 			mStream >> typeSize;
 			type.resize(typeSize);
 			PVD_FOREACH(idx, type.size()) streamify(type[idx]);
@@ -1397,7 +1397,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 		template <typename TArrayType>
 		void streamifyLinks(PxArray<TArrayType>& type)
 		{
-			uint32_t typeSize;
+			PxU32 typeSize;
 			mStream >> typeSize;
 			type.resize(typeSize);
 			PVD_FOREACH(idx, type.size()) streamifyLinks(type[idx]);
@@ -1421,7 +1421,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 	template <typename TReaderType>
 	void read(TReaderType& stream)
 	{
-		uint32_t version;
+		PxU32 version;
 		stream >> version;
 		stream >> mNextClassId;
         mStringTable->read(stream);
@@ -1439,14 +1439,14 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 			if(cls == NULL)
 				continue;
 			mNameToClasses.insert(cls->mName, mClasses[i]);
-			uint32_t propCount = getNbProperties(cls->mClassId);
+			PxU32 propCount = getNbProperties(cls->mClassId);
 			PropertyDescription descs[16];
-			uint32_t offset = 0;
-			for(uint32_t idx = 0; idx < propCount; idx = offset)
+			PxU32 offset = 0;
+			for(PxU32 idx = 0; idx < propCount; idx = offset)
 			{
-				uint32_t numProps = getProperties(cls->mClassId, descs, 16, offset);
+				PxU32 numProps = getProperties(cls->mClassId, descs, 16, offset);
 				offset += numProps;
-				for(uint32_t propIdx = 0; propIdx < numProps; ++propIdx)
+				for(PxU32 propIdx = 0; propIdx < numProps; ++propIdx)
 				{
 					PropDescImpl* prop = getPropertyImpl(descs[propIdx].mPropertyId);
 					if(prop)
@@ -1476,7 +1476,7 @@ struct PvdObjectModelMetaDataImpl : public PvdObjectModelMetaData, public PxUser
 };
 }
 
-uint32_t PvdObjectModelMetaData::getCurrentPvdObjectModelVersion()
+PxU32 PvdObjectModelMetaData::getCurrentPvdObjectModelVersion()
 {
 	return 1;
 }

@@ -112,11 +112,11 @@ class NpContactCallbackTask : public physx::PxLightCpuTask
 {
 	NpScene*	mScene;
 	const PxContactPairHeader* mContactPairHeaders;
-	uint32_t mNbContactPairHeaders;
+	PxU32 mNbContactPairHeaders;
 
 public:
 
-	void setData(NpScene* scene, const PxContactPairHeader* contactPairHeaders, const uint32_t nbContactPairHeaders);
+	void setData(NpScene* scene, const PxContactPairHeader* contactPairHeaders, const PxU32 nbContactPairHeaders);
 
 	virtual void run();
 

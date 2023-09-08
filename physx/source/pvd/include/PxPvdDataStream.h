@@ -84,7 +84,7 @@ class PvdMetaDataStream
 	}
 
 	virtual PvdError createPropertyMessage(const NamespacedName& cls, const NamespacedName& msgName,
-	                                       DataRef<PropertyMessageArg> entries, uint32_t messageSizeInBytes) = 0;
+	                                       DataRef<PropertyMessageArg> entries, PxU32 messageSizeInBytes) = 0;
 
 	template <typename TClsType, typename TMsgType>
 	PvdError createPropertyMessage(DataRef<PropertyMessageArg> entries)
@@ -123,7 +123,7 @@ class PvdInstanceDataStream
 	}
 
 	template <typename TDataType>
-	PvdError setPropertyValue(const void* instance, String name, const TDataType* value, uint32_t numItems)
+	PvdError setPropertyValue(const void* instance, String name, const TDataType* value, PxU32 numItems)
 	{
 		const uint8_t* dataStart = reinterpret_cast<const uint8_t*>(value);
 		return setPropertyValue(instance, name,
@@ -142,7 +142,7 @@ class PvdInstanceDataStream
 	virtual PvdError appendPropertyValueData(DataRef<const uint8_t> data) = 0;
 
 	template <typename TDataType>
-	PvdError appendPropertyValueData(const TDataType* value, uint32_t numItems)
+	PvdError appendPropertyValueData(const TDataType* value, PxU32 numItems)
 	{
 		const uint8_t* dataStart = reinterpret_cast<const uint8_t*>(value);
 		return appendPropertyValueData(DataRef<const uint8_t>(dataStart, dataStart + numItems * sizeof(TDataType)));
@@ -230,7 +230,7 @@ class PvdInstanceDataStream
 	};
 
 	// PVD SDK provide this helper function to allocate cmd's memory and release them at after flush the command queue
-	virtual void* allocateMemForCmd(uint32_t length) = 0;
+	virtual void* allocateMemForCmd(PxU32 length) = 0;
 
 	// PVD will call the destructor of PvdCommand object at the end fo flushPvdCommand
 	virtual void pushPvdCommand(PvdCommand& cmd) = 0;
@@ -254,7 +254,7 @@ class PvdDataStream : public PvdInstanceDataStream, public PvdMetaDataStream
 	virtual PvdPropertyDefinitionHelper& getPropertyDefinitionHelper() = 0;
 
 	virtual void setIsTopLevelUIElement(const void* instance, bool topLevel) = 0;
-	virtual void sendErrorMessage(uint32_t code, const char* message, const char* file, uint32_t line) = 0;
+	virtual void sendErrorMessage(PxU32 code, const char* message, const char* file, PxU32 line) = 0;
 	virtual void updateCamera(const char* name, const PxVec3& origin, const PxVec3& up, const PxVec3& target) = 0;
 
 /**

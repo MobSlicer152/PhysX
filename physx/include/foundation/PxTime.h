@@ -83,7 +83,7 @@ class PX_FOUNDATION_API PxTime
 	Second getLastTime() const;
 
   private:
-#if PX_SWITCH || PX_LINUX || PX_APPLE_FAMILY
+#if PX_SWITCH || PX_LINUX || PX_APPLE_FAMILY || PX_PSP
 	Second mLastTime;
 #else
 	PxI64 mTickCount;

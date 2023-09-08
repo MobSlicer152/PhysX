@@ -38,15 +38,15 @@
 namespace physx
 {
 #endif
-PX_INLINE uint32_t PxBitCount(uint32_t v)
+PX_INLINE PxU32 PxBitCount(PxU32 v)
 {
 	// from http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
-	uint32_t const w = v - ((v >> 1) & 0x55555555);
-	uint32_t const x = (w & 0x33333333) + ((w >> 2) & 0x33333333);
+	PxU32 const w = v - ((v >> 1) & 0x55555555);
+	PxU32 const x = (w & 0x33333333) + ((w >> 2) & 0x33333333);
 	return (((x + (x >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
 
-PX_INLINE bool PxIsPowerOfTwo(uint32_t x)
+PX_INLINE bool PxIsPowerOfTwo(PxU32 x)
 {
 	return x != 0 && (x & (x - 1)) == 0;
 }
@@ -56,7 +56,7 @@ PX_INLINE bool PxIsPowerOfTwo(uint32_t x)
 // that recursively "folds" the upper bits into the lower bits. This process yields a bit vector with
 // the same most significant 1 as x, but all 1's below it. Adding 1 to that value yields the next
 // largest power of 2. For a 32-bit value:"
-PX_INLINE uint32_t PxNextPowerOfTwo(uint32_t x)
+PX_INLINE PxU32 PxNextPowerOfTwo(PxU32 x)
 {
 	x |= (x >> 1);
 	x |= (x >> 2);
@@ -70,7 +70,7 @@ PX_INLINE uint32_t PxNextPowerOfTwo(uint32_t x)
 Return the index of the highest set bit. Not valid for zero arg.
 */
 
-PX_INLINE uint32_t PxLowestSetBit(uint32_t x)
+PX_INLINE PxU32 PxLowestSetBit(PxU32 x)
 {
 	PX_ASSERT(x);
 	return PxLowestSetBitUnsafe(x);
@@ -80,7 +80,7 @@ PX_INLINE uint32_t PxLowestSetBit(uint32_t x)
 Return the index of the highest set bit. Not valid for zero arg.
 */
 
-PX_INLINE uint32_t PxHighestSetBit(uint32_t x)
+PX_INLINE PxU32 PxHighestSetBit(PxU32 x)
 {
 	PX_ASSERT(x);
 	return PxHighestSetBitUnsafe(x);
@@ -88,9 +88,9 @@ PX_INLINE uint32_t PxHighestSetBit(uint32_t x)
 
 // Helper function to approximate log2 of an integer value
 // assumes that the input is actually power of two.
-PX_INLINE uint32_t PxILog2(uint32_t num)
+PX_INLINE PxU32 PxILog2(PxU32 num)
 {
-	for(uint32_t i = 0; i < 32; i++)
+	for(PxU32 i = 0; i < 32; i++)
 	{
 		num >>= 1;
 		if(num == 0)
@@ -98,7 +98,7 @@ PX_INLINE uint32_t PxILog2(uint32_t num)
 	}
 
 	PX_ASSERT(0);
-	return uint32_t(-1);
+	return PxU32(-1);
 }
 
 #if !PX_DOXYGEN

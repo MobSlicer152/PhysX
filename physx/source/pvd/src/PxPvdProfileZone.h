@@ -121,7 +121,7 @@ namespace physx {
 		will be associated with monotonically incrementing uint16_t values from the first
 		id.  
 		 */
-		virtual uint16_t getEventIdsForNames( const char** inNames, uint32_t inLen ) = 0;
+		virtual uint16_t getEventIdsForNames( const char** inNames, PxU32 inLen ) = 0;
 
 		/**
 		\brief Create a new profile zone.  
@@ -133,7 +133,7 @@ namespace physx {
 			as profile events are fairly small individually.
 		\return a profile zone implementation.
 		 */		
-		static PxProfileZone& createProfileZone(PxAllocatorCallback* inAllocator, const char* inSDKName, PxProfileNames inNames = PxProfileNames(), uint32_t inEventBufferByteSize = 0x10000 /*64k*/);
+		static PxProfileZone& createProfileZone(PxAllocatorCallback* inAllocator, const char* inSDKName, PxProfileNames inNames = PxProfileNames(), PxU32 inEventBufferByteSize = 0x10000 /*64k*/);
 
 	};
 } }

@@ -36,12 +36,12 @@ namespace physx
 {
 	namespace Gu
 	{
-		/*PX_FORCE_INLINE*/ uint32_t PxComputeHash(const ActorShapeMap::ActorShape& owner)
+		/*PX_FORCE_INLINE*/ PxU32 PxComputeHash(const ActorShapeMap::ActorShape& owner)
 		{
 			PX_ASSERT(!(size_t(owner.mActor)&3));
 			PX_ASSERT(!(size_t(owner.mShape)&3));
-			const uint32_t id0 = uint32_t(size_t(owner.mActor)>>2);
-			const uint32_t id1 = uint32_t(size_t(owner.mShape)>>2);
+			const PxU32 id0 = PxU32(size_t(owner.mActor)>>2);
+			const PxU32 id1 = PxU32(size_t(owner.mShape)>>2);
 			const uint64_t mix = (uint64_t(id0)<<32)|uint64_t(id1);
 			return ::PxComputeHash(mix);
 		}

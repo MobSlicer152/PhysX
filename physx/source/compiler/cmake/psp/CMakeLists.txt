@@ -80,6 +80,7 @@ SET(CLANG_WARNINGS "-ferror-limit=0 -Wall -Wextra -Werror -Wstrict-aliasing=2 -W
     -Wno-weak-template-vtables \
     -Wno-weak-vtables \
     -Wno-zero-as-null-pointer-constant \
+    -Wno-misleading-indentation \
 ")
 
 
@@ -105,6 +106,8 @@ ELSE()
 		-Wno-pragmas\
 		-Wno-uninitialized\
 		-Wno-unused-function\
+		-Wno-misleading-indentation\
+		-Wno-nonnull\
 	")
 	SET(AARCH64_FLAGS "")
 ENDIF()
@@ -138,11 +141,7 @@ ENDIF()
 
 # Controls PX_NVTX for all projects
 SET(NVTX_FLAG "PX_NVTX=0")
-IF(${CMAKE_CROSSCOMPILING} AND CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
-	SET(PX_SUPPORT_OMNI_PVD_FLAG "PX_SUPPORT_OMNI_PVD=0")
-ELSE()
-	SET(PX_SUPPORT_OMNI_PVD_FLAG "PX_SUPPORT_OMNI_PVD=1")
-ENDIF()
+SET(PX_SUPPORT_OMNI_PVD_FLAG "PX_SUPPORT_OMNI_PVD=0")
 SET(PHYSX_PSP_COMPILE_DEFS "${CUDA_FLAG};PX_SIMD_DISABLED=1;${PHYSX_AUTOBUILD};${PUBLIC_RELEASE_FLAG};${FEATURES_UNDER_CONSTRUCTION_FLAG}" CACHE INTERNAL "Base PhysX preprocessor definitions")
 SET(PHYSX_PSP_DEBUG_COMPILE_DEFS   "_DEBUG=1;PX_DEBUG=1;PX_CHECKED=1;${NVTX_FLAG};PX_SUPPORT_PVD=1;${PX_SUPPORT_OMNI_PVD_FLAG}"  CACHE INTERNAL "Debug PhysX preprocessor definitions")
 SET(PHYSX_PSP_CHECKED_COMPILE_DEFS "_DEBUG=1;PX_CHECKED=1;${NVTX_FLAG};PX_SUPPORT_PVD=1;${PX_SUPPORT_OMNI_PVD_FLAG}" CACHE INTERNAL "Checked PhysX preprocessor definitions")

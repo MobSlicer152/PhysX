@@ -77,7 +77,7 @@ class ThreadImpl
 	PxThreadImpl::ExecuteFn fn;
 	void* arg;
 
-	uint32_t affinityMask;
+	PxU32 affinityMask;
 	const char* name;
 };
 
@@ -99,10 +99,10 @@ static DWORD WINAPI PxThreadStart(LPVOID arg)
 }
 
 // cache physical thread count
-static uint32_t gPhysicalCoreCount = 0;
+static PxU32 gPhysicalCoreCount = 0;
 }
 
-uint32_t PxThreadImpl::getSize()
+PxU32 PxThreadImpl::getSize()
 {
 	return sizeof(ThreadImpl);
 }
@@ -115,7 +115,7 @@ PxThreadImpl::Id PxThreadImpl::getId()
 // fwd GetLogicalProcessorInformation()
 typedef BOOL(WINAPI* LPFN_GLPI)(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, PDWORD);
 
-uint32_t PxThreadImpl::getNbPhysicalCores()
+PxU32 PxThreadImpl::getNbPhysicalCores()
 {
 	if(!gPhysicalCoreCount)
 	{
@@ -214,7 +214,7 @@ PxThreadImpl::~PxThreadImpl()
 	CloseHandle(getThread(this)->thread);
 }
 
-void PxThreadImpl::start(uint32_t stackSize, PxRunnable* runnable)
+void PxThreadImpl::start(PxU32 stackSize, PxRunnable* runnable)
 {
 	if(getThread(this)->state != ThreadImpl::NotStarted)
 		return;
@@ -283,7 +283,7 @@ void PxThreadImpl::kill()
 	getThread(this)->state = ThreadImpl::Stopped;
 }
 
-void PxThreadImpl::sleep(uint32_t ms)
+void PxThreadImpl::sleep(PxU32 ms)
 {
 	Sleep(ms);
 }
@@ -298,7 +298,7 @@ void PxThreadImpl::yieldProcessor()
 	YieldProcessor();
 }
 
-uint32_t PxThreadImpl::setAffinityMask(uint32_t mask)
+PxU32 PxThreadImpl::setAffinityMask(PxU32 mask)
 {
 	if(mask)
 	{
@@ -308,7 +308,7 @@ uint32_t PxThreadImpl::setAffinityMask(uint32_t mask)
 		// if thread already started apply immediately
 		if(getThread(this)->state == ThreadImpl::Started)
 		{
-			uint32_t err = uint32_t(SetThreadAffinityMask(getThread(this)->thread, mask));
+			PxU32 err = PxU32(SetThreadAffinityMask(getThread(this)->thread, mask));
 			return err;
 		}
 	}

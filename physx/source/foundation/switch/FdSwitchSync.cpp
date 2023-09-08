@@ -57,7 +57,7 @@ SyncImpl* getSync(PxSyncImpl* impl)
 }
 }
 
-uint32_t PxSyncImpl::getSize()
+PxU32 PxSyncImpl::getSize()
 {
 	return sizeof(SyncImpl);
 }
@@ -112,13 +112,13 @@ void PxSyncImpl::set()
 	}
 }
 
-bool PxSyncImpl::wait(uint32_t ms)
+bool PxSyncImpl::wait(PxU32 ms)
 {
 	PxUnixScopeLock lock(getSync(this)->mutex);
 	int lastSetCounter = getSync(this)->setCounter;
 	if(!getSync(this)->is_set)
 	{
-		if(ms == uint32_t(-1))
+		if(ms == PxU32(-1))
 		{
 			// have to loop here and check is_set since pthread_cond_wait can return successfully
 			// even if it was not signaled by pthread_cond_broadcast (OS efficiency design decision)
@@ -132,14 +132,14 @@ bool PxSyncImpl::wait(uint32_t ms)
 			timespec ts;
 			timeval tp;
 			gettimeofday(&tp, NULL);
-			uint32_t sec = ms / 1000;
-			uint32_t usec = (ms - 1000 * sec) * 1000;
+			PxU32 sec = ms / 1000;
+			PxU32 usec = (ms - 1000 * sec) * 1000;
 
 			// sschirm: taking into account that us might accumulate to a second
 			// otherwise the pthread_cond_timedwait complains on osx.
 			usec = tp.tv_usec + usec;
-			uint32_t div_sec = usec / 1000000;
-			uint32_t rem_usec = usec - div_sec * 1000000;
+			PxU32 div_sec = usec / 1000000;
+			PxU32 rem_usec = usec - div_sec * 1000000;
 
 			ts.tv_sec = tp.tv_sec + sec + div_sec;
 			ts.tv_nsec = rem_usec * 1000;

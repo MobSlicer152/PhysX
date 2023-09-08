@@ -43,11 +43,11 @@ namespace physx
 // * the resulting string is always NULL-terminated regardless of truncation.
 // * in the case of truncation the return value is the number of characters that would have been created.
 
-PX_FOUNDATION_API int32_t Pxsscanf(const char* buffer, const char* format, ...);
-PX_FOUNDATION_API int32_t Pxstrcmp(const char* str1, const char* str2);
-PX_FOUNDATION_API int32_t Pxstrncmp(const char* str1, const char* str2, size_t count);
-PX_FOUNDATION_API int32_t Pxsnprintf(char* dst, size_t dstSize, const char* format, ...);
-PX_FOUNDATION_API int32_t Pxvsnprintf(char* dst, size_t dstSize, const char* src, va_list arg);
+PX_FOUNDATION_API PxI32 Pxsscanf(const char* buffer, const char* format, ...);
+PX_FOUNDATION_API PxI32 Pxstrcmp(const char* str1, const char* str2);
+PX_FOUNDATION_API PxI32 Pxstrncmp(const char* str1, const char* str2, size_t count);
+PX_FOUNDATION_API PxI32 Pxsnprintf(char* dst, size_t dstSize, const char* format, ...);
+PX_FOUNDATION_API PxI32 Pxvsnprintf(char* dst, size_t dstSize, const char* src, va_list arg);
 
 // strlcat and strlcpy have BSD semantics:
 // * dstSize is always the size of the destination buffer
@@ -58,8 +58,8 @@ PX_FOUNDATION_API size_t Pxstrlcat(char* dst, size_t dstSize, const char* src);
 PX_FOUNDATION_API size_t Pxstrlcpy(char* dst, size_t dstSize, const char* src);
 
 // case-insensitive string comparison
-PX_FOUNDATION_API int32_t Pxstricmp(const char* str1, const char* str2);
-PX_FOUNDATION_API int32_t Pxstrnicmp(const char* str1, const char* str2, size_t count);
+PX_FOUNDATION_API PxI32 Pxstricmp(const char* str1, const char* str2);
+PX_FOUNDATION_API PxI32 Pxstrnicmp(const char* str1, const char* str2, size_t count);
 
 // in-place string case conversion
 PX_FOUNDATION_API void Pxstrlwr(char* str);

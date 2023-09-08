@@ -33,11 +33,11 @@ namespace physx { namespace profile {
 
 	struct PxProfileEventExecutionContext
 	{
-		uint32_t				mThreadId;
+		PxU32				mThreadId;
 		uint8_t					mCpuId;
 		uint8_t					mThreadPriority;
 
-		PxProfileEventExecutionContext( uint32_t inThreadId = 0, uint8_t inThreadPriority = 2 /*eThreadPriorityNormal*/, uint8_t inCpuId = 0 )
+		PxProfileEventExecutionContext( PxU32 inThreadId = 0, uint8_t inThreadPriority = 2 /*eThreadPriorityNormal*/, uint8_t inCpuId = 0 )
 			: mThreadId( inThreadId )
 			, mCpuId( inCpuId )
 			, mThreadPriority( inThreadPriority )

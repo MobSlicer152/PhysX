@@ -53,7 +53,7 @@ namespace physx { namespace profile {
 		typedef typename TBaseType::TU8AllocatorType TU8AllocatorType;
 		typedef typename TBaseType::TMemoryBufferType TMemoryBufferType;
 		typedef typename TBaseType::TBufferClientArray TBufferClientArray;
-		typedef PxHashMap<const char*, uint32_t, PxHash<const char*>, TU8AllocatorType> TCharPtrToHandleMap;
+		typedef PxHashMap<const char*, PxU32, PxHash<const char*>, TU8AllocatorType> TCharPtrToHandleMap;
 
 	protected:
 		TCharPtrToHandleMap mStringTable;
@@ -61,20 +61,20 @@ namespace physx { namespace profile {
 	public:
 
 		MemoryEventBuffer( PxAllocatorCallback& cback
-					, uint32_t inBufferFullAmount
+					, PxU32 inBufferFullAmount
 					, TMutexType* inBufferMutex )
 			: TBaseType( &cback, inBufferFullAmount, inBufferMutex, "struct physx::profile::MemoryEvent" )
 			, mStringTable( TU8AllocatorType( TBaseType::getWrapper(), "MemoryEventStringBuffer" ) )
 		{
 		}
 
-		uint32_t getHandle( const char* inData )
+		PxU32 getHandle( const char* inData )
 		{
 			if ( inData == NULL ) inData = "";
 			const typename TCharPtrToHandleMap::Entry* result( mStringTable.find( inData ) );
 			if ( result )
 				return result->second;
-			uint32_t hdl = mStringTable.size() + 1;
+			PxU32 hdl = mStringTable.size() + 1;
 			mStringTable.insert( inData, hdl );
 			StringTableEvent theEvent;
 			theEvent.init( inData, hdl );
@@ -82,12 +82,12 @@ namespace physx { namespace profile {
 			return hdl;
 		}
 
-		void onAllocation( size_t inSize, const char* inType, const char* inFile, uint32_t inLine, uint64_t addr )
+		void onAllocation( size_t inSize, const char* inType, const char* inFile, PxU32 inLine, uint64_t addr )
 		{
 			if ( addr == 0 )
 				return;
-			uint32_t typeHdl( getHandle( inType ) );
-			uint32_t fileHdl( getHandle( inFile ) );
+			PxU32 typeHdl( getHandle( inType ) );
+			PxU32 fileHdl( getHandle( inFile ) );
 			AllocationEvent theEvent;
 			theEvent.init( inSize, typeHdl, fileHdl, inLine, addr );
 			sendEvent( theEvent );
@@ -128,14 +128,14 @@ namespace physx { namespace profile {
 		TMemoryBufferType mBuffer;
 
 	public:
-		PxProfileMemoryEventBufferImpl( PxAllocatorCallback& alloc, uint32_t inBufferFullAmount )
+		PxProfileMemoryEventBufferImpl( PxAllocatorCallback& alloc, PxU32 inBufferFullAmount )
 			: mBuffer( alloc, inBufferFullAmount, NULL )
 		{
 		}
 
 		virtual void onAllocation( size_t size, const char* typeName, const char* filename, int line, void* allocatedMemory )
 		{
-			mBuffer.onAllocation( size, typeName, filename, uint32_t(line), static_cast<uint64_t>(reinterpret_cast<size_t>(allocatedMemory)) );
+			mBuffer.onAllocation( size, typeName, filename, PxU32(line), static_cast<uint64_t>(reinterpret_cast<size_t>(allocatedMemory)) );
 		}
 		virtual void onDeallocation( void* allocatedMemory )
 		{

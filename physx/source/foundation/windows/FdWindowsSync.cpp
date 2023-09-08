@@ -40,7 +40,7 @@ HANDLE& getSync(PxSyncImpl* impl)
 }
 }
 
-uint32_t PxSyncImpl::getSize()
+PxU32 PxSyncImpl::getSize()
 {
 	return sizeof(HANDLE);
 }
@@ -65,7 +65,7 @@ void PxSyncImpl::set()
 	SetEvent(getSync(this));
 }
 
-bool PxSyncImpl::wait(uint32_t milliseconds)
+bool PxSyncImpl::wait(PxU32 milliseconds)
 {
 	if(milliseconds == -1)
 		milliseconds = INFINITE;

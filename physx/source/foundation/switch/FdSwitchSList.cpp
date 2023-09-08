@@ -61,7 +61,7 @@ typedef ScopedMutexLock ScopedLock;
 #else
 struct ScopedSpinLock
 {
-	PX_FORCE_INLINE ScopedSpinLock(volatile int32_t& lock) : mLock(lock)
+	PX_FORCE_INLINE ScopedSpinLock(volatile PxI32& lock) : mLock(lock)
 	{
 		while(__sync_lock_test_and_set(&mLock, 1))
 		{
@@ -79,7 +79,7 @@ struct ScopedSpinLock
 	}
 
   private:
-	volatile int32_t& mLock;
+	volatile PxI32& mLock;
 };
 
 typedef ScopedSpinLock ScopedLock;
@@ -91,7 +91,7 @@ struct SListDetail
 #if defined(USE_MUTEX)
 	pthread_mutex_t lock;
 #else
-	volatile int32_t lock;
+	volatile PxI32 lock;
 #endif
 };
 
@@ -144,7 +144,7 @@ PxSListEntry* PxSListImpl::flush()
 	return result;
 }
 
-uint32_t PxSListImpl::getSize()
+PxU32 PxSListImpl::getSize()
 {
 	return sizeof(SListDetail);
 }

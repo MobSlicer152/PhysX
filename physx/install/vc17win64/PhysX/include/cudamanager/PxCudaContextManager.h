@@ -103,8 +103,8 @@ protected:
 
 @see NxCudaInteropRegisterFlag
 */
-typedef PxFlags<PxCudaInteropRegisterFlag::Enum, uint32_t> PxCudaInteropRegisterFlags;
-PX_FLAGS_OPERATORS(PxCudaInteropRegisterFlag::Enum, uint32_t)
+typedef PxFlags<PxCudaInteropRegisterFlag::Enum, PxU32> PxCudaInteropRegisterFlags;
+PX_FLAGS_OPERATORS(PxCudaInteropRegisterFlag::Enum, PxU32)
 
 //! \brief Descriptor used to create a PxCudaContextManager
 class PxCudaContextManagerDesc
@@ -435,7 +435,7 @@ public:
      * \param buffer [IN] GLuint buffer index to be mapped to cuda
      * \param flags [IN] cuda interop registration flags
      */
-    virtual bool registerResourceInCudaGL(CUgraphicsResource& resource, uint32_t buffer, PxCudaInteropRegisterFlags flags = PxCudaInteropRegisterFlags()) = 0;
+    virtual bool registerResourceInCudaGL(CUgraphicsResource& resource, PxU32 buffer, PxCudaInteropRegisterFlags flags = PxCudaInteropRegisterFlags()) = 0;
 
      /**
      * \brief Register a rendering resource with CUDA

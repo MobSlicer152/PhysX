@@ -59,7 +59,7 @@ static inline void marshalSingleT(const uint8_t* srcData, uint8_t* destData)
 }
 
 template <typename smtype, typename lgtype>
-static inline void marshalBlockT(const uint8_t* srcData, uint8_t* destData, uint32_t numBytes)
+static inline void marshalBlockT(const uint8_t* srcData, uint8_t* destData, PxU32 numBytes)
 {
 	for(const uint8_t* item = srcData, *end = srcData + numBytes; item < end;
 	    item += sizeof(smtype), destData += sizeof(lgtype))
@@ -70,12 +70,12 @@ static inline void marshalBlockT(const uint8_t* srcData, uint8_t* destData, uint
 	template <>                                                                                                        \
 	struct PvdMarshalling<smtype, lgtype>                                                                              \
 	{                                                                                                                  \
-		uint32_t canMarshal;                                                                                           \
+		PxU32 canMarshal;                                                                                           \
 		static void marshalSingle(const uint8_t* srcData, uint8_t* destData)                                           \
 		{                                                                                                              \
 			marshalSingleT<smtype, lgtype>(srcData, destData);                                                         \
 		}                                                                                                              \
-		static void marshalBlock(const uint8_t* srcData, uint8_t* destData, uint32_t numBytes)                         \
+		static void marshalBlock(const uint8_t* srcData, uint8_t* destData, PxU32 numBytes)                         \
 		{                                                                                                              \
 			marshalBlockT<smtype, lgtype>(srcData, destData, numBytes);                                                \
 		}                                                                                                              \
@@ -84,8 +84,8 @@ static inline void marshalBlockT(const uint8_t* srcData, uint8_t* destData, uint
 // define marshalling tables.
 PVD_TYPE_MARSHALLER(int8_t, int16_t)
 PVD_TYPE_MARSHALLER(int8_t, uint16_t)
-PVD_TYPE_MARSHALLER(int8_t, int32_t)
-PVD_TYPE_MARSHALLER(int8_t, uint32_t)
+PVD_TYPE_MARSHALLER(int8_t, PxI32)
+PVD_TYPE_MARSHALLER(int8_t, PxU32)
 PVD_TYPE_MARSHALLER(int8_t, int64_t)
 PVD_TYPE_MARSHALLER(int8_t, uint64_t)
 PVD_TYPE_MARSHALLER(int8_t, PvdF32)
@@ -93,40 +93,40 @@ PVD_TYPE_MARSHALLER(int8_t, PvdF64)
 
 PVD_TYPE_MARSHALLER(uint8_t, int16_t)
 PVD_TYPE_MARSHALLER(uint8_t, uint16_t)
-PVD_TYPE_MARSHALLER(uint8_t, int32_t)
-PVD_TYPE_MARSHALLER(uint8_t, uint32_t)
+PVD_TYPE_MARSHALLER(uint8_t, PxI32)
+PVD_TYPE_MARSHALLER(uint8_t, PxU32)
 PVD_TYPE_MARSHALLER(uint8_t, int64_t)
 PVD_TYPE_MARSHALLER(uint8_t, uint64_t)
 PVD_TYPE_MARSHALLER(uint8_t, PvdF32)
 PVD_TYPE_MARSHALLER(uint8_t, PvdF64)
 
-PVD_TYPE_MARSHALLER(int16_t, int32_t)
-PVD_TYPE_MARSHALLER(int16_t, uint32_t)
+PVD_TYPE_MARSHALLER(int16_t, PxI32)
+PVD_TYPE_MARSHALLER(int16_t, PxU32)
 PVD_TYPE_MARSHALLER(int16_t, int64_t)
 PVD_TYPE_MARSHALLER(int16_t, uint64_t)
 PVD_TYPE_MARSHALLER(int16_t, PvdF32)
 PVD_TYPE_MARSHALLER(int16_t, PvdF64)
 
-PVD_TYPE_MARSHALLER(uint16_t, int32_t)
-PVD_TYPE_MARSHALLER(uint16_t, uint32_t)
+PVD_TYPE_MARSHALLER(uint16_t, PxI32)
+PVD_TYPE_MARSHALLER(uint16_t, PxU32)
 PVD_TYPE_MARSHALLER(uint16_t, int64_t)
 PVD_TYPE_MARSHALLER(uint16_t, uint64_t)
 PVD_TYPE_MARSHALLER(uint16_t, PvdF32)
 PVD_TYPE_MARSHALLER(uint16_t, PvdF64)
 
-PVD_TYPE_MARSHALLER(int32_t, int64_t)
-PVD_TYPE_MARSHALLER(int32_t, uint64_t)
-PVD_TYPE_MARSHALLER(int32_t, PvdF64)
-PVD_TYPE_MARSHALLER(int32_t, PvdF32)
+PVD_TYPE_MARSHALLER(PxI32, int64_t)
+PVD_TYPE_MARSHALLER(PxI32, uint64_t)
+PVD_TYPE_MARSHALLER(PxI32, PvdF64)
+PVD_TYPE_MARSHALLER(PxI32, PvdF32)
 
-PVD_TYPE_MARSHALLER(uint32_t, int64_t)
-PVD_TYPE_MARSHALLER(uint32_t, uint64_t)
-PVD_TYPE_MARSHALLER(uint32_t, PvdF64)
-PVD_TYPE_MARSHALLER(uint32_t, PvdF32)
+PVD_TYPE_MARSHALLER(PxU32, int64_t)
+PVD_TYPE_MARSHALLER(PxU32, uint64_t)
+PVD_TYPE_MARSHALLER(PxU32, PvdF64)
+PVD_TYPE_MARSHALLER(PxU32, PvdF32)
 
 PVD_TYPE_MARSHALLER(PvdF32, PvdF64)
-PVD_TYPE_MARSHALLER(PvdF32, uint32_t)
-PVD_TYPE_MARSHALLER(PvdF32, int32_t)
+PVD_TYPE_MARSHALLER(PvdF32, PxU32)
+PVD_TYPE_MARSHALLER(PvdF32, PxI32)
 
 PVD_TYPE_MARSHALLER(uint64_t, PvdF64)
 PVD_TYPE_MARSHALLER(int64_t, PvdF64)
@@ -140,7 +140,7 @@ static inline bool getMarshalOperators(TSingleMarshaller&, TBlockMarshaller&, TM
 }
 
 template <typename TMarshaller>
-static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshaller& block, TMarshaller&, uint32_t)
+static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshaller& block, TMarshaller&, PxU32)
 {
 	single = TMarshaller::marshalSingle;
 	block = TMarshaller::marshalBlock;
@@ -157,7 +157,7 @@ static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshall
 }
 
 template <typename smtype>
-static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshaller& block, int32_t lgtypeId)
+static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshaller& block, PxI32 lgtypeId)
 {
 	switch(lgtypeId)
 	{
@@ -169,10 +169,10 @@ static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshall
 		return getMarshalOperators<smtype, int16_t>(single, block);
 	case PvdBaseType::PvdU16: // uint16_t:
 		return getMarshalOperators<smtype, uint16_t>(single, block);
-	case PvdBaseType::PvdI32: // int32_t:
-		return getMarshalOperators<smtype, int32_t>(single, block);
-	case PvdBaseType::PvdU32: // uint32_t:
-		return getMarshalOperators<smtype, uint32_t>(single, block);
+	case PvdBaseType::PvdI32: // PxI32:
+		return getMarshalOperators<smtype, PxI32>(single, block);
+	case PvdBaseType::PvdU32: // PxU32:
+		return getMarshalOperators<smtype, PxU32>(single, block);
 	case PvdBaseType::PvdI64: // int64_t:
 		return getMarshalOperators<smtype, int64_t>(single, block);
 	case PvdBaseType::PvdU64: // uint64_t:
@@ -185,8 +185,8 @@ static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshall
 	return false;
 }
 
-static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshaller& block, int32_t smtypeId,
-                                       int32_t lgtypeId)
+static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshaller& block, PxI32 smtypeId,
+                                       PxI32 lgtypeId)
 {
 	switch(smtypeId)
 	{
@@ -198,10 +198,10 @@ static inline bool getMarshalOperators(TSingleMarshaller& single, TBlockMarshall
 		return getMarshalOperators<int16_t>(single, block, lgtypeId);
 	case PvdBaseType::PvdU16: // uint16_t:
 		return getMarshalOperators<uint16_t>(single, block, lgtypeId);
-	case PvdBaseType::PvdI32: // int32_t:
-		return getMarshalOperators<int32_t>(single, block, lgtypeId);
-	case PvdBaseType::PvdU32: // uint32_t:
-		return getMarshalOperators<uint32_t>(single, block, lgtypeId);
+	case PvdBaseType::PvdI32: // PxI32:
+		return getMarshalOperators<PxI32>(single, block, lgtypeId);
+	case PvdBaseType::PvdU32: // PxU32:
+		return getMarshalOperators<PxU32>(single, block, lgtypeId);
 	case PvdBaseType::PvdI64: // int64_t:
 		return getMarshalOperators<int64_t>(single, block, lgtypeId);
 	case PvdBaseType::PvdU64: // uint64_t:

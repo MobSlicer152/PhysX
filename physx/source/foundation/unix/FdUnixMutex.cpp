@@ -141,7 +141,7 @@ void PxMutexImpl::unlock()
 	PX_UNUSED(err);
 }
 
-uint32_t PxMutexImpl::getSize()
+PxU32 PxMutexImpl::getSize()
 {
 	return sizeof(MutexUnixImpl);
 }

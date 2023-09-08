@@ -60,8 +60,8 @@ public:
 
 	uint8_t* OMNI_PVD_CALL getAttributeDataPointer();
 	OmniPvdAttributeDataType OMNI_PVD_CALL getAttributeDataType();
-	uint32_t OMNI_PVD_CALL getAttributeDataLength();
-	uint32_t OMNI_PVD_CALL getAttributeNumberElements();
+	PxU32 OMNI_PVD_CALL getAttributeDataLength();
+	PxU32 OMNI_PVD_CALL getAttributeNumberElements();
 	OmniPvdClassHandle OMNI_PVD_CALL getAttributeClassHandle();
 	
 	uint8_t OMNI_PVD_CALL getAttributeNumberHandles();
@@ -71,10 +71,10 @@ public:
 	uint64_t OMNI_PVD_CALL getFrameTimeStop();
 	
 	OmniPvdClassHandle OMNI_PVD_CALL getEnumClassHandle();
-	uint32_t OMNI_PVD_CALL getEnumValue();
+	PxU32 OMNI_PVD_CALL getEnumValue();
 
 	// Internal helper
-	void readLongDataFromStream(uint32_t streamByteLen);
+	void readLongDataFromStream(PxU32 streamByteLen);
 
 	OmniPvdLog mLog;
 
@@ -93,9 +93,9 @@ public:
 	OmniPvdContextHandle mCmdContextHandle;
 	OmniPvdObjectHandle mCmdObjectHandle;
 
-	uint32_t mCmdClassHandle;
-	uint32_t mCmdBaseClassHandle;
-	uint32_t mCmdAttributeHandle;
+	PxU32 mCmdClassHandle;
+	PxU32 mCmdBaseClassHandle;
+	PxU32 mCmdAttributeHandle;
 		
 	////////////////////////////////////////////////////////////////////////////////
 	// TODO : take care of buffer length limit at read time!
@@ -110,9 +110,9 @@ public:
 
 	uint8_t* mCmdAttributeDataPtr;
 	OmniPvdAttributeDataType mCmdAttributeDataType;
-	uint32_t mCmdAttributeDataLen;
-	uint32_t mCmdAttributeNbrFields;
-	uint32_t mCmdEnumValue;
+	PxU32 mCmdAttributeDataLen;
+	PxU32 mCmdAttributeNbrFields;
+	PxU32 mCmdEnumValue;
 	OmniPvdClassHandle mCmdEnumClassHandle;
 	OmniPvdClassHandle mCmdAttributeClassHandle;
 
@@ -123,7 +123,7 @@ public:
 	uint64_t mCmdFrameTimeStop;
 
 	uint8_t *mDataBuffer;
-	uint32_t mDataBuffAllocatedLen;
+	PxU32 mDataBuffAllocatedLen;
 
 	bool mIsReadingStarted;
 	uint8_t mReadBaseClassHandle;

@@ -406,7 +406,7 @@ bool NpScene::fetchResultsStart(const PxContactPairHeader*& contactPairs, PxU32&
 	return true;
 }
 
-void NpContactCallbackTask::setData(NpScene* scene, const PxContactPairHeader* contactPairHeaders, const uint32_t nbContactPairHeaders)
+void NpContactCallbackTask::setData(NpScene* scene, const PxContactPairHeader* contactPairHeaders, const PxU32 nbContactPairHeaders)
 {
 	mScene = scene;
 	mContactPairHeaders = contactPairHeaders;
@@ -420,7 +420,7 @@ void NpContactCallbackTask::run()
 		return;
 
 	mScene->lockRead();
-	for (uint32_t i = 0; i<mNbContactPairHeaders; ++i)
+	for (PxU32 i = 0; i<mNbContactPairHeaders; ++i)
 	{
 		const PxContactPairHeader& pairHeader = mContactPairHeaders[i];
 		callback->onContact(pairHeader, pairHeader.pairs, pairHeader.nbPairs);

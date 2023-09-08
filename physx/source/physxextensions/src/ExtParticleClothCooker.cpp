@@ -75,7 +75,7 @@ struct Edge
 class EdgeHash
 {
 public:
-	uint32_t operator()(const Edge& e) const
+	PxU32 operator()(const Edge& e) const
 	{
 		return PxComputeHash(e.a) ^ PxComputeHash(e.b);
 	}

@@ -138,7 +138,7 @@ namespace physx { namespace profile {
 	//We can enlarge the current compression value, but we can't make is smaller.
 	//In this way, we can use this function to find the smallest compression setting
 	//that will work for a set of values.
-	inline EventStreamCompressionFlags::Enum findCompressionValue( uint32_t inValue, EventStreamCompressionFlags::Enum inCurrentCompressionValue = EventStreamCompressionFlags::U8 )
+	inline EventStreamCompressionFlags::Enum findCompressionValue( PxU32 inValue, EventStreamCompressionFlags::Enum inCurrentCompressionValue = EventStreamCompressionFlags::U8 )
 	{
 		PX_ASSERT_WITH_MESSAGE( (inCurrentCompressionValue >= EventStreamCompressionFlags::U8) &&
 								(inCurrentCompressionValue <= EventStreamCompressionFlags::U64),
@@ -230,9 +230,9 @@ namespace physx { namespace profile {
 		}
 
 		template<typename TStreamType>
-		inline uint32_t streamify( TStreamType& inStream )
+		inline PxU32 streamify( TStreamType& inStream )
 		{
-			uint32_t writtenSize = inStream.streamify( "EventType", mEventType ); 
+			PxU32 writtenSize = inStream.streamify( "EventType", mEventType ); 
 			writtenSize += inStream.streamify("StreamOptions", mStreamOptions); //Timestamp compression, etc.
 			writtenSize += inStream.streamify("EventId", mEventId);	//16 bit per-event-system event id
 			return writtenSize;
@@ -257,7 +257,7 @@ namespace physx { namespace profile {
 			return mTensOfNanoSeconds == other.mTensOfNanoSeconds;
 		}
 		template<typename TStreamType> 
-		uint32_t streamify( TStreamType& inStream, const EventHeader& inHeader )
+		PxU32 streamify( TStreamType& inStream, const EventHeader& inHeader )
 		{
 			return inStream.streamify( "TensOfNanoSeconds", mTensOfNanoSeconds, inHeader.getTimestampCompressionFlags() );
 		}
@@ -268,9 +268,9 @@ namespace physx { namespace profile {
 			mTensOfNanoSeconds = inHeader.compressTimestamp( inLastTimestamp, mTensOfNanoSeconds );
 		}
 
-		uint32_t getEventSize(const EventHeader& inHeader)
+		PxU32 getEventSize(const EventHeader& inHeader)
 		{	
-			uint32_t size = 0;
+			PxU32 size = 0;
 			switch (inHeader.getTimestampCompressionFlags())
 			{
 			case EventStreamCompressionFlags::U8:
@@ -296,7 +296,7 @@ namespace physx { namespace profile {
 		void init( uint64_t inTs = 0 ) { RelativeProfileEvent::init( inTs ); }
 		void init( const RelativeStartEvent& inData ) { RelativeProfileEvent::init( inData ); }
 		template<typename THandlerType>
-		void handle( THandlerType* inHdlr, uint16_t eventId, uint32_t thread, uint64_t context, uint8_t inCpuId, uint8_t threadPriority ) const
+		void handle( THandlerType* inHdlr, uint16_t eventId, PxU32 thread, uint64_t context, uint8_t inCpuId, uint8_t threadPriority ) const
 		{
 			inHdlr->onStartEvent( PxProfileEventId( eventId ), thread, context, inCpuId, threadPriority, mTensOfNanoSeconds );
 		}
@@ -310,7 +310,7 @@ namespace physx { namespace profile {
 		void init( uint64_t inTs = 0 ) { RelativeProfileEvent::init( inTs ); }
 		void init( const RelativeStopEvent& inData ) { RelativeProfileEvent::init( inData ); }
 		template<typename THandlerType>
-		void handle( THandlerType* inHdlr, uint16_t eventId, uint32_t thread, uint64_t context, uint8_t inCpuId, uint8_t threadPriority ) const
+		void handle( THandlerType* inHdlr, uint16_t eventId, PxU32 thread, uint64_t context, uint8_t inCpuId, uint8_t threadPriority ) const
 		{
 			inHdlr->onStopEvent( PxProfileEventId( eventId ), thread, context, inCpuId, threadPriority, mTensOfNanoSeconds );
 		}
@@ -321,11 +321,11 @@ namespace physx { namespace profile {
 	struct EventContextInformation
 	{
 		uint64_t mContextId;
-		uint32_t mThreadId; //Thread this event was taken from
+		PxU32 mThreadId; //Thread this event was taken from
 		uint8_t  mThreadPriority;
 		uint8_t  mCpuId;
 
-		void init( uint32_t inThreadId = UINT32_MAX
+		void init( PxU32 inThreadId = UINT32_MAX
 								, uint64_t inContextId = (uint64_t(-1))
 								, uint8_t inPriority = UINT8_MAX
 								, uint8_t inCpuId = UINT8_MAX )
@@ -345,9 +345,9 @@ namespace physx { namespace profile {
 		}
 
 		template<typename TStreamType> 
-		uint32_t streamify( TStreamType& inStream, EventStreamCompressionFlags::Enum inContextIdFlags )
+		PxU32 streamify( TStreamType& inStream, EventStreamCompressionFlags::Enum inContextIdFlags )
 		{
-			uint32_t writtenSize = inStream.streamify( "ThreadId", mThreadId );
+			PxU32 writtenSize = inStream.streamify( "ThreadId", mThreadId );
 			writtenSize += inStream.streamify("ContextId", mContextId, inContextIdFlags);
 			writtenSize += inStream.streamify("ThreadPriority", mThreadPriority);
 			writtenSize += inStream.streamify("CpuId", mCpuId);
@@ -374,7 +374,7 @@ namespace physx { namespace profile {
 	{
 		EventContextInformation mContextInformation;
 		RelativeProfileEvent	mTimeData; //timestamp in seconds.
-		void init( uint32_t inThreadId, uint64_t inContextId, uint8_t inCpuId, uint8_t inPriority, uint64_t inTs )
+		void init( PxU32 inThreadId, uint64_t inContextId, uint8_t inCpuId, uint8_t inPriority, uint64_t inTs )
 		{
 			mContextInformation.init( inThreadId, inContextId, inPriority, inCpuId );
 			mTimeData.init( inTs );
@@ -393,16 +393,16 @@ namespace physx { namespace profile {
 		}
 
 		template<typename TStreamType> 
-		uint32_t streamify( TStreamType& inStream, const EventHeader& inHeader )
+		PxU32 streamify( TStreamType& inStream, const EventHeader& inHeader )
 		{
-			uint32_t writtenSize = mContextInformation.streamify(inStream, inHeader.getContextIdCompressionFlags());
+			PxU32 writtenSize = mContextInformation.streamify(inStream, inHeader.getContextIdCompressionFlags());
 			writtenSize += mTimeData.streamify(inStream, inHeader);
 			return writtenSize;
 		}
 
-		uint32_t getEventSize(const EventHeader& inHeader)
+		PxU32 getEventSize(const EventHeader& inHeader)
 		{
-			uint32_t eventSize = 0;
+			PxU32 eventSize = 0;
 			// time is stored depending on the conpress flag mTimeData.streamify(inStream, inHeader);
 			switch (inHeader.getTimestampCompressionFlags())
 			{
@@ -422,7 +422,7 @@ namespace physx { namespace profile {
 
 			// context information
 			// mContextInformation.streamify( inStream, inHeader.getContextIdCompressionFlags() );
-			eventSize += 6;  // 		uint32_t mThreadId; uint8_t  mThreadPriority; uint8_t  mCpuId;
+			eventSize += 6;  // 		PxU32 mThreadId; uint8_t  mThreadPriority; uint8_t  mCpuId;
 			switch (inHeader.getContextIdCompressionFlags())
 			{
 			case EventStreamCompressionFlags::U8:
@@ -455,7 +455,7 @@ namespace physx { namespace profile {
 	//profile start event starts the profile session.
 	struct StartEvent : public ProfileEvent
 	{
-		void init( uint32_t inThreadId = 0, uint64_t inContextId = 0, uint8_t inCpuId = 0, uint8_t inPriority = 0, uint64_t inTensOfNanoSeconds = 0 ) 
+		void init( PxU32 inThreadId = 0, uint64_t inContextId = 0, uint8_t inCpuId = 0, uint8_t inPriority = 0, uint64_t inTensOfNanoSeconds = 0 ) 
 		{
 			ProfileEvent::init( inThreadId, inContextId, inCpuId, inPriority, inTensOfNanoSeconds );
 		}
@@ -473,7 +473,7 @@ namespace physx { namespace profile {
 	//Profile stop event stops the profile session.
 	struct StopEvent : public ProfileEvent
 	{
-		void init( uint32_t inThreadId = 0, uint64_t inContextId = 0, uint8_t inCpuId = 0, uint8_t inPriority = 0, uint64_t inTensOfNanoSeconds = 0 )
+		void init( PxU32 inThreadId = 0, uint64_t inContextId = 0, uint8_t inCpuId = 0, uint8_t inPriority = 0, uint64_t inTensOfNanoSeconds = 0 )
 		{
 			ProfileEvent::init( inThreadId, inContextId, inCpuId, inPriority, inTensOfNanoSeconds );
 		}
@@ -491,8 +491,8 @@ namespace physx { namespace profile {
 	{
 		uint64_t	mValue;
 		uint64_t	mContextId;
-		uint32_t	mThreadId;
-		void init( int64_t inValue = 0, uint64_t inContextId = 0, uint32_t inThreadId = 0 )
+		PxU32	mThreadId;
+		void init( int64_t inValue = 0, uint64_t inContextId = 0, PxU32 inThreadId = 0 )
 		{
 			mValue = static_cast<uint64_t>( inValue );
 			mContextId = inContextId;
@@ -515,17 +515,17 @@ namespace physx { namespace profile {
 		}
 
 		template<typename TStreamType> 
-		uint32_t streamify( TStreamType& inStream, const EventHeader& inHeader )
+		PxU32 streamify( TStreamType& inStream, const EventHeader& inHeader )
 		{
-			uint32_t writtenSize = inStream.streamify("Value", mValue, inHeader.getTimestampCompressionFlags());
+			PxU32 writtenSize = inStream.streamify("Value", mValue, inHeader.getTimestampCompressionFlags());
 			writtenSize += inStream.streamify("ContextId", mContextId, inHeader.getContextIdCompressionFlags());
 			writtenSize += inStream.streamify("ThreadId", mThreadId);
 			return writtenSize;
 		}
 
-		uint32_t getEventSize(const EventHeader& inHeader)
+		PxU32 getEventSize(const EventHeader& inHeader)
 		{
-			uint32_t eventSize = 0;
+			PxU32 eventSize = 0;
 			// value
 			switch (inHeader.getTimestampCompressionFlags())
 			{
@@ -560,7 +560,7 @@ namespace physx { namespace profile {
 				break;
 			}
 
-			eventSize += 4;  // 		uint32_t mThreadId;
+			eventSize += 4;  // 		PxU32 mThreadId;
 
 			return eventSize;
 		}
@@ -587,13 +587,13 @@ namespace physx { namespace profile {
 		uint64_t mTimestamp;
 		float mTimespan;
 		const uint8_t* mCudaData;
-		uint32_t mBufLen;
-		uint32_t mVersion;
+		PxU32 mBufLen;
+		PxU32 mVersion;
 
 		template<typename TStreamType> 
-		uint32_t streamify( TStreamType& inStream, const EventHeader& )
+		PxU32 streamify( TStreamType& inStream, const EventHeader& )
 		{
-			uint32_t writtenSize = inStream.streamify("Timestamp", mTimestamp);
+			PxU32 writtenSize = inStream.streamify("Timestamp", mTimestamp);
 			writtenSize += inStream.streamify("Timespan", mTimespan);
 			writtenSize += inStream.streamify("CudaData", mCudaData, mBufLen);
 			writtenSize += inStream.streamify("BufLen", mBufLen);

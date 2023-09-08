@@ -42,7 +42,7 @@ namespace physx { namespace profile {
 		PxProfileNames getProfileNames() const { return mNames; }
 	};
 
-	PxProfileZone& PxProfileZone::createProfileZone( PxAllocatorCallback* inAllocator, const char* inSDKName, PxProfileNames inNames, uint32_t inEventBufferByteSize )
+	PxProfileZone& PxProfileZone::createProfileZone( PxAllocatorCallback* inAllocator, const char* inSDKName, PxProfileNames inNames, PxU32 inEventBufferByteSize )
 	{
 		typedef ZoneImpl<PxProfileNameProviderForward> TSDKType;
 		return *PX_PROFILE_NEW( inAllocator, TSDKType ) ( inAllocator, inSDKName, inEventBufferByteSize, PxProfileNameProviderForward( inNames ) );
@@ -53,7 +53,7 @@ namespace physx { namespace profile {
 		return *PX_PROFILE_NEW( inAllocator, ZoneManagerImpl ) ( inAllocator );
 	}
 
-	PxProfileMemoryEventBuffer& PxProfileMemoryEventBuffer::createMemoryEventBuffer( PxAllocatorCallback& inAllocator, uint32_t inBufferSize )
+	PxProfileMemoryEventBuffer& PxProfileMemoryEventBuffer::createMemoryEventBuffer( PxAllocatorCallback& inAllocator, PxU32 inBufferSize )
 	{
 		return *PX_PROFILE_NEW( &inAllocator, PxProfileMemoryEventBufferImpl )( inAllocator, inBufferSize );
 	}

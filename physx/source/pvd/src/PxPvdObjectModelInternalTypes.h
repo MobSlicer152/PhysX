@@ -49,7 +49,7 @@ struct PvdInternalType
 	};
 };
 
-PX_COMPILE_TIME_ASSERT(uint32_t(PvdInternalType::Last) <= uint32_t(PvdBaseType::InternalStop));
+PX_COMPILE_TIME_ASSERT(PxU32(PvdInternalType::Last) <= PxU32(PvdBaseType::InternalStop));
 
 template <typename T>
 struct DataTypeToPvdTypeMap
@@ -95,10 +95,10 @@ DataRef<TDataType> toDataRef(const PxArray<TDataType, TAlloc>& data)
 
 static inline bool safeStrEq(const DataRef<String>& lhs, const DataRef<String>& rhs)
 {
-	uint32_t count = lhs.size();
+	PxU32 count = lhs.size();
 	if(count != rhs.size())
 		return false;
-	for(uint32_t idx = 0; idx < count; ++idx)
+	for(PxU32 idx = 0; idx < count; ++idx)
 		if(!safeStrEq(lhs[idx], rhs[idx]))
 			return false;
 	return true;
@@ -107,7 +107,7 @@ static inline bool safeStrEq(const DataRef<String>& lhs, const DataRef<String>& 
 static inline char* copyStr(const char* str)
 {
 	str = nonNull(str);
-	uint32_t len = static_cast<uint32_t>(strlen(str));
+	PxU32 len = static_cast<PxU32>(strlen(str));
 	char* newData = reinterpret_cast<char*>(PX_ALLOC(len + 1, "string"));
 	PxMemCopy(newData, str, len);
 	newData[len] = 0;

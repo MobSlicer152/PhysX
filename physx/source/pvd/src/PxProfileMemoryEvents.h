@@ -177,9 +177,9 @@ namespace physx { namespace profile {
 	struct StringTableEvent
 	{
 		const char* mString;
-		uint32_t		mHandle;
+		PxU32		mHandle;
 
-		void init( const char* inStr = "", uint32_t inHdl = 0 )
+		void init( const char* inStr = "", PxU32 inHdl = 0 )
 		{
 			mString = inStr;
 			mHandle = inHdl;
@@ -240,14 +240,14 @@ namespace physx { namespace profile {
 
 	struct AllocationEvent : public MemoryEventData
 	{
-		uint32_t mSize;
-		uint32_t mType;
-		uint32_t mFile;
-		uint32_t mLine;
-		void init( size_t size = 0, uint32_t type = 0, uint32_t file = 0, uint32_t line = 0, uint64_t addr = 0 )
+		PxU32 mSize;
+		PxU32 mType;
+		PxU32 mFile;
+		PxU32 mLine;
+		void init( size_t size = 0, PxU32 type = 0, PxU32 file = 0, PxU32 line = 0, uint64_t addr = 0 )
 		{
 			MemoryEventData::init( addr );
-			mSize = static_cast<uint32_t>( size );
+			mSize = static_cast<PxU32>( size );
 			mType = type;
 			mFile = file;
 			mLine = line;
@@ -298,8 +298,8 @@ namespace physx { namespace profile {
 		size_t mSize;
 		const char* mType;
 		const char* mFile;
-		uint32_t mLine;
-		void init( size_t size, const char* type, const char* file, uint32_t line, uint64_t addr )
+		PxU32 mLine;
+		void init( size_t size, const char* type, const char* file, PxU32 line, uint64_t addr )
 		{
 			MemoryEventData::init( addr );
 			mSize = size;

@@ -42,25 +42,25 @@ class PvdOutputStream;
 struct PropertyDescription
 {
 	NamespacedName mOwnerClassName;
-	int32_t mOwnerClassId;
+	PxI32 mOwnerClassId;
 	String mName;
 	String mSemantic;
 	// The datatype this property corresponds to.
-	int32_t mDatatype;
+	PxI32 mDatatype;
 	// The name of the datatype
 	NamespacedName mDatatypeName;
 	// Scalar or array.
 	PropertyType::Enum mPropertyType;
 	// No other property under any class has this id, it is DB-unique.
-	int32_t mPropertyId;
+	PxI32 mPropertyId;
 	// Offset in bytes into the object's data section where this property starts.
-	uint32_t m32BitOffset;
+	PxU32 m32BitOffset;
 	// Offset in bytes into the object's data section where this property starts.
-	uint32_t m64BitOffset;
+	PxU32 m64BitOffset;
 
-	PropertyDescription(const NamespacedName& clsName, int32_t classId, String name, String semantic, int32_t datatype,
-	                    const NamespacedName& datatypeName, PropertyType::Enum propType, int32_t propId,
-	                    uint32_t offset32, uint32_t offset64)
+	PropertyDescription(const NamespacedName& clsName, PxI32 classId, String name, String semantic, PxI32 datatype,
+	                    const NamespacedName& datatypeName, PropertyType::Enum propType, PxI32 propId,
+	                    PxU32 offset32, PxU32 offset64)
 	: mOwnerClassName(clsName)
 	, mOwnerClassId(classId)
 	, mName(name)
@@ -104,8 +104,8 @@ struct PtrOffsetType
 struct PtrOffset
 {
 	PtrOffsetType::Enum mOffsetType;
-	uint32_t mOffset;
-	PtrOffset(PtrOffsetType::Enum type, uint32_t offset) : mOffsetType(type), mOffset(offset)
+	PxU32 mOffset;
+	PtrOffset(PtrOffsetType::Enum type, PxU32 offset) : mOffsetType(type), mOffset(offset)
 	{
 	}
 	PtrOffset() : mOffsetType(PtrOffsetType::UnknownOffset), mOffset(0)
@@ -113,10 +113,10 @@ struct PtrOffset
 	}
 };
 
-inline uint32_t align(uint32_t offset, uint32_t alignment)
+inline PxU32 align(PxU32 offset, PxU32 alignment)
 {
-	uint32_t startOffset = offset;
-	uint32_t alignmentMask = ~(alignment - 1);
+	PxU32 startOffset = offset;
+	PxU32 alignmentMask = ~(alignment - 1);
 	offset = (offset + alignment - 1) & alignmentMask;
 	PX_ASSERT(offset >= startOffset && (offset % alignment) == 0);
 	(void)startOffset;
@@ -126,11 +126,11 @@ inline uint32_t align(uint32_t offset, uint32_t alignment)
 struct ClassDescriptionSizeInfo
 {
 	// The size of the data section of this object, padded to alignment.
-	uint32_t mByteSize;
+	PxU32 mByteSize;
 	// The last data member goes to here.
-	uint32_t mDataByteSize;
+	PxU32 mDataByteSize;
 	// Alignment in bytes of the data section of this object.
-	uint32_t mAlignment;
+	PxU32 mAlignment;
 	// the offsets of string handles in the binary value of this class
 	DataRef<PtrOffset> mPtrOffsets;
 	ClassDescriptionSizeInfo() : mByteSize(0), mDataByteSize(0), mAlignment(0)
@@ -142,18 +142,18 @@ struct ClassDescription
 {
 	NamespacedName mName;
 	// No other class has this id, it is DB-unique
-	int32_t mClassId;
+	PxI32 mClassId;
 	// Only single derivation supported.
-	int32_t mBaseClass;
+	PxI32 mBaseClass;
 	// If this class has properties that are of uniform type, then we note that.
 	// This means that when deserialization an array of these objects we can just use
 	// single function to endian convert the entire mess at once.
-	int32_t mPackedUniformWidth;
+	PxI32 mPackedUniformWidth;
 	// If this class is composed uniformly of members of a given type
 	// Or all of its properties are composed uniformly of members of
 	// a give ntype, then this class's packed type is that type.
 	// PxTransform's packed type would be float.
-	int32_t mPackedClassType;
+	PxI32 mPackedClassType;
 	// 0: 32Bit 1: 64Bit
 	ClassDescriptionSizeInfo mSizeInfo[2];
 	// No further property additions allowed.
@@ -162,7 +162,7 @@ struct ClassDescription
 	// separately deleted.
 	bool mRequiresDestruction;
 
-	ClassDescription(NamespacedName name, int32_t id)
+	ClassDescription(NamespacedName name, PxI32 id)
 	: mName(name)
 	, mClassId(id)
 	, mBaseClass(-1)
@@ -188,16 +188,16 @@ struct ClassDescription
 	{
 		return mSizeInfo[1];
 	}
-	uint32_t& get32BitSize()
+	PxU32& get32BitSize()
 	{
 		return get32BitSizeInfo().mByteSize;
 	}
-	uint32_t& get64BitSize()
+	PxU32& get64BitSize()
 	{
 		return get64BitSizeInfo().mByteSize;
 	}
 
-	uint32_t get32BitSize() const
+	PxU32 get32BitSize() const
 	{
 		return mSizeInfo[0].mByteSize;
 	}
@@ -205,7 +205,7 @@ struct ClassDescription
 	{
 		return mSizeInfo[(sizeof(void*) >> 2) - 1];
 	}
-	uint32_t getNativeSize() const
+	PxU32 getNativeSize() const
 	{
 		return getNativeSizeInfo().mByteSize;
 	}
@@ -213,14 +213,14 @@ struct ClassDescription
 
 struct MarshalQueryResult
 {
-	int32_t srcType;
-	int32_t dstType;
+	PxI32 srcType;
+	PxI32 dstType;
 	// If canMarshal != needsMarshalling we have a problem.
 	bool canMarshal;
 	bool needsMarshalling;
 	// Non null if marshalling is possible.
 	TBlockMarshaller marshaller;
-	MarshalQueryResult(int32_t _srcType = -1, int32_t _dstType = -1, bool _canMarshal = false, bool _needs = false,
+	MarshalQueryResult(PxI32 _srcType = -1, PxI32 _dstType = -1, bool _canMarshal = false, bool _needs = false,
 	                   TBlockMarshaller _m = NULL)
 	: srcType(_srcType), dstType(_dstType), canMarshal(_canMarshal), needsMarshalling(_needs), marshaller(_m)
 	{
@@ -232,17 +232,17 @@ struct PropertyMessageEntry
 	PropertyDescription mProperty;
 	NamespacedName mDatatypeName;
 	// datatype of the data in the message.
-	int32_t mDatatypeId;
+	PxI32 mDatatypeId;
 	// where in the message this property starts.
-	uint32_t mMessageOffset;
+	PxU32 mMessageOffset;
 	// size of this entry object
-	uint32_t mByteSize;
+	PxU32 mByteSize;
 
 	// If the chain of properties doesn't have any array properties this indicates the
-	uint32_t mDestByteSize;
+	PxU32 mDestByteSize;
 
-	PropertyMessageEntry(PropertyDescription propName, NamespacedName dtypeName, int32_t dtype, uint32_t messageOff,
-	                     uint32_t byteSize, uint32_t destByteSize)
+	PropertyMessageEntry(PropertyDescription propName, NamespacedName dtypeName, PxI32 dtype, PxU32 messageOff,
+	                     PxU32 byteSize, PxU32 destByteSize)
 	: mProperty(propName)
 	, mDatatypeName(dtypeName)
 	, mDatatypeId(dtype)
@@ -261,15 +261,15 @@ struct PropertyMessageDescription
 {
 	NamespacedName mClassName;
 	// No other class has this id, it is DB-unique
-	int32_t mClassId;
+	PxI32 mClassId;
 	NamespacedName mMessageName;
-	int32_t mMessageId;
+	PxI32 mMessageId;
 	DataRef<PropertyMessageEntry> mProperties;
-	uint32_t mMessageByteSize;
+	PxU32 mMessageByteSize;
 	// Offsets into the property message where const char* items are.
-	DataRef<uint32_t> mStringOffsets;
-	PropertyMessageDescription(const NamespacedName& nm, int32_t clsId, const NamespacedName& msgName, int32_t msgId,
-	                           uint32_t msgSize)
+	DataRef<PxU32> mStringOffsets;
+	PropertyMessageDescription(const NamespacedName& nm, PxI32 clsId, const NamespacedName& msgName, PxI32 msgId,
+	                           PxU32 msgSize)
 	: mClassName(nm), mClassId(clsId), mMessageName(msgName), mMessageId(msgId), mMessageByteSize(msgSize)
 	{
 	}
@@ -289,8 +289,8 @@ class StringTable
 	}
 
   public:
-	virtual uint32_t getNbStrs() = 0;
-	virtual uint32_t getStrs(const char** outStrs, uint32_t bufLen, uint32_t startIdx = 0) = 0;
+	virtual PxU32 getNbStrs() = 0;
+	virtual PxU32 getStrs(const char** outStrs, PxU32 bufLen, PxU32 startIdx = 0) = 0;
 	virtual const char* registerStr(const char* str, bool& outAdded) = 0;
 	const char* registerStr(const char* str)
 	{
@@ -298,7 +298,7 @@ class StringTable
 		return registerStr(str, ignored);
 	}
 	virtual StringHandle strToHandle(const char* str) = 0;
-	virtual const char* handleToStr(uint32_t hdl) = 0;
+	virtual const char* handleToStr(PxU32 hdl) = 0;
 	virtual void release() = 0;
 
 	static StringTable& create();
@@ -387,11 +387,11 @@ class PvdObjectModelMetaData
 	{
 		return findClass(getPvdNamespacedNameForType<TDataType>());
 	}
-	virtual Option<ClassDescription> getClass(int32_t classId) const = 0;
-	virtual ClassDescription* getClassPtr(int32_t classId) const = 0;
+	virtual Option<ClassDescription> getClass(PxI32 classId) const = 0;
+	virtual ClassDescription* getClassPtr(PxI32 classId) const = 0;
 
-	virtual Option<ClassDescription> getParentClass(int32_t classId) const = 0;
-	bool isDerivedFrom(int32_t classId, int32_t parentClass) const
+	virtual Option<ClassDescription> getParentClass(PxI32 classId) const = 0;
+	bool isDerivedFrom(PxI32 classId, PxI32 parentClass) const
 	{
 		if(classId == parentClass)
 			return true;
@@ -405,14 +405,14 @@ class PvdObjectModelMetaData
 		return false;
 	}
 
-	virtual void lockClass(int32_t classId) = 0;
+	virtual void lockClass(PxI32 classId) = 0;
 
-	virtual uint32_t getNbClasses() const = 0;
-	virtual uint32_t getClasses(ClassDescription* outClasses, uint32_t requestCount, uint32_t startIndex = 0) const = 0;
+	virtual PxU32 getNbClasses() const = 0;
+	virtual PxU32 getClasses(ClassDescription* outClasses, PxU32 requestCount, PxU32 startIndex = 0) const = 0;
 
 	// Create a nested property.
 	// This way you can have obj.p.x without explicity defining the class p.
-	virtual Option<PropertyDescription> createProperty(int32_t classId, String name, String semantic, int32_t datatype,
+	virtual Option<PropertyDescription> createProperty(PxI32 classId, String name, String semantic, PxI32 datatype,
 	                                                   PropertyType::Enum propertyType = PropertyType::Scalar) = 0;
 	Option<PropertyDescription> createProperty(NamespacedName clsId, String name, String semantic, NamespacedName dtype,
 	                                           PropertyType::Enum propertyType = PropertyType::Scalar)
@@ -424,42 +424,42 @@ class PvdObjectModelMetaData
 	{
 		return createProperty(findClass(clsId)->mClassId, name, "", findClass(dtype)->mClassId, propertyType);
 	}
-	Option<PropertyDescription> createProperty(int32_t clsId, String name, int32_t dtype,
+	Option<PropertyDescription> createProperty(PxI32 clsId, String name, PxI32 dtype,
 	                                           PropertyType::Enum propertyType = PropertyType::Scalar)
 	{
 		return createProperty(clsId, name, "", dtype, propertyType);
 	}
 	template <typename TDataType>
-	Option<PropertyDescription> createProperty(int32_t clsId, String name, String semantic = "",
+	Option<PropertyDescription> createProperty(PxI32 clsId, String name, String semantic = "",
 	                                           PropertyType::Enum propertyType = PropertyType::Scalar)
 	{
 		return createProperty(clsId, name, semantic, getPvdNamespacedNameForType<TDataType>(), propertyType);
 	}
 	virtual Option<PropertyDescription> findProperty(const NamespacedName& cls, String prop) const = 0;
-	virtual Option<PropertyDescription> findProperty(int32_t clsId, String prop) const = 0;
-	virtual Option<PropertyDescription> getProperty(int32_t propId) const = 0;
-	virtual void setNamedPropertyValues(DataRef<NamedValue> values, int32_t propId) = 0;
+	virtual Option<PropertyDescription> findProperty(PxI32 clsId, String prop) const = 0;
+	virtual Option<PropertyDescription> getProperty(PxI32 propId) const = 0;
+	virtual void setNamedPropertyValues(DataRef<NamedValue> values, PxI32 propId) = 0;
 	// for enumerations and flags.
-	virtual DataRef<NamedValue> getNamedPropertyValues(int32_t propId) const = 0;
+	virtual DataRef<NamedValue> getNamedPropertyValues(PxI32 propId) const = 0;
 
-	virtual uint32_t getNbProperties(int32_t classId) const = 0;
-	virtual uint32_t getProperties(int32_t classId, PropertyDescription* outBuffer, uint32_t bufCount,
-	                               uint32_t startIdx = 0) const = 0;
+	virtual PxU32 getNbProperties(PxI32 classId) const = 0;
+	virtual PxU32 getProperties(PxI32 classId, PropertyDescription* outBuffer, PxU32 bufCount,
+	                               PxU32 startIdx = 0) const = 0;
 
 	// Does one cls id differ marshalling to another and if so return the functions to do it.
-	virtual MarshalQueryResult checkMarshalling(int32_t srcClsId, int32_t dstClsId) const = 0;
+	virtual MarshalQueryResult checkMarshalling(PxI32 srcClsId, PxI32 dstClsId) const = 0;
 
 	// messages and classes are stored in separate maps, so a property message can have the same name as a class.
 	virtual Option<PropertyMessageDescription> createPropertyMessage(const NamespacedName& cls,
 	                                                                 const NamespacedName& msgName,
 	                                                                 DataRef<PropertyMessageArg> entries,
-	                                                                 uint32_t messageSize) = 0;
+	                                                                 PxU32 messageSize) = 0;
 	virtual Option<PropertyMessageDescription> findPropertyMessage(const NamespacedName& msgName) const = 0;
-	virtual Option<PropertyMessageDescription> getPropertyMessage(int32_t msgId) const = 0;
+	virtual Option<PropertyMessageDescription> getPropertyMessage(PxI32 msgId) const = 0;
 
-	virtual uint32_t getNbPropertyMessages() const = 0;
-	virtual uint32_t getPropertyMessages(PropertyMessageDescription* msgBuf, uint32_t bufLen,
-	                                     uint32_t startIdx = 0) const = 0;
+	virtual PxU32 getNbPropertyMessages() const = 0;
+	virtual PxU32 getPropertyMessages(PropertyMessageDescription* msgBuf, PxU32 bufLen,
+	                                     PxU32 startIdx = 0) const = 0;
 
 	virtual StringTable& getStringTable() const = 0;
 
@@ -472,7 +472,7 @@ class PvdObjectModelMetaData
 	virtual void addRef() = 0;
 	virtual void release() = 0;
 
-	static uint32_t getCurrentPvdObjectModelVersion();
+	static PxU32 getCurrentPvdObjectModelVersion();
 	static PvdObjectModelMetaData& create();
 	static PvdObjectModelMetaData& create(PvdInputStream& stream);
 };

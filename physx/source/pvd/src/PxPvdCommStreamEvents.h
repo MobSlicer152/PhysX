@@ -46,7 +46,7 @@ struct CommStreamFlagTypes
 	};
 };
 
-typedef PxFlags<CommStreamFlagTypes::Enum, uint32_t> CommStreamFlags;
+typedef PxFlags<CommStreamFlagTypes::Enum, PxU32> CommStreamFlags;
 
 template <typename TDataType>
 struct PvdCommVariableSizedEventCheck
@@ -60,7 +60,7 @@ struct PvdCommVariableSizedEventCheck
 	template <>                                                                                                        \
 	struct PvdCommVariableSizedEventCheck<type>                                                                        \
 	{                                                                                                                  \
-		uint32_t variable_size_check;                                                                                  \
+		PxU32 variable_size_check;                                                                                  \
 	};
 
 struct NameHandleValue;
@@ -211,7 +211,7 @@ class PvdEventSerializer
   public:
 	virtual void streamify(uint8_t& val) = 0;
 	virtual void streamify(uint16_t& val) = 0;
-	virtual void streamify(uint32_t& val) = 0;
+	virtual void streamify(PxU32& val) = 0;
 	virtual void streamify(float& val) = 0;
 	virtual void streamify(uint64_t& val) = 0;
 	virtual void streamify(String& val) = 0;
@@ -226,7 +226,7 @@ class PvdEventSerializer
 	}
 	void streamify(CommStreamFlags& flags)
 	{
-		uint32_t val(flags);
+		PxU32 val(flags);
 		streamify(val);
 		flags = CommStreamFlags(val);
 	}
@@ -272,7 +272,7 @@ class PvdEventSerializer
 		streamify(vec.z);
 	}
 
-	static uint32_t measure(const EventSerializeable& evt);
+	static PxU32 measure(const EventSerializeable& evt);
 };
 
 class EventSerializeable
@@ -292,17 +292,17 @@ class EventSerializeable
 */
 struct StreamInitialization : public EventSerializeable
 {
-	static uint32_t getStreamId()
+	static PxU32 getStreamId()
 	{
 		return 837150850;
 	}
-	static uint32_t getStreamVersion()
+	static PxU32 getStreamVersion()
 	{
 		return 1;
 	}
 
-	uint32_t mStreamId;
-	uint32_t mStreamVersion;
+	PxU32 mStreamId;
+	PxU32 mStreamVersion;
 	uint64_t mTimestampNumerator;
 	uint64_t mTimestampDenominator;
 	CommStreamFlags mStreamFlags;
@@ -327,12 +327,12 @@ struct StreamInitialization : public EventSerializeable
 
 struct EventGroup : public EventSerializeable
 {
-	uint32_t mDataSize; // in bytes, data directly follows this header
-	uint32_t mNumEvents;
+	PxU32 mDataSize; // in bytes, data directly follows this header
+	PxU32 mNumEvents;
 	uint64_t mStreamId;
 	uint64_t mTimestamp;
 
-	EventGroup(uint32_t dataSize = 0, uint32_t numEvents = 0, uint64_t streamId = 0, uint64_t ts = 0)
+	EventGroup(PxU32 dataSize = 0, PxU32 numEvents = 0, uint64_t streamId = 0, uint64_t ts = 0)
 	: mDataSize(dataSize), mNumEvents(numEvents), mStreamId(streamId), mTimestamp(ts)
 	{
 	}
@@ -349,8 +349,8 @@ struct EventGroup : public EventSerializeable
 struct StringHandleEvent : public EventSerializeable
 {
 	String mString;
-	uint32_t mHandle;
-	StringHandleEvent(String str, uint32_t hdl) : mString(str), mHandle(hdl)
+	PxU32 mHandle;
+	StringHandleEvent(String str, PxU32 hdl) : mString(str), mHandle(hdl)
 	{
 	}
 	StringHandleEvent()
@@ -406,8 +406,8 @@ struct DeriveClass : public EventSerializeable
 struct NameHandleValue : public EventSerializeable
 {
 	StringHandle mName;
-	uint32_t mValue;
-	NameHandleValue(StringHandle name, uint32_t val) : mName(name), mValue(val)
+	PxU32 mValue;
+	NameHandleValue(StringHandle name, PxU32 val) : mName(name), mValue(val)
 	{
 	}
 	NameHandleValue()
@@ -456,9 +456,9 @@ struct StreamPropMessageArg : public EventSerializeable
 {
 	StringHandle mPropertyName;
 	StreamNamespacedName mDatatypeName;
-	uint32_t mMessageOffset;
-	uint32_t mByteSize;
-	StreamPropMessageArg(StringHandle pname, StreamNamespacedName dtypeName, uint32_t offset, uint32_t byteSize)
+	PxU32 mMessageOffset;
+	PxU32 mByteSize;
+	StreamPropMessageArg(StringHandle pname, StreamNamespacedName dtypeName, PxU32 offset, PxU32 byteSize)
 	: mPropertyName(pname), mDatatypeName(dtypeName), mMessageOffset(offset), mByteSize(byteSize)
 	{
 	}
@@ -478,17 +478,17 @@ struct StreamPropMessageArg : public EventSerializeable
 
 /*
     virtual PvdError createPropertyMessage( StreamNamespacedName cls, StreamNamespacedName msgName
-                                                , DataRef<PropertyMessageArg> entries, uint32_t messageSizeInBytes ) =
+                                                , DataRef<PropertyMessageArg> entries, PxU32 messageSizeInBytes ) =
    0;*/
 struct CreatePropertyMessage : public EventSerializeable
 {
 	StreamNamespacedName mClass;
 	StreamNamespacedName mMessageName;
 	DataRef<StreamPropMessageArg> mMessageEntries;
-	uint32_t mMessageByteSize;
+	PxU32 mMessageByteSize;
 
 	CreatePropertyMessage(StreamNamespacedName cls, StreamNamespacedName msgName, DataRef<StreamPropMessageArg> propArg,
-	                      uint32_t messageByteSize)
+	                      PxU32 messageByteSize)
 	: mClass(cls), mMessageName(msgName), mMessageEntries(propArg), mMessageByteSize(messageByteSize)
 	{
 	}
@@ -535,10 +535,10 @@ struct SetPropertyValue : public EventSerializeable
 	StringHandle mPropertyName;
 	DataRef<const uint8_t> mData;
 	StreamNamespacedName mIncomingTypeName;
-	uint32_t mNumItems;
+	PxU32 mNumItems;
 
 	SetPropertyValue(uint64_t instance, StringHandle name, DataRef<const uint8_t> data,
-	                 StreamNamespacedName incomingTypeName, uint32_t numItems)
+	                 StreamNamespacedName incomingTypeName, PxU32 numItems)
 	: mInstanceId(instance), mPropertyName(name), mData(data), mIncomingTypeName(incomingTypeName), mNumItems(numItems)
 	{
 	}
@@ -590,8 +590,8 @@ struct BeginSetPropertyValue : public EventSerializeable
 struct AppendPropertyValueData : public EventSerializeable
 {
 	DataRef<const uint8_t> mData;
-	uint32_t mNumItems;
-	AppendPropertyValueData(DataRef<const uint8_t> data, uint32_t numItems) : mData(data), mNumItems(numItems)
+	PxU32 mNumItems;
+	AppendPropertyValueData(DataRef<const uint8_t> data, PxU32 numItems) : mData(data), mNumItems(numItems)
 	{
 	}
 	AppendPropertyValueData()
@@ -885,12 +885,12 @@ struct SetCamera : public EventSerializeable
 
 struct ErrorMessage : public EventSerializeable
 {
-	uint32_t mCode;
+	PxU32 mCode;
 	String mMessage;
 	String mFile;
-	uint32_t mLine;
+	PxU32 mLine;
 
-	ErrorMessage(uint32_t code, String message, String file, uint32_t line)
+	ErrorMessage(PxU32 code, String message, String file, PxU32 line)
 	: mCode(code), mMessage(message), mFile(file), mLine(line)
 	{
 	}

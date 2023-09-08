@@ -53,26 +53,26 @@ namespace physx
 
 // Thomas Wang's 32 bit mix
 // http://www.cris.com/~Ttwang/tech/inthash.htm
-PX_FORCE_INLINE uint32_t PxComputeHash(const uint32_t key)
+PX_FORCE_INLINE PxU32 PxComputeHash(const PxU32 key)
 {
-	uint32_t k = key;
+	PxU32 k = key;
 	k += ~(k << 15);
 	k ^= (k >> 10);
 	k += (k << 3);
 	k ^= (k >> 6);
 	k += ~(k << 11);
 	k ^= (k >> 16);
-	return uint32_t(k);
+	return PxU32(k);
 }
 
-PX_FORCE_INLINE uint32_t PxComputeHash(const int32_t key)
+PX_FORCE_INLINE PxU32 PxComputeHash(const PxI32 key)
 {
-	return PxComputeHash(uint32_t(key));
+	return PxComputeHash(PxU32(key));
 }
 
 // Thomas Wang's 64 bit mix
 // http://www.cris.com/~Ttwang/tech/inthash.htm
-PX_FORCE_INLINE uint32_t PxComputeHash(const uint64_t key)
+PX_FORCE_INLINE PxU32 PxComputeHash(const uint64_t key)
 {
 	uint64_t k = key;
 	k += ~(k << 32);
@@ -83,37 +83,37 @@ PX_FORCE_INLINE uint32_t PxComputeHash(const uint64_t key)
 	k ^= (k >> 15);
 	k += ~(k << 27);
 	k ^= (k >> 31);
-	return uint32_t(UINT32_MAX & k);
+	return PxU32(UINT32_MAX & k);
 }
 
 #if PX_APPLE_FAMILY
 // hash for size_t, to make gcc happy
-PX_INLINE uint32_t PxComputeHash(const size_t key)
+PX_INLINE PxU32 PxComputeHash(const size_t key)
 {
 #if PX_P64_FAMILY
 	return PxComputeHash(uint64_t(key));
 #else
-	return PxComputeHash(uint32_t(key));
+	return PxComputeHash(PxU32(key));
 #endif
 }
 #endif
 
 // Hash function for pointers
-PX_INLINE uint32_t PxComputeHash(const void* ptr)
+PX_INLINE PxU32 PxComputeHash(const void* ptr)
 {
 #if PX_P64_FAMILY
 	return PxComputeHash(uint64_t(ptr));
 #else
-	return PxComputeHash(uint32_t(UINT32_MAX & size_t(ptr)));
+	return PxComputeHash(PxU32(UINT32_MAX & size_t(ptr)));
 #endif
 }
 
 // Hash function for pairs
 template <typename F, typename S>
-PX_INLINE uint32_t PxComputeHash(const PxPair<F, S>& p)
+PX_INLINE PxU32 PxComputeHash(const PxPair<F, S>& p)
 {
-	uint32_t seed = 0x876543;
-	uint32_t m = 1000007;
+	PxU32 seed = 0x876543;
+	PxU32 m = 1000007;
 	return PxComputeHash(p.second) ^ (m * (PxComputeHash(p.first) ^ (m * seed)));
 }
 
@@ -121,7 +121,7 @@ PX_INLINE uint32_t PxComputeHash(const PxPair<F, S>& p)
 template <class Key>
 struct PxHash
 {
-	uint32_t operator()(const Key& k) const
+	PxU32 operator()(const Key& k) const
 	{
 		return PxComputeHash(k);
 	}
@@ -136,13 +136,13 @@ template <>
 struct PxHash<const char*>
 {
   public:
-	uint32_t operator()(const char* _string) const
+	PxU32 operator()(const char* _string) const
 	{
 		// "DJB" string hash
 		const uint8_t* string = reinterpret_cast<const uint8_t*>(_string);
-		uint32_t h = 5381;
+		PxU32 h = 5381;
 		for(const uint8_t* ptr = string; *ptr; ptr++)
-			h = ((h << 5) + h) ^ uint32_t(*ptr);
+			h = ((h << 5) + h) ^ PxU32(*ptr);
 		return h;
 	}
 	bool equal(const char* string0, const char* string1) const

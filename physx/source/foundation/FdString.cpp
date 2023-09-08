@@ -49,33 +49,33 @@ namespace physx
 {
 // cross-platform implementations
 
-int32_t Pxstrcmp(const char* str1, const char* str2)
+PxI32 Pxstrcmp(const char* str1, const char* str2)
 {
 	return ::strcmp(str1, str2);
 }
 
-int32_t Pxstrncmp(const char* str1, const char* str2, size_t count)
+PxI32 Pxstrncmp(const char* str1, const char* str2, size_t count)
 {
 	return ::strncmp(str1, str2, count);
 }
 
-int32_t Pxsnprintf(char* dst, size_t dstSize, const char* format, ...)
+PxI32 Pxsnprintf(char* dst, size_t dstSize, const char* format, ...)
 {
 	va_list arg;
 	va_start(arg, format);
-	int32_t r = Pxvsnprintf(dst, dstSize, format, arg);
+	PxI32 r = Pxvsnprintf(dst, dstSize, format, arg);
 	va_end(arg);
 	return r;
 }
 
-int32_t Pxsscanf(const char* buffer, const char* format, ...)
+PxI32 Pxsscanf(const char* buffer, const char* format, ...)
 {
 	va_list arg;
 	va_start(arg, format);
 #if (PX_VC < 12) && !PX_LINUX
-	int32_t r = ::sscanf(buffer, format, arg);
+	PxI32 r = ::sscanf(buffer, format, arg);
 #else
-	int32_t r = ::vsscanf(buffer, format, arg);
+	PxI32 r = ::vsscanf(buffer, format, arg);
 #endif
 	va_end(arg);
 
@@ -129,27 +129,27 @@ void Pxstrupr(char* str)
 			*str -= 32;
 }
 
-int32_t Pxvsnprintf(char* dst, size_t dstSize, const char* src, va_list arg)
+PxI32 Pxvsnprintf(char* dst, size_t dstSize, const char* src, va_list arg)
 {
 
 #if PX_VC // MSVC is not C99-compliant...
-	int32_t result = dst ? ::vsnprintf(dst, dstSize, src, arg) : -1;
-	if(dst && (result == int32_t(dstSize) || result < 0))
+	PxI32 result = dst ? ::vsnprintf(dst, dstSize, src, arg) : -1;
+	if(dst && (result == PxI32(dstSize) || result < 0))
 		dst[dstSize - 1] = 0; // string was truncated or there wasn't room for the NULL
 	if(result < 0)
 		result = _vscprintf(src, arg); // work out how long the answer would have been.
 #else
-	int32_t result = ::vsnprintf(dst, dstSize, src, arg);
+	PxI32 result = ::vsnprintf(dst, dstSize, src, arg);
 #endif
 	return result;
 }
 
-int32_t Pxstricmp(const char* str, const char* str1)
+PxI32 Pxstricmp(const char* str, const char* str1)
 {
 	return Pxstrnicmp(str, str1, strlen(str));
 }
 
-int32_t Pxstrnicmp(const char* str, const char* str1, size_t n)
+PxI32 Pxstrnicmp(const char* str, const char* str1, size_t n)
 {
 #if PX_VC
 	return (::_strnicmp(str, str1, n));

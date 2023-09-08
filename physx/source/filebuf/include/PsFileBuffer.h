@@ -69,7 +69,7 @@ public:
 		if ( mFph )
 		{
 			fseek(mFph,0L,SEEK_END);
-			mFileLength = static_cast<uint32_t>(ftell(mFph));
+			mFileLength = static_cast<PxU32>(ftell(mFph));
 			fseek(mFph,0L,SEEK_SET);
 		}
 		else
@@ -97,40 +97,40 @@ public:
 		return mSeekType;
 	}
 
-	virtual		uint32_t			read(void* buffer, uint32_t size)	
+	virtual		PxU32			read(void* buffer, PxU32 size)	
 	{
-		uint32_t ret = 0;
+		PxU32 ret = 0;
 		if ( mFph )
 		{
 			setSeekRead();
-			ret = static_cast<uint32_t>(::fread(buffer,1,size,mFph));
+			ret = static_cast<PxU32>(::fread(buffer,1,size,mFph));
 			mSeekRead+=ret;
 			mSeekCurrent+=ret;
 		}
 		return ret;
 	}
 
-	virtual		uint32_t			peek(void* buffer, uint32_t size)
+	virtual		PxU32			peek(void* buffer, PxU32 size)
 	{
-		uint32_t ret = 0;
+		PxU32 ret = 0;
 		if ( mFph )
 		{
-			uint32_t loc = tellRead();
+			PxU32 loc = tellRead();
 			setSeekRead();
-			ret = static_cast<uint32_t>(::fread(buffer,1,size,mFph));
+			ret = static_cast<PxU32>(::fread(buffer,1,size,mFph));
 			mSeekCurrent+=ret;
 			seekRead(loc);
 		}
 		return ret;
 	}
 
-	virtual		uint32_t		write(const void* buffer, uint32_t size)
+	virtual		PxU32		write(const void* buffer, PxU32 size)
 	{
-		uint32_t ret = 0;
+		PxU32 ret = 0;
 		if ( mFph )
 		{
 			setSeekWrite();
-			ret = static_cast<uint32_t>(::fwrite(buffer,1,size,mFph));
+			ret = static_cast<PxU32>(::fwrite(buffer,1,size,mFph));
 			mSeekWrite+=ret;
 			mSeekCurrent+=ret;
 			if ( mSeekWrite > mFileLength )
@@ -141,17 +141,17 @@ public:
 		return ret;
 	}
 
-	virtual uint32_t tellRead(void) const
+	virtual PxU32 tellRead(void) const
 	{
 		return mSeekRead;
 	}
 
-	virtual uint32_t tellWrite(void) const
+	virtual PxU32 tellWrite(void) const
 	{
 		return mSeekWrite;
 	}
 
-	virtual uint32_t seekRead(uint32_t loc) 
+	virtual PxU32 seekRead(PxU32 loc) 
 	{
 		mSeekRead = loc;
 		if ( mSeekRead > mFileLength )
@@ -161,7 +161,7 @@ public:
 		return mSeekRead;
 	}
 
-	virtual uint32_t seekWrite(uint32_t loc)
+	virtual PxU32 seekWrite(PxU32 loc)
 	{
 		mSeekWrite = loc;
 		if ( mSeekWrite > mFileLength )
@@ -184,7 +184,7 @@ public:
 		return mOpenMode;
 	}
 
-	virtual uint32_t getFileLength(void) const
+	virtual PxU32 getFileLength(void) const
 	{
 		return mFileLength;
 	}
@@ -203,7 +203,7 @@ private:
 			{
 				fseek(mFph,static_cast<long>(mSeekRead),SEEK_SET);
 			}
-			mSeekCurrent = mSeekRead = static_cast<uint32_t>(ftell(mFph));
+			mSeekCurrent = mSeekRead = static_cast<PxU32>(ftell(mFph));
 		}
 	}
 	// Moves the actual file pointer to the current write location
@@ -219,16 +219,16 @@ private:
 			{
 				fseek(mFph,static_cast<long>(mSeekWrite),SEEK_SET);
 			}
-			mSeekCurrent = mSeekWrite = static_cast<uint32_t>(ftell(mFph));
+			mSeekCurrent = mSeekWrite = static_cast<PxU32>(ftell(mFph));
 		}
 	}
 
 
 	FILE		*mFph;
-	uint32_t		mSeekRead;
-	uint32_t		mSeekWrite;
-	uint32_t		mSeekCurrent;
-	uint32_t		mFileLength;
+	PxU32		mSeekRead;
+	PxU32		mSeekWrite;
+	PxU32		mSeekCurrent;
+	PxU32		mFileLength;
 	SeekType	mSeekType;
 	OpenMode	mOpenMode;
 };

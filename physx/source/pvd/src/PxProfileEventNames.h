@@ -57,13 +57,13 @@ namespace physx { namespace profile {
 		\param inEventCount Number of provided events.
 		\param inSubsystems Event names array.
 		*/
-		PxProfileNames( uint32_t inEventCount = 0, const PxProfileEventName* inSubsystems = NULL )
+		PxProfileNames( PxU32 inEventCount = 0, const PxProfileEventName* inSubsystems = NULL )
 			: eventCount( inEventCount )
 			, events( inSubsystems )
 		{
 		}
 
-		uint32_t							eventCount;
+		PxU32							eventCount;
 		const PxProfileEventName*			events;
 	};
 

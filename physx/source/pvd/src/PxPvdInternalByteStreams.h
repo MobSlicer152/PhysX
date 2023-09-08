@@ -47,9 +47,9 @@ struct MemPvdInputStream : public PvdInputStream
 		mGood = true;
 	}
 
-	uint32_t size() const
+	PxU32 size() const
 	{
-		return mGood ? static_cast<uint32_t>(mEnd - mBegin) : 0;
+		return mGood ? static_cast<PxU32>(mEnd - mBegin) : 0;
 	}
 	bool isGood() const
 	{
@@ -62,7 +62,7 @@ struct MemPvdInputStream : public PvdInputStream
 		mEnd = stop;
 	}
 
-	void nocopyRead(uint8_t*& buffer, uint32_t& len)
+	void nocopyRead(uint8_t*& buffer, PxU32& len)
 	{
 		if(len == 0 || mGood == false)
 		{
@@ -70,7 +70,7 @@ struct MemPvdInputStream : public PvdInputStream
 			buffer = NULL;
 			return;
 		}
-		uint32_t original = len;
+		PxU32 original = len;
 		len = PxMin(len, size());
 		if(mGood && len != original)
 			mGood = false;
@@ -78,11 +78,11 @@ struct MemPvdInputStream : public PvdInputStream
 		mBegin += len;
 	}
 
-	virtual bool read(uint8_t* buffer, uint32_t& len)
+	virtual bool read(uint8_t* buffer, PxU32& len)
 	{
 		if(len == 0)
 			return true;
-		uint32_t original = len;
+		PxU32 original = len;
 		len = PxMin(len, size());
 
 		physx::intrinsics::memCopy(buffer, mBegin, len);

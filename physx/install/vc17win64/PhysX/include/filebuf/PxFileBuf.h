@@ -82,7 +82,7 @@ public:
 	*
 	* Does not support streams longer than 32 bits
 	*/
-	static const uint32_t STREAM_SEEK_END=0xFFFFFFFF;
+	static const PxU32 STREAM_SEEK_END=0xFFFFFFFF;
 
 	enum OpenMode
 	{
@@ -129,7 +129,7 @@ public:
 		return mEndianMode;
 	}
 
-	virtual uint32_t getFileLength(void) const = 0;
+	virtual PxU32 getFileLength(void) const = 0;
 
 	/**
 	\brief Seeks the stream to a particular location for reading
@@ -137,7 +137,7 @@ public:
 	* If the location passed exceeds the length of the stream, then it will seek to the end.
 	* Returns the location it ended up at (useful if you seek to the end) to get the file position
 	*/
-	virtual uint32_t	seekRead(uint32_t loc) = 0;
+	virtual PxU32	seekRead(PxU32 loc) = 0;
 
 	/**
 	\brief Seeks the stream to a particular location for writing
@@ -145,7 +145,7 @@ public:
 	* If the location passed exceeds the length of the stream, then it will seek to the end.
 	* Returns the location it ended up at (useful if you seek to the end) to get the file position
 	*/
-	virtual uint32_t	seekWrite(uint32_t loc) = 0;
+	virtual PxU32	seekWrite(PxU32 loc) = 0;
 
 	/**
 	\brief Reads from the stream into a buffer.
@@ -155,7 +155,7 @@ public:
 
 	\return Returns the actual number of bytes read.  If not equal to the length requested, then reached end of stream.
 	*/
-	virtual uint32_t	read(void *mem,uint32_t len) = 0;
+	virtual PxU32	read(void *mem,PxU32 len) = 0;
 
 
 	/**
@@ -166,7 +166,7 @@ public:
 
 	\return Returns the actual number of bytes read.  If not equal to the length requested, then reached end of stream.
 	*/
-	virtual uint32_t	peek(void *mem,uint32_t len) = 0;
+	virtual PxU32	peek(void *mem,PxU32 len) = 0;
 
 	/**
 	\brief Writes a buffer of memory to the stream
@@ -176,21 +176,21 @@ public:
 
 	\return Returns the actual number of bytes sent to the stream.  If not equal to the length specific, then the stream is full or unable to write for some reason.
 	*/
-	virtual uint32_t	write(const void *mem,uint32_t len) = 0;
+	virtual PxU32	write(const void *mem,PxU32 len) = 0;
 
 	/**
 	\brief Reports the current stream location read aqccess.
 
 	\return Returns the current stream read location.
 	*/
-	virtual uint32_t	tellRead(void) const = 0;
+	virtual PxU32	tellRead(void) const = 0;
 
 	/**
 	\brief Reports the current stream location for write access.
 
 	\return Returns the current stream write location.
 	*/
-	virtual uint32_t	tellWrite(void) const = 0;
+	virtual PxU32	tellWrite(void) const = 0;
 
 	/**
 	\brief	Causes any temporarily cached data to be flushed to the stream.
@@ -209,7 +209,7 @@ public:
 
     static PX_INLINE bool isBigEndian()
      {
-       int32_t i = 1;
+       PxI32 i = 1;
         return *(reinterpret_cast<char*>(&i))==0;
     }
 
@@ -239,7 +239,7 @@ public:
     }
 
 
-	PX_INLINE void storeDword(uint32_t v)
+	PX_INLINE void storeDword(PxU32 v)
 	{
 		if ( mEndianSwap )
 		    swap4Bytes(&v);
@@ -289,9 +289,9 @@ public:
 		return v;
 	}
 
-	uint32_t readDword(void) 
+	PxU32 readDword(void) 
 	{
-		uint32_t v=0;
+		PxU32 v=0;
 		read(&v,sizeof(v));
 		if ( mEndianSwap )
 		    swap4Bytes(&v);

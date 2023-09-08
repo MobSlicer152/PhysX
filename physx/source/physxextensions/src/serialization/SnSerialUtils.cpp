@@ -38,7 +38,7 @@ using namespace physx;
 namespace
 {
 
-#define SN_NUM_BINARY_PLATFORMS 9
+#define SN_NUM_BINARY_PLATFORMS 10
 const PxU32 sBinaryPlatformTags[SN_NUM_BINARY_PLATFORMS] =
 {
 	PX_MAKE_FOURCC('W','_','3','2'),
@@ -49,7 +49,8 @@ const PxU32 sBinaryPlatformTags[SN_NUM_BINARY_PLATFORMS] =
 	PX_MAKE_FOURCC('M','_','6','4'),
 	PX_MAKE_FOURCC('N','X','3','2'),
 	PX_MAKE_FOURCC('N','X','6','4'),
-	PX_MAKE_FOURCC('L','A','6','4')
+	PX_MAKE_FOURCC('L','A','6','4'),
+	PX_MAKE_FOURCC('P','S','P',' '),
 };
 
 const char* sBinaryPlatformNames[SN_NUM_BINARY_PLATFORMS] =
@@ -89,6 +90,8 @@ PxU32 getBinaryPlatformTag()
 	return sBinaryPlatformTags[7];
 #elif PX_LINUX && PX_A64
 	return sBinaryPlatformTags[8];
+#elif PX_PSP && PX_MIPS
+	return sBinaryPlatformTags[9];
 #else
 	#error Unknown binary platform
 #endif

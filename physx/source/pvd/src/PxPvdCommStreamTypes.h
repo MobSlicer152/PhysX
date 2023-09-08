@@ -72,7 +72,7 @@ class PvdOMMetaDataProvider
 	virtual bool createInstance(const NamespacedName& clsName, const void* instance) = 0;
 	virtual bool isInstanceValid(const void* instance) = 0;
 	virtual void destroyInstance(const void* instance) = 0;
-	virtual int32_t getInstanceClassType(const void* instance) = 0;
+	virtual PxI32 getInstanceClassType(const void* instance) = 0;
 };
 
 class PvdCommStreamEmbeddedTypes
@@ -108,29 +108,29 @@ struct EventStreamifier : public PvdEventSerializer
 		mBuffer.write(reinterpret_cast<const uint8_t*>(&type), sizeof(TDataType));
 	}
 	template <typename TDataType>
-	void write(const TDataType* type, uint32_t count)
+	void write(const TDataType* type, PxU32 count)
 	{
 		mBuffer.write(reinterpret_cast<const uint8_t*>(type), count * sizeof(TDataType));
 	}
 
 	void writeRef(DataRef<const uint8_t> data)
 	{
-		uint32_t amount = static_cast<uint32_t>(data.size());
+		PxU32 amount = static_cast<PxU32>(data.size());
 		write(amount);
 		write(data.begin(), amount);
 	}
 	void writeRef(DataRef<StringHandle> data)
 	{
-		uint32_t amount = static_cast<uint32_t>(data.size());
+		PxU32 amount = static_cast<PxU32>(data.size());
 		write(amount);
 		write(data.begin(), amount);
 	}
 	template <typename TDataType>
 	void writeRef(DataRef<TDataType> data)
 	{
-		uint32_t amount = static_cast<uint32_t>(data.size());
+		PxU32 amount = static_cast<PxU32>(data.size());
 		write(amount);
-		for(uint32_t idx = 0; idx < amount; ++idx)
+		for(PxU32 idx = 0; idx < amount; ++idx)
 		{
 			TDataType& dtype(const_cast<TDataType&>(data[idx]));
 			dtype.serialize(*this);
@@ -145,7 +145,7 @@ struct EventStreamifier : public PvdEventSerializer
 	{
 		write(val);
 	}
-	virtual void streamify(uint32_t& val)
+	virtual void streamify(PxU32& val)
 	{
 		write(val);
 	}
@@ -167,10 +167,10 @@ struct EventStreamifier : public PvdEventSerializer
 
 	virtual void streamify(String& val)
 	{
-		uint32_t len = 0;
+		PxU32 len = 0;
 		String temp = nonNull(val);
 		if(*temp)
-			len = static_cast<uint32_t>(strlen(temp) + 1);
+			len = static_cast<PxU32>(strlen(temp) + 1);
 		write(len);
 		write(val, len);
 	}
@@ -197,7 +197,7 @@ struct EventStreamifier : public PvdEventSerializer
 
 struct MeasureStream
 {
-	uint32_t mSize;
+	PxU32 mSize;
 	MeasureStream() : mSize(0)
 	{
 	}
@@ -207,7 +207,7 @@ struct MeasureStream
 		mSize += sizeof(val);
 	}
 	template <typename TDataType>
-	void write(const TDataType*, uint32_t count)
+	void write(const TDataType*, PxU32 count)
 	{
 		mSize += sizeof(TDataType) * count;
 	}

@@ -103,7 +103,7 @@ public:
 	 *
 	 * @see OmniPvdWriter::registerClass()
 	 */
-	virtual OmniPvdAttributeHandle OMNI_PVD_CALL registerEnumValue(const OmniPvdClassHandle classHandle, const char* attributeName, const uint32_t value) = 0;
+	virtual OmniPvdAttributeHandle OMNI_PVD_CALL registerEnumValue(const OmniPvdClassHandle classHandle, const char* attributeName, const PxU32 value) = 0;
 	
 	/**
 	 * @brief Registers an attribute.
@@ -119,7 +119,7 @@ public:
 	 * @see OmniPvdWriter::registerClass()
 	 * @see OmniPvdWriter::setAttribute()
 	 */
-	virtual OmniPvdAttributeHandle OMNI_PVD_CALL registerAttribute(const OmniPvdClassHandle classHandle, const char* attributeName, const OmniPvdAttributeDataType attributeDataType, const uint32_t nbrFields) = 0;
+	virtual OmniPvdAttributeHandle OMNI_PVD_CALL registerAttribute(const OmniPvdClassHandle classHandle, const char* attributeName, const OmniPvdAttributeDataType attributeDataType, const PxU32 nbrFields) = 0;
 	
 	/**
 	 * @brief Registers an attribute which is a flag.
@@ -183,7 +183,7 @@ public:
 	 * @param data The pointer to the data of the element(s) to remove from the set
 	 * @param nbrBytes The number of bytes to be written
 	 */
-	virtual void OMNI_PVD_CALL setAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t *data, const uint32_t nbrBytes) = 0;
+	virtual void OMNI_PVD_CALL setAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t *data, const PxU32 nbrBytes) = 0;
 
 	/**
 	 * @brief Sets an attribute value.
@@ -198,7 +198,7 @@ public:
 	 *
 	 * @see OmniPvdWriter::registerAttribute()
 	 */
-	virtual void OMNI_PVD_CALL setAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t *data, const uint32_t nbrBytes) = 0;
+	virtual void OMNI_PVD_CALL setAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t *data, const PxU32 nbrBytes) = 0;
 	
 	/**
 	 * @brief Adds an item to a set attribute.
@@ -214,7 +214,7 @@ public:
 	 * @param data The pointer to the data of the element(s) to remove from the set
 	 * @param nbrBytes The number of bytes to be written
 	 */
-	virtual void OMNI_PVD_CALL addToSetAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const uint32_t nbrBytes) = 0;
+	virtual void OMNI_PVD_CALL addToSetAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const PxU32 nbrBytes) = 0;
 	
 	/**
 	 * @brief Adds an item to a set attribute.
@@ -233,7 +233,7 @@ public:
 	 *
 	 * @see OmniPvdWriter::registerSetAttribute()
 	 */
-	virtual void OMNI_PVD_CALL addToSetAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t* data, const uint32_t nbrBytes) = 0;
+	virtual void OMNI_PVD_CALL addToSetAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t* data, const PxU32 nbrBytes) = 0;
 	
 	/**
 	 * @brief Removes an item from a set attribute, where the attribute is allowed to be nested
@@ -249,7 +249,7 @@ public:
 	 * @param data The pointer to the data of the element(s) to remove from the set
 	 * @param nbrBytes The number of bytes to be written
 	 */
-	virtual void OMNI_PVD_CALL removeFromSetAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const uint32_t nbrBytes) = 0;
+	virtual void OMNI_PVD_CALL removeFromSetAttribute(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const uint8_t handleDepth, const OmniPvdAttributeHandle* attributeHandles, const uint8_t* data, const PxU32 nbrBytes) = 0;
 	
 	/**
 	 * @brief Removes an item from a set attribute
@@ -264,7 +264,7 @@ public:
 	 * @param data The pointer to the data of the removed set element(s)
 	 * @param nbrBytes The number of bytes to be written
 	 */
-	virtual void OMNI_PVD_CALL removeFromSetAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t* data, const uint32_t nbrBytes) = 0;
+	virtual void OMNI_PVD_CALL removeFromSetAttributeShallow(const OmniPvdContextHandle contextHandle, const OmniPvdObjectHandle objectHandle, const OmniPvdAttributeHandle attributeHandle, const uint8_t* data, const PxU32 nbrBytes) = 0;
 
 	/**
 	 * @brief Creates an object creation event

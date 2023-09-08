@@ -141,7 +141,7 @@ PX_CUDA_CALLABLE PX_FORCE_INLINE bool isFinite(double a)
 /*!
 Sets \c count bytes starting at \c dst to zero.
 */
-PX_FORCE_INLINE void* memZero(void* dest, uint32_t count)
+PX_FORCE_INLINE void* memZero(void* dest, PxU32 count)
 {
 	return memset(dest, 0, count);
 }
@@ -149,7 +149,7 @@ PX_FORCE_INLINE void* memZero(void* dest, uint32_t count)
 /*!
 Sets \c count bytes starting at \c dst to \c c.
 */
-PX_FORCE_INLINE void* memSet(void* dest, int32_t c, uint32_t count)
+PX_FORCE_INLINE void* memSet(void* dest, PxI32 c, PxU32 count)
 {
 	return memset(dest, c, count);
 }
@@ -157,7 +157,7 @@ PX_FORCE_INLINE void* memSet(void* dest, int32_t c, uint32_t count)
 /*!
 Copies \c count bytes from \c src to \c dst. User memMove if regions overlap.
 */
-PX_FORCE_INLINE void* memCopy(void* dest, const void* src, uint32_t count)
+PX_FORCE_INLINE void* memCopy(void* dest, const void* src, PxU32 count)
 {
 	return memcpy(dest, src, count);
 }
@@ -165,7 +165,7 @@ PX_FORCE_INLINE void* memCopy(void* dest, const void* src, uint32_t count)
 /*!
 Copies \c count bytes from \c src to \c dst. Supports overlapping regions.
 */
-PX_FORCE_INLINE void* memMove(void* dest, const void* src, uint32_t count)
+PX_FORCE_INLINE void* memMove(void* dest, const void* src, PxU32 count)
 {
 	return memmove(dest, src, count);
 }

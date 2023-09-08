@@ -81,7 +81,7 @@ PX_FORCE_INLINE void PxMemoryBarrier()
 /*!
 Returns the index of the highest set bit. Not valid for zero arg.
 */
-PX_FORCE_INLINE uint32_t PxHighestSetBitUnsafe(uint32_t v)
+PX_FORCE_INLINE PxU32 PxHighestSetBitUnsafe(PxU32 v)
 {
 	unsigned long retval;
 	_BitScanReverse(&retval, v);
@@ -91,7 +91,7 @@ PX_FORCE_INLINE uint32_t PxHighestSetBitUnsafe(uint32_t v)
 /*!
 Returns the index of the highest set bit. Undefined for zero arg.
 */
-PX_FORCE_INLINE uint32_t PxLowestSetBitUnsafe(uint32_t v)
+PX_FORCE_INLINE PxU32 PxLowestSetBitUnsafe(PxU32 v)
 {
 	unsigned long retval;
 	_BitScanForward(&retval, v);
@@ -101,7 +101,7 @@ PX_FORCE_INLINE uint32_t PxLowestSetBitUnsafe(uint32_t v)
 /*!
 Returns the number of leading zeros in v. Returns 32 for v=0.
 */
-PX_FORCE_INLINE uint32_t PxCountLeadingZeros(uint32_t v)
+PX_FORCE_INLINE PxU32 PxCountLeadingZeros(PxU32 v)
 {
 	if(v)
 	{
@@ -117,7 +117,7 @@ PX_FORCE_INLINE uint32_t PxCountLeadingZeros(uint32_t v)
 Prefetch aligned cache size around \c ptr+offset.
 */
 #if !PX_ARM && !PX_A64
-PX_FORCE_INLINE void PxPrefetchLine(const void* ptr, uint32_t offset = 0)
+PX_FORCE_INLINE void PxPrefetchLine(const void* ptr, PxU32 offset = 0)
 {
 	// cache line on X86/X64 is 64-bytes so a 128-byte prefetch would require 2 prefetches.
 	// However, we can only dispatch a limited number of prefetch instructions so we opt to prefetch just 1 cache line
@@ -126,7 +126,7 @@ PX_FORCE_INLINE void PxPrefetchLine(const void* ptr, uint32_t offset = 0)
 	_mm_prefetch(((const char*)ptr + offset), _MM_HINT_NTA);
 }
 #else
-PX_FORCE_INLINE void PxPrefetchLine(const void* ptr, uint32_t offset = 0)
+PX_FORCE_INLINE void PxPrefetchLine(const void* ptr, PxU32 offset = 0)
 {
 	// arm does have 32b cache line size
 	__prefetch(((const char*)ptr + offset));
@@ -137,7 +137,7 @@ PX_FORCE_INLINE void PxPrefetchLine(const void* ptr, uint32_t offset = 0)
 Prefetch \c count bytes starting at \c ptr.
 */
 #if !PX_ARM
-PX_FORCE_INLINE void PxPrefetch(const void* ptr, uint32_t count = 1)
+PX_FORCE_INLINE void PxPrefetch(const void* ptr, PxU32 count = 1)
 {
 	const char* cp = (char*)ptr;
 	uint64_t p = size_t(ptr);
@@ -150,12 +150,12 @@ PX_FORCE_INLINE void PxPrefetch(const void* ptr, uint32_t count = 1)
 	} while(--lines);
 }
 #else
-PX_FORCE_INLINE void PxPrefetch(const void* ptr, uint32_t count = 1)
+PX_FORCE_INLINE void PxPrefetch(const void* ptr, PxU32 count = 1)
 {
 	const char* cp = (char*)ptr;
-	uint32_t p = size_t(ptr);
-	uint32_t startLine = p >> 5, endLine = (p + count - 1) >> 5;
-	uint32_t lines = endLine - startLine + 1;
+	PxU32 p = size_t(ptr);
+	PxU32 startLine = p >> 5, endLine = (p + count - 1) >> 5;
+	PxU32 lines = endLine - startLine + 1;
 	do
 	{
 		PxPrefetchLine(cp);

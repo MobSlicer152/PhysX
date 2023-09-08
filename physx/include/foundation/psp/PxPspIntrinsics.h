@@ -52,27 +52,27 @@ PX_FORCE_INLINE void PxMemoryBarrier()
 /*!
 Return the index of the highest set bit. Undefined for zero arg.
 */
-PX_INLINE uint32_t PxHighestSetBitUnsafe(uint32_t v)
+PX_INLINE PxU32 PxHighestSetBitUnsafe(PxU32 v)
 {
 
-	return uint32_t(31 - __builtin_clz(v));
+	return PxU32(31 - __builtin_clz(v));
 }
 
 /*!
 Return the index of the highest set bit. Undefined for zero arg.
 */
-PX_INLINE uint32_t PxLowestSetBitUnsafe(uint32_t v)
+PX_INLINE PxU32 PxLowestSetBitUnsafe(PxU32 v)
 {
-	return uint32_t(__builtin_ctz(v));
+	return PxU32(__builtin_ctz(v));
 }
 
 /*!
 Returns the index of the highest set bit. Returns 32 for v=0.
 */
-PX_INLINE uint32_t PxCountLeadingZeros(uint32_t v)
+PX_INLINE PxU32 PxCountLeadingZeros(PxU32 v)
 {
 	if(v)
-		return uint32_t(__builtin_clz(v));
+		return PxU32(__builtin_clz(v));
 	else
 		return 32u;
 }
@@ -80,7 +80,7 @@ PX_INLINE uint32_t PxCountLeadingZeros(uint32_t v)
 /*!
 Prefetch aligned 64B x86, 32b ARM around \c ptr+offset.
 */
-PX_FORCE_INLINE void PxPrefetchLine(const void* ptr, uint32_t offset = 0)
+PX_FORCE_INLINE void PxPrefetchLine(const void* ptr, PxU32 offset = 0)
 {
 	__builtin_prefetch(reinterpret_cast<const char* PX_RESTRICT>(ptr) + offset, 0, 3);
 }
@@ -88,7 +88,7 @@ PX_FORCE_INLINE void PxPrefetchLine(const void* ptr, uint32_t offset = 0)
 /*!
 Prefetch \c count bytes starting at \c ptr.
 */
-PX_FORCE_INLINE void PxPrefetch(const void* ptr, uint32_t count = 1)
+PX_FORCE_INLINE void PxPrefetch(const void* ptr, PxU32 count = 1)
 {
 	const char* cp = reinterpret_cast<const char*>(ptr);
 	uint64_t p = size_t(ptr);

@@ -56,10 +56,10 @@ class PvdProfileZoneClient;
 struct MetaDataProvider : public PvdOMMetaDataProvider, public PxUserAllocated
 {
     typedef PxMutex::ScopedLock TScopedLockType;
-    typedef PxHashMap<const void*, int32_t> TInstTypeMap;
+    typedef PxHashMap<const void*, PxI32> TInstTypeMap;
 	PvdObjectModelMetaData& mMetaData;
     PxMutex mMutex;
-	uint32_t mRefCount;
+	PxU32 mRefCount;
 	TInstTypeMap mTypeMap;
 
 	MetaDataProvider()
@@ -103,7 +103,7 @@ struct MetaDataProvider : public PvdOMMetaDataProvider, public PxUserAllocated
 		Option<ClassDescription> cls(mMetaData.findClass(clsName));
 		if(cls.hasValue() == false)
 			return false;
-		int32_t instType = cls->mClassId;
+		PxI32 instType = cls->mClassId;
 		mTypeMap.insert(instance, instType);
 		return true;
 	}
@@ -125,7 +125,7 @@ struct MetaDataProvider : public PvdOMMetaDataProvider, public PxUserAllocated
 			mTypeMap.erase(instance);
 		}
 	}
-	virtual int32_t getInstanceClassType(const void* instance)
+	virtual PxI32 getInstanceClassType(const void* instance)
 	{
 		TScopedLockType locker(mMutex);
 		const TInstTypeMap::Entry* entry = mTypeMap.find(instance);
@@ -206,13 +206,13 @@ class PvdImpl : public PsPvd, public PxUserAllocated
 	bool								mIsConnected;
 	bool                                mGPUProfilingWasConnected;
 	bool								mIsNVTXSupportEnabled;
-	uint32_t							mNVTXContext;
+	PxU32							mNVTXContext;
 	uint64_t							mNextStreamId;
 	physx::profile::PxProfileZoneManager*mProfileZoneManager;
 	PvdProfileZoneClient*				mProfileClient;
 	physx::profile::PxProfileZone*		mProfileZone;
 	static PvdImpl*						sInstance;
-	static uint32_t						sRefCount;
+	static PxU32						sRefCount;
 };
 
 } // namespace pvdsdk

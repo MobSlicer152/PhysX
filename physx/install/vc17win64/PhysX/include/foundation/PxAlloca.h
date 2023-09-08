@@ -79,7 +79,7 @@ class PxScopedPointer : private Alloc
 #define PX_ALLOCA(var, type, count)                                                                                    \
 	physx::PxScopedPointer<type> var;                                                                            \
 	{                                                                                                                  \
-		uint32_t size = sizeof(type) * (count);                                                                        \
+		PxU32 size = sizeof(type) * (count);                                                                        \
 		var.mOwned = size > 1024;                                                                                      \
 		if(var.mOwned)                                                                                                 \
 			var.mPointer = reinterpret_cast<type*>(physx::PxTempAllocator().allocate(size, __FILE__, __LINE__)); \

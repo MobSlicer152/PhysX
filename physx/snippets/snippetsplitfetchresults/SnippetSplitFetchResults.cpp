@@ -132,7 +132,7 @@ class ContactReportCallback : public PxSimulationEventCallback
 			{
 				pairs[i].extractContacts(&contactPoints[0], contactCount);
 
-				PxI32 startIdx = physx::PxAtomicAdd(&gSharedIndex, int32_t(contactCount));
+				PxI32 startIdx = physx::PxAtomicAdd(&gSharedIndex, PxI32(contactCount));
 				for (PxU32 j = 0; j<contactCount; j++)
 				{
 					gContactPositions[startIdx+j] = contactPoints[j].position;

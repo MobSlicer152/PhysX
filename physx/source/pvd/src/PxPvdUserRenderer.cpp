@@ -43,9 +43,9 @@ struct RenderWriter : public RenderSerializer
 	{
 	}
 	template <typename TDataType>
-	void write(const TDataType* val, uint32_t count)
+	void write(const TDataType* val, PxU32 count)
 	{
-		uint32_t numBytes = count * sizeof(TDataType);
+		PxU32 numBytes = count * sizeof(TDataType);
 		mStream.write(reinterpret_cast<const uint8_t*>(val), numBytes);
 	}
 	template <typename TDataType>
@@ -57,7 +57,7 @@ struct RenderWriter : public RenderSerializer
 	template <typename TDataType>
 	void writeRef(DataRef<TDataType>& val)
 	{
-		uint32_t amount = val.size();
+		PxU32 amount = val.size();
 		write(amount);
 		if(amount)
 			write(val.begin(), amount);
@@ -67,7 +67,7 @@ struct RenderWriter : public RenderSerializer
 	{
 		write(val);
 	}
-	virtual void streamify(uint32_t& val)
+	virtual void streamify(PxU32& val)
 	{
 		write(val);
 	}
@@ -90,7 +90,7 @@ struct RenderWriter : public RenderSerializer
 		write(val.position);
 		write(val.size);
 
-		uint32_t amount = static_cast<uint32_t>(strlen(val.string)) + 1;
+		PxU32 amount = static_cast<PxU32>(strlen(val.string)) + 1;
 		write(amount);
 		if(amount)
 			write(val.string, amount);
@@ -109,7 +109,7 @@ struct RenderWriter : public RenderSerializer
 		writeRef(val);
 	}
 
-	virtual uint32_t hasData()
+	virtual PxU32 hasData()
 	{
 		return false;
 	}
@@ -125,10 +125,10 @@ struct RenderWriter : public RenderSerializer
 struct UserRenderer : public PvdUserRenderer
 {
 	ForwardingMemoryBuffer mBuffer;
-	uint32_t mBufferCapacity;
+	PxU32 mBufferCapacity;
 	RendererEventClient* mClient;
 
-	UserRenderer(uint32_t bufferFullAmount)
+	UserRenderer(PxU32 bufferFullAmount)
 	: mBuffer("UserRenderBuffer"), mBufferCapacity(bufferFullAmount), mClient(NULL)
 	{
 	}
@@ -157,17 +157,17 @@ struct UserRenderer : public PvdUserRenderer
 		handleEvent(SetInstanceIdRenderEvent(PVD_POINTER_TO_U64(iid)));
 	}
 	// Draw these points associated with this instance
-	virtual void drawPoints(const PxDebugPoint* points, uint32_t count)
+	virtual void drawPoints(const PxDebugPoint* points, PxU32 count)
 	{
 		handleEvent(PointsRenderEvent(points, count));
 	}
 	// Draw these lines associated with this instance
-	virtual void drawLines(const PxDebugLine* lines, uint32_t count)
+	virtual void drawLines(const PxDebugLine* lines, PxU32 count)
 	{
 		handleEvent(LinesRenderEvent(lines, count));
 	}
 	// Draw these triangles associated with this instance
-	virtual void drawTriangles(const PxDebugTriangle* triangles, uint32_t count)
+	virtual void drawTriangles(const PxDebugTriangle* triangles, PxU32 count)
 	{
 		handleEvent(TrianglesRenderEvent(triangles, count));
 	}
@@ -177,8 +177,8 @@ struct UserRenderer : public PvdUserRenderer
 		handleEvent(TextRenderEvent(text));
 	}
 
-	virtual void drawRenderbuffer(const PxDebugPoint* pointData, uint32_t pointCount, const PxDebugLine* lineData,
-	                              uint32_t lineCount, const PxDebugTriangle* triangleData, uint32_t triangleCount)
+	virtual void drawRenderbuffer(const PxDebugPoint* pointData, PxU32 pointCount, const PxDebugLine* lineData,
+	                              PxU32 lineCount, const PxDebugTriangle* triangleData, PxU32 triangleCount)
 	{
 		handleEvent(DebugRenderEvent(pointData, pointCount, lineData, lineCount, triangleData, triangleCount));
 	}
@@ -234,7 +234,7 @@ struct RenderReader : public RenderSerializer
 	{
 		mStream.setup(const_cast<uint8_t*>(data.begin()), const_cast<uint8_t*>(data.end()));
 	}
-	virtual void streamify(uint32_t& val)
+	virtual void streamify(PxU32& val)
 	{
 		mStream >> val;
 	}
@@ -253,9 +253,9 @@ struct RenderReader : public RenderSerializer
 	template <typename TDataType>
 	void readRef(DataRef<TDataType>& val)
 	{
-		uint32_t count;
+		PxU32 count;
 		mStream >> count;
-		uint32_t numBytes = sizeof(TDataType) * count;
+		PxU32 numBytes = sizeof(TDataType) * count;
 
 		TDataType* dataPtr = reinterpret_cast<TDataType*>(mBuffer.growBuf(numBytes));
 		mStream.read(reinterpret_cast<uint8_t*>(dataPtr), numBytes);
@@ -280,7 +280,7 @@ struct RenderReader : public RenderSerializer
 		mStream >> val.position;
 		mStream >> val.size;
 
-		uint32_t len = 0;
+		PxU32 len = 0;
 		mStream >> len;
 
 		uint8_t* dataPtr = mBuffer.growBuf(len);
@@ -295,9 +295,9 @@ struct RenderReader : public RenderSerializer
 	{
 		return mStream.isGood();
 	}
-	virtual uint32_t hasData()
+	virtual PxU32 hasData()
 	{
-		return uint32_t(mStream.size() > 0);
+		return PxU32(mStream.size() > 0);
 	}
 
   private:
@@ -327,7 +327,7 @@ struct RenderReader<true> : public RenderSerializer
 	{
 		read(val);
 	}
-	virtual void streamify(uint32_t& val)
+	virtual void streamify(PxU32& val)
 	{
 		read(val);
 	}
@@ -342,10 +342,10 @@ struct RenderReader<true> : public RenderSerializer
 	template <typename TDataType>
 	void readRef(DataRef<TDataType>& val)
 	{
-		uint32_t count;
+		PxU32 count;
 		mStream >> count;
 		swapBytes(count);
-		uint32_t numBytes = sizeof(TDataType) * count;
+		PxU32 numBytes = sizeof(TDataType) * count;
 
 		TDataType* dataPtr = reinterpret_cast<TDataType*>(mBuffer.growBuf(numBytes));
 		PVD_FOREACH(idx, count)
@@ -371,7 +371,7 @@ struct RenderReader<true> : public RenderSerializer
 		mStream >> val.position;
 		mStream >> val.size;
 
-		uint32_t len = 0;
+		PxU32 len = 0;
 		mStream >> len;
 
 		uint8_t* dataPtr = mBuffer.growBuf(len);
@@ -386,9 +386,9 @@ struct RenderReader<true> : public RenderSerializer
 	{
 		return mStream.isGood();
 	}
-	virtual uint32_t hasData()
+	virtual PxU32 hasData()
 	{
-		return uint32_t(mStream.size() > 0);
+		return PxU32(mStream.size() > 0);
 	}
 
   private:
@@ -397,7 +397,7 @@ struct RenderReader<true> : public RenderSerializer
 
 }
 
-PvdUserRenderer* PvdUserRenderer::create(uint32_t bufferSize)
+PvdUserRenderer* PvdUserRenderer::create(PxU32 bufferSize)
 {
 	return PVD_NEW(UserRenderer)(bufferSize);
 }

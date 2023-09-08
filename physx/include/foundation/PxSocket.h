@@ -42,7 +42,7 @@ Socket abstraction API
 class PX_FOUNDATION_API PxSocket : public PxUserAllocated
 {
   public:
-	static const uint32_t DEFAULT_BUFFER_SIZE;
+	static const PxU32 DEFAULT_BUFFER_SIZE;
 
 	PxSocket(bool inEnableBuffering = true, bool blocking = true);
 
@@ -63,7 +63,7 @@ class PX_FOUNDATION_API PxSocket : public PxUserAllocated
 	\return
 	True if the connection was successful, false otherwise
 	*/
-	bool connect(const char* host, uint16_t port, uint32_t timeout = 1000);
+	bool connect(const char* host, uint16_t port, PxU32 timeout = 1000);
 
 	/*!
 	Opens a network socket for input and/or output as a server.  Put the connection in listening mode
@@ -144,7 +144,7 @@ class PX_FOUNDATION_API PxSocket : public PxUserAllocated
 	Number of bytes actually written. This could be lower than length if the socket is non-blocking.
 	*/
 
-	uint32_t write(const uint8_t* data, uint32_t length);
+	PxU32 write(const uint8_t* data, PxU32 length);
 
 	/*!
 	Reads data from the output stream.
@@ -159,7 +159,7 @@ class PX_FOUNDATION_API PxSocket : public PxUserAllocated
 	Number of bytes actually read. This could be lower than length if the stream end is
 	encountered or the socket is non-blocking.
 	*/
-	uint32_t read(uint8_t* data, uint32_t length);
+	PxU32 read(uint8_t* data, PxU32 length);
 
 	/*!
 	Sets blocking mode of the socket.

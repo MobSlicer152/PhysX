@@ -186,7 +186,7 @@ class PxBounds3
 	 \param	a		the other AABB
 	 \param	axis	the axis (0, 1, 2)
 	 */
-	PX_CUDA_CALLABLE PX_FORCE_INLINE bool intersects1D(const PxBounds3& a, uint32_t axis) const;
+	PX_CUDA_CALLABLE PX_FORCE_INLINE bool intersects1D(const PxBounds3& a, PxU32 axis) const;
 
 	/**
 	\brief indicates if these bounds contain v.
@@ -208,12 +208,12 @@ class PxBounds3
 	/**
 	\brief get component of the box's center along a given axis
 	*/
-	PX_CUDA_CALLABLE PX_FORCE_INLINE float getCenter(uint32_t axis) const;
+	PX_CUDA_CALLABLE PX_FORCE_INLINE float getCenter(PxU32 axis) const;
 
 	/**
 	\brief get component of the box's extents along a given axis
 	*/
-	PX_CUDA_CALLABLE PX_FORCE_INLINE float getExtents(uint32_t axis) const;
+	PX_CUDA_CALLABLE PX_FORCE_INLINE float getExtents(PxU32 axis) const;
 
 	/**
 	\brief returns the dimensions (width/height/depth) of this axis aligned box.
@@ -361,7 +361,7 @@ PX_CUDA_CALLABLE PX_FORCE_INLINE bool PxBounds3::intersects(const PxBounds3& b) 
 	         b.minimum.z > maximum.z || minimum.z > b.maximum.z);
 }
 
-PX_CUDA_CALLABLE PX_FORCE_INLINE bool PxBounds3::intersects1D(const PxBounds3& a, uint32_t axis) const
+PX_CUDA_CALLABLE PX_FORCE_INLINE bool PxBounds3::intersects1D(const PxBounds3& a, PxU32 axis) const
 {
 	PX_ASSERT(isValid() && a.isValid());
 	return maximum[axis] >= a.minimum[axis] && a.maximum[axis] >= minimum[axis];
@@ -399,13 +399,13 @@ PX_CUDA_CALLABLE PX_FORCE_INLINE PxVec3 PxBounds3::getCenter() const
 	return (minimum + maximum) * 0.5f;
 }
 
-PX_CUDA_CALLABLE PX_FORCE_INLINE float PxBounds3::getCenter(uint32_t axis) const
+PX_CUDA_CALLABLE PX_FORCE_INLINE float PxBounds3::getCenter(PxU32 axis) const
 {
 	PX_ASSERT(isValid());
 	return (minimum[axis] + maximum[axis]) * 0.5f;
 }
 
-PX_CUDA_CALLABLE PX_FORCE_INLINE float PxBounds3::getExtents(uint32_t axis) const
+PX_CUDA_CALLABLE PX_FORCE_INLINE float PxBounds3::getExtents(PxU32 axis) const
 {
 	PX_ASSERT(isValid());
 	return (maximum[axis] - minimum[axis]) * 0.5f;

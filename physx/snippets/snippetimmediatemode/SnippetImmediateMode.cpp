@@ -122,7 +122,7 @@ static PxReal gStackZ = 10.0f;
 			PxU32	nbFrictions;
 		};
 
-		static PX_INLINE uint32_t PxComputeHash(const PersistentPair& p)
+		static PX_INLINE PxU32 PxComputeHash(const PersistentPair& p)
 		{
 			return PxComputeHash(uint64_t(p.mID0)|(uint64_t(p.mID1)<<32));
 		}

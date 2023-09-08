@@ -49,7 +49,7 @@ namespace physx { namespace profile {
 
 		@see PxProfileEventHandler::parseEventBuffer.
 		 */
-		virtual void handleBufferFlush( const uint8_t* inData, uint32_t inLength ) = 0;
+		virtual void handleBufferFlush( const uint8_t* inData, PxU32 inLength ) = 0;
 
 		/**
 		\brief Happens if something removes all the clients from the manager.

@@ -79,7 +79,7 @@ void initializeModelTypes(PvdDataStream& stream)
 }
 
 PvdImpl* PvdImpl::sInstance = NULL;
-uint32_t PvdImpl::sRefCount = 0;
+PxU32 PvdImpl::sRefCount = 0;
 
 PvdImpl::PvdImpl()
 : mPvdTransport(NULL)
@@ -156,7 +156,7 @@ bool PvdImpl::connect(PxPvdTransport& transport, PxPvdInstrumentationFlags flags
 			mProfileZone = &physx::profile::PxProfileZone::createProfileZone(PxGetBroadcastAllocator(),gSdkName,gProfileNameProvider.getProfileNames());
 		}
 
-		for(uint32_t i = 0; i < mPvdClients.size(); i++)
+		for(PxU32 i = 0; i < mPvdClients.size(); i++)
 			mPvdClients[i]->onPvdConnected();
 
 		if (mProfileZone)
@@ -190,7 +190,7 @@ void PvdImpl::disconnect()
 
 	if(mIsConnected)
 	{
-		for(uint32_t i = 0; i < mPvdClients.size(); i++)
+		for(PxU32 i = 0; i < mPvdClients.size(); i++)
 			mPvdClients[i]->onPvdDisconnected();		
 
 		if(mMemClient)
@@ -210,7 +210,7 @@ void PvdImpl::disconnect()
 
 void PvdImpl::flush()
 {
-	for(uint32_t i = 0; i < mPvdClients.size(); i++)
+	for(PxU32 i = 0; i < mPvdClients.size(); i++)
 		mPvdClients[i]->flush();
 	if ( mProfileZone )
 	{
@@ -248,7 +248,7 @@ void PvdImpl::sendTransportInitialization()
 void PvdImpl::addClient(PvdClient* client)
 {
 	PX_ASSERT(client);
-	for(uint32_t i = 0; i < mPvdClients.size(); i++)
+	for(PxU32 i = 0; i < mPvdClients.size(); i++)
 	{
 		if(client == mPvdClients[i])
 		    return;
@@ -262,7 +262,7 @@ void PvdImpl::addClient(PvdClient* client)
 
 void PvdImpl::removeClient(PvdClient* client)
 {
-	for(uint32_t i = 0; i < mPvdClients.size(); i++)
+	for(PxU32 i = 0; i < mPvdClients.size(); i++)
 	{
 		if(client == mPvdClients[i])
 		{
@@ -338,7 +338,7 @@ PvdImpl* PvdImpl::getInstance()
 Instrumented profiling events
 ***************************************************************************************************************************/
 
-static const uint32_t CrossThreadId = 99999789;
+static const PxU32 CrossThreadId = 99999789;
 
 void* PvdImpl::zoneStart(const char* eventName, bool detached, uint64_t contextId)
 {

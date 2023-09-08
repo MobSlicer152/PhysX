@@ -59,13 +59,13 @@ bool PvdDefaultFileTransport::isConnected()
 	return mConnected;
 }
 
-bool PvdDefaultFileTransport::write(const uint8_t* inBytes, uint32_t inLength)
+bool PvdDefaultFileTransport::write(const uint8_t* inBytes, PxU32 inLength)
 {
 	PX_ASSERT(mLocked);
 	PX_ASSERT(mFileBuffer);
 	if (mConnected)
 	{
-		uint32_t len = mFileBuffer->write(inBytes, inLength);
+		PxU32 len = mFileBuffer->write(inBytes, inLength);
 		mWrittenData += len;
 		return len == inLength;
 	}
@@ -119,7 +119,7 @@ class NullFileTransport : public physx::PxPvdTransport, public physx::PxUserAllo
 	virtual void disconnect();
 	virtual bool isConnected();
 
-	virtual bool write(const uint8_t* inBytes, uint32_t inLength);
+	virtual bool write(const uint8_t* inBytes, PxU32 inLength);
 
 	virtual PxPvdTransport& lock();
 	virtual void unlock();
@@ -161,12 +161,12 @@ bool NullFileTransport::isConnected()
 	return mConnected;
 }
 
-bool NullFileTransport::write(const uint8_t* /*inBytes*/, uint32_t inLength)
+bool NullFileTransport::write(const uint8_t* /*inBytes*/, PxU32 inLength)
 {
 	PX_ASSERT(mLocked);
 	if(mConnected)
 	{
-		uint32_t len = inLength;
+		PxU32 len = inLength;
 		mWrittenData += len;
 		return len == inLength;
 	}

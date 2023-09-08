@@ -36,14 +36,14 @@ namespace pvdsdk
 
 // Marshallers cannot assume src is aligned, but they can assume dest is aligned.
 typedef void (*TSingleMarshaller)(const uint8_t* src, uint8_t* dest);
-typedef void (*TBlockMarshaller)(const uint8_t* src, uint8_t* dest, uint32_t numItems);
+typedef void (*TBlockMarshaller)(const uint8_t* src, uint8_t* dest, PxU32 numItems);
 
 template <uint8_t ByteCount>
 static inline void doSwapBytes(uint8_t* __restrict inData)
 {
-	for(uint32_t idx = 0; idx < ByteCount / 2; ++idx)
+	for(PxU32 idx = 0; idx < ByteCount / 2; ++idx)
 	{
-		uint32_t endIdx = ByteCount - idx - 1;
+		PxU32 endIdx = ByteCount - idx - 1;
 		uint8_t theTemp = inData[idx];
 		inData[idx] = inData[endIdx];
 		inData[endIdx] = theTemp;
@@ -51,16 +51,16 @@ static inline void doSwapBytes(uint8_t* __restrict inData)
 }
 
 template <uint8_t ByteCount>
-static inline void doSwapBytes(uint8_t* __restrict inData, uint32_t itemCount)
+static inline void doSwapBytes(uint8_t* __restrict inData, PxU32 itemCount)
 {
 	uint8_t* end = inData + itemCount * ByteCount;
 	for(; inData < end; inData += ByteCount)
 		doSwapBytes<ByteCount>(inData);
 }
 
-static inline void swapBytes(uint8_t* __restrict dataPtr, uint32_t numBytes, uint32_t itemWidth)
+static inline void swapBytes(uint8_t* __restrict dataPtr, PxU32 numBytes, PxU32 itemWidth)
 {
-	uint32_t numItems = numBytes / itemWidth;
+	PxU32 numItems = numBytes / itemWidth;
 	switch(itemWidth)
 	{
 	case 1:
@@ -97,11 +97,11 @@ static inline void swapBytes(int16_t& inData)
 {
 	doSwapBytes<2>(reinterpret_cast<uint8_t*>(&inData));
 }
-static inline void swapBytes(uint32_t& inData)
+static inline void swapBytes(PxU32& inData)
 {
 	doSwapBytes<4>(reinterpret_cast<uint8_t*>(&inData));
 }
-static inline void swapBytes(int32_t& inData)
+static inline void swapBytes(PxI32& inData)
 {
 	doSwapBytes<4>(reinterpret_cast<uint8_t*>(&inData));
 }
@@ -122,9 +122,9 @@ static inline void swapBytes(double& inData)
 	doSwapBytes<8>(reinterpret_cast<uint8_t*>(&inData));
 }
 
-static inline bool checkLength(const uint8_t* inStart, const uint8_t* inStop, uint32_t inLength)
+static inline bool checkLength(const uint8_t* inStart, const uint8_t* inStop, PxU32 inLength)
 {
-	return static_cast<uint32_t>(inStop - inStart) >= inLength;
+	return static_cast<PxU32>(inStop - inStart) >= inLength;
 }
 }
 }

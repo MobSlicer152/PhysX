@@ -57,7 +57,7 @@ class RenderSerializer
   public:
 	virtual void streamify(uint64_t& val) = 0;
 	virtual void streamify(float& val) = 0;
-	virtual void streamify(uint32_t& val) = 0;
+	virtual void streamify(PxU32& val) = 0;
 	virtual void streamify(uint8_t& val) = 0;
 	virtual void streamify(DataRef<uint8_t>& val) = 0;
 	virtual void streamify(DataRef<PxDebugPoint>& val) = 0;
@@ -65,7 +65,7 @@ class RenderSerializer
 	virtual void streamify(DataRef<PxDebugTriangle>& val) = 0;
 	virtual void streamify(PxDebugText& val) = 0;
 	virtual bool isGood() = 0;
-	virtual uint32_t hasData() = 0;
+	virtual PxU32 hasData() = 0;
 
 	void streamify(PvdUserRenderTypes::Enum& val)
 	{
@@ -109,7 +109,7 @@ template <typename TBulkRenderType>
 struct BulkRenderEvent
 {
 	DataRef<TBulkRenderType> mData;
-	BulkRenderEvent(const TBulkRenderType* data, uint32_t count) : mData(data, count)
+	BulkRenderEvent(const TBulkRenderType* data, PxU32 count) : mData(data, count)
 	{
 	}
 	BulkRenderEvent()
@@ -136,7 +136,7 @@ struct SetInstanceIdRenderEvent
 };
 struct PointsRenderEvent : BulkRenderEvent<PxDebugPoint>
 {
-	PointsRenderEvent(const PxDebugPoint* data, uint32_t count) : BulkRenderEvent<PxDebugPoint>(data, count)
+	PointsRenderEvent(const PxDebugPoint* data, PxU32 count) : BulkRenderEvent<PxDebugPoint>(data, count)
 	{
 	}
 	PointsRenderEvent()
@@ -145,7 +145,7 @@ struct PointsRenderEvent : BulkRenderEvent<PxDebugPoint>
 };
 struct LinesRenderEvent : BulkRenderEvent<PxDebugLine>
 {
-	LinesRenderEvent(const PxDebugLine* data, uint32_t count) : BulkRenderEvent<PxDebugLine>(data, count)
+	LinesRenderEvent(const PxDebugLine* data, PxU32 count) : BulkRenderEvent<PxDebugLine>(data, count)
 	{
 	}
 	LinesRenderEvent()
@@ -154,7 +154,7 @@ struct LinesRenderEvent : BulkRenderEvent<PxDebugLine>
 };
 struct TrianglesRenderEvent : BulkRenderEvent<PxDebugTriangle>
 {
-	TrianglesRenderEvent(const PxDebugTriangle* data, uint32_t count) : BulkRenderEvent<PxDebugTriangle>(data, count)
+	TrianglesRenderEvent(const PxDebugTriangle* data, PxU32 count) : BulkRenderEvent<PxDebugTriangle>(data, count)
 	{
 	}
 	TrianglesRenderEvent()
@@ -166,8 +166,8 @@ struct DebugRenderEvent
 	DataRef<PxDebugPoint> mPointData;
 	DataRef<PxDebugLine> mLineData;
 	DataRef<PxDebugTriangle> mTriangleData;
-	DebugRenderEvent(const PxDebugPoint* pointData, uint32_t pointCount, const PxDebugLine* lineData,
-	                 uint32_t lineCount, const PxDebugTriangle* triangleData, uint32_t triangleCount)
+	DebugRenderEvent(const PxDebugPoint* pointData, PxU32 pointCount, const PxDebugLine* lineData,
+	                 PxU32 lineCount, const PxDebugTriangle* triangleData, PxU32 triangleCount)
 	: mPointData(pointData, pointCount), mLineData(lineData, lineCount), mTriangleData(triangleData, triangleCount)
 	{
 	}

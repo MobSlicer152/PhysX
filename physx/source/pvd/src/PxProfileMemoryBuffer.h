@@ -47,15 +47,15 @@ namespace physx { namespace profile {
 		{
 			if ( mBegin ) TAllocator::deallocate( mBegin );
 		}
-		uint32_t size() const { return static_cast<uint32_t>( mEnd - mBegin ); }
-		uint32_t capacity() const { return static_cast<uint32_t>( mCapacityEnd - mBegin ); }
+		PxU32 size() const { return static_cast<PxU32>( mEnd - mBegin ); }
+		PxU32 capacity() const { return static_cast<PxU32>( mCapacityEnd - mBegin ); }
 		uint8_t* begin() { return mBegin; }
 		uint8_t* end() { return mEnd; }
 		void setEnd(uint8_t* nEnd) { mEnd = nEnd; }
 		const uint8_t* begin() const { return mBegin; }
 		const uint8_t* end() const { return mEnd; }
 		void clear() { mEnd = mBegin; }
-		uint32_t write( uint8_t inValue )
+		PxU32 write( uint8_t inValue )
 		{
 			growBuf( 1 );
 			*mEnd = inValue;
@@ -64,23 +64,23 @@ namespace physx { namespace profile {
 		}
 
 		template<typename TDataType>
-		uint32_t write( const TDataType& inValue )
+		PxU32 write( const TDataType& inValue )
 		{
-			uint32_t writtenSize = sizeof(TDataType);
+			PxU32 writtenSize = sizeof(TDataType);
 			growBuf(writtenSize);
 			const uint8_t* __restrict readPtr = reinterpret_cast< const uint8_t* >( &inValue );
 			uint8_t* __restrict writePtr = mEnd;
-			for ( uint32_t idx = 0; idx < sizeof(TDataType); ++idx ) writePtr[idx] = readPtr[idx];
+			for ( PxU32 idx = 0; idx < sizeof(TDataType); ++idx ) writePtr[idx] = readPtr[idx];
 			mEnd += writtenSize;
 			return writtenSize;
 		}
 		
 		template<typename TDataType>
-		uint32_t write( const TDataType* inValue, uint32_t inLength )
+		PxU32 write( const TDataType* inValue, PxU32 inLength )
 		{
 			if ( inValue && inLength )
 			{
-				uint32_t writeSize = inLength * sizeof( TDataType );
+				PxU32 writeSize = inLength * sizeof( TDataType );
 				growBuf( writeSize );
 				PxMemCopy( mBegin + size(), inValue, writeSize );
 				mEnd += writeSize;
@@ -92,11 +92,11 @@ namespace physx { namespace profile {
 		// used by atomic write. Store the data and write the end afterwards
 		// we dont check the buffer size, it should not resize on the fly
 		template<typename TDataType>
-		uint32_t write(const TDataType* inValue, uint32_t inLength, int32_t index)
+		PxU32 write(const TDataType* inValue, PxU32 inLength, PxI32 index)
 		{
 			if (inValue && inLength)
 			{
-				uint32_t writeSize = inLength * sizeof(TDataType);
+				PxU32 writeSize = inLength * sizeof(TDataType);
 				PX_ASSERT(mBegin + index + writeSize < mCapacityEnd);
 				PxMemCopy(mBegin + index, inValue, writeSize);				
 				return writeSize;
@@ -104,22 +104,22 @@ namespace physx { namespace profile {
 			return 0;
 		}
 		
-		void growBuf( uint32_t inAmount )
+		void growBuf( PxU32 inAmount )
 		{
-			uint32_t newSize = size() + inAmount;
+			PxU32 newSize = size() + inAmount;
 			reserve( newSize );
 		}
-		void resize( uint32_t inAmount )
+		void resize( PxU32 inAmount )
 		{
 			reserve( inAmount );
 			mEnd = mBegin + inAmount;
 		}
-		void reserve( uint32_t newSize )
+		void reserve( PxU32 newSize )
 		{
-			uint32_t currentSize = size();
+			PxU32 currentSize = size();
 			if ( newSize >= capacity() )
 			{
-				const uint32_t allocSize = mBegin ? newSize * 2 : newSize;
+				const PxU32 allocSize = mBegin ? newSize * 2 : newSize;
 
 				uint8_t* newData = static_cast<uint8_t*>(TAllocator::allocate(allocSize, __FILE__, __LINE__));
 				memset(newData, 0xf,allocSize);
@@ -143,17 +143,17 @@ namespace physx { namespace profile {
 		uint8_t* mCapacityEnd;
 
 	public:
-		TempMemoryBuffer(uint8_t* data, int32_t size) : mBegin(data), mEnd(data), mCapacityEnd(data + size) {}
+		TempMemoryBuffer(uint8_t* data, PxI32 size) : mBegin(data), mEnd(data), mCapacityEnd(data + size) {}
 		~TempMemoryBuffer()
 		{			
 		}
-		uint32_t size() const { return static_cast<uint32_t>(mEnd - mBegin); }
-		uint32_t capacity() const { return static_cast<uint32_t>(mCapacityEnd - mBegin); }
+		PxU32 size() const { return static_cast<PxU32>(mEnd - mBegin); }
+		PxU32 capacity() const { return static_cast<PxU32>(mCapacityEnd - mBegin); }
 		const uint8_t* begin() { return mBegin; }
 		uint8_t* end() { return mEnd; }
 		const uint8_t* begin() const { return mBegin; }
 		const uint8_t* end() const { return mEnd; }		
-		uint32_t write(uint8_t inValue)
+		PxU32 write(uint8_t inValue)
 		{			
 			*mEnd = inValue;
 			++mEnd;
@@ -161,22 +161,22 @@ namespace physx { namespace profile {
 		}
 
 		template<typename TDataType>
-		uint32_t write(const TDataType& inValue)
+		PxU32 write(const TDataType& inValue)
 		{
-			uint32_t writtenSize = sizeof(TDataType);			
+			PxU32 writtenSize = sizeof(TDataType);			
 			const uint8_t* __restrict readPtr = reinterpret_cast<const uint8_t*>(&inValue);
 			uint8_t* __restrict writePtr = mEnd;
-			for (uint32_t idx = 0; idx < sizeof(TDataType); ++idx) writePtr[idx] = readPtr[idx];
+			for (PxU32 idx = 0; idx < sizeof(TDataType); ++idx) writePtr[idx] = readPtr[idx];
 			mEnd += writtenSize;
 			return writtenSize;
 		}
 
 		template<typename TDataType>
-		uint32_t write(const TDataType* inValue, uint32_t inLength)
+		PxU32 write(const TDataType* inValue, PxU32 inLength)
 		{
 			if (inValue && inLength)
 			{
-				uint32_t writeSize = inLength * sizeof(TDataType);
+				PxU32 writeSize = inLength * sizeof(TDataType);
 				PxMemCopy(mBegin + size(), inValue, writeSize);
 				mEnd += writeSize;
 				return writeSize;

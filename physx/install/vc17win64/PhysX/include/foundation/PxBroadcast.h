@@ -81,7 +81,7 @@ template <class Listener, class Base>
 class PxBroadcast : public Base
 {
   public:
-	static const uint32_t MAX_NB_LISTENERS = 16;
+	static const PxU32 MAX_NB_LISTENERS = 16;
 
 	/**
 	\brief The default constructor.
@@ -122,7 +122,7 @@ class PxBroadcast : public Base
 
 	\return Number of listeners.
 	*/
-	uint32_t getNbListeners() const
+	PxU32 getNbListeners() const
 	{
 		return mListeners.size();
 	}
@@ -133,7 +133,7 @@ class PxBroadcast : public Base
 	\param index Index of the listener.
 	\return Listener on given index.
 	*/
-	Listener& getListener(uint32_t index)
+	Listener& getListener(PxU32 index)
 	{
 		PX_ASSERT(index <= mListeners.size());
 		return *mListeners[index];
@@ -203,7 +203,7 @@ class PxBroadcastingAllocator : public PxBroadcast<PxAllocationListener, PxAlloc
 			return NULL;
 		}
 
-		for(uint32_t i = 0; i < mListeners.size(); i++)
+		for(PxU32 i = 0; i < mListeners.size(); i++)
 			mListeners[i]->onAllocation(size, typeName, filename, line, mem);
 
 		return mem;
@@ -219,7 +219,7 @@ class PxBroadcastingAllocator : public PxBroadcast<PxAllocationListener, PxAlloc
 	*/
 	void deallocate(void* ptr)
 	{
-		for(uint32_t i = 0; i < mListeners.size(); i++)
+		for(PxU32 i = 0; i < mListeners.size(); i++)
 		{
 			mListeners[i]->onDeallocation(ptr);
 		}
@@ -264,7 +264,7 @@ class PxBroadcastingErrorCallback : public PxBroadcast<PxErrorCallback, PxErrorC
 	*/
 	void reportError(PxErrorCode::Enum code, const char* message, const char* file, int line)
 	{
-		for(uint32_t i = 0; i < mListeners.size(); i++)
+		for(PxU32 i = 0; i < mListeners.size(); i++)
 			mListeners[i]->reportError(code, message, file, line);
 	}
 };

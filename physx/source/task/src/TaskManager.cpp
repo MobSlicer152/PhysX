@@ -66,7 +66,7 @@ namespace physx
 			}
 			else
 			{
-				depTable[ uint32_t(mLastDep) ].mNextDep = newDep;
+				depTable[ PxU32(mLastDep) ].mNextDep = newDep;
 				mLastDep = newDep;
 			}
 		}
@@ -118,7 +118,7 @@ public:
 
 	void	addReference( PxTaskID taskID );
 	void	decrReference( PxTaskID taskID );
-	int32_t	getReference( PxTaskID taskID ) const;
+	PxI32	getReference( PxTaskID taskID ) const;
 
 	void	decrReference( PxLightCpuTask& lighttask );
 	void	addReference( PxLightCpuTask& lighttask );		
@@ -219,7 +219,7 @@ void PxTaskMgr::startSimulation()
 			mStartDispatch.pushBack(i);
 		}
 	}
-	for( uint32_t i=0; i<mStartDispatch.size(); ++i)
+	for( PxU32 i=0; i<mStartDispatch.size(); ++i)
 	{
 		dispatchTask( mStartDispatch[i] );
 	}
@@ -375,7 +375,7 @@ void PxTaskMgr::decrReference( PxTaskID taskID )
     }
 }
 
-int32_t PxTaskMgr::getReference(PxTaskID taskID) const
+PxI32 PxTaskMgr::getReference(PxTaskID taskID) const
 {
 	return mTaskTable[ taskID ].mRefCount;
 }
@@ -391,7 +391,7 @@ void PxTaskMgr::resolveRow( PxTaskID taskID )
 
     while( depRow != EOL )
     {
-        PxTaskDepTableRow& row = mDepTable[ uint32_t(depRow) ];
+        PxTaskDepTableRow& row = mDepTable[ PxU32(depRow) ];
         PxTaskTableRow& dtt = mTaskTable[ row.mTaskID ];
 
         if( !PxAtomicDecrement( &dtt.mRefCount ) )

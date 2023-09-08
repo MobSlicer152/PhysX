@@ -182,14 +182,14 @@ public:
 	 *
 	 * @return The attribute data length
 	 */
-	virtual uint32_t OMNI_PVD_CALL getAttributeDataLength() = 0;
+	virtual PxU32 OMNI_PVD_CALL getAttributeDataLength() = 0;
 	
 	/**
 	 * @brief Returns the number of elements contained in the last set operation
 	 *
 	 * @return The number of elements
 	 */
-	virtual uint32_t OMNI_PVD_CALL getAttributeNumberElements() = 0;
+	virtual PxU32 OMNI_PVD_CALL getAttributeNumberElements() = 0;
 	
 	/**
 	 * @brief Returns the numberclass handle of the attribute class
@@ -224,7 +224,7 @@ public:
 	 *
 	 * @return The enum value
 	 */
-	virtual uint32_t OMNI_PVD_CALL getEnumValue() = 0;
+	virtual PxU32 OMNI_PVD_CALL getEnumValue() = 0;
 };
 
 #endif

@@ -38,12 +38,12 @@ namespace physx { namespace profile {
 		PxProfileEventExecutionContext getExecutionContext() 
 		{ 
 			PxThread::Id theId( PxThread::getId() );
-			return PxProfileEventExecutionContext( static_cast<uint32_t>( theId ), static_cast<uint8_t>( PxThreadPriority::eNORMAL ), 0 );
+			return PxProfileEventExecutionContext( static_cast<PxU32>( theId ), static_cast<uint8_t>( PxThreadPriority::eNORMAL ), 0 );
 		}
 
-		uint32_t getThreadId() 
+		PxU32 getThreadId() 
 		{ 
-			return static_cast<uint32_t>( PxThread::getId() ); 
+			return static_cast<PxU32>( PxThread::getId() ); 
 		}
 	};
 } }

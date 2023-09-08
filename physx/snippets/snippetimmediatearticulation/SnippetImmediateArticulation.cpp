@@ -127,7 +127,7 @@ struct PersistentContactPair
 		}
 	};
 
-	PX_FORCE_INLINE uint32_t PxComputeHash(const IDS& p)
+	PX_FORCE_INLINE PxU32 PxComputeHash(const IDS& p)
 	{
 		return PxComputeHash(uint64_t(p.mID0)|(uint64_t(p.mID1)<<32));
 	}

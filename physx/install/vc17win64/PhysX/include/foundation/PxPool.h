@@ -46,7 +46,7 @@ class PxPoolBase : public PxUserAllocated, public Alloc
 {
 	PX_NOCOPY(PxPoolBase)
   protected:
-	PxPoolBase(const Alloc& alloc, uint32_t elementsPerSlab, uint32_t slabSize)
+	PxPoolBase(const Alloc& alloc, PxU32 elementsPerSlab, PxU32 slabSize)
 	: Alloc(alloc), mSlabs(alloc), mElementsPerSlab(elementsPerSlab), mUsed(0), mSlabSize(slabSize), mFreeElement(0)
 	{
 		mSlabs.reserve(64);
@@ -185,9 +185,9 @@ class PxPoolBase : public PxUserAllocated, public Alloc
 	// All the allocated slabs, sorted by pointer
 	PxArray<void*, Alloc> mSlabs;
 
-	uint32_t mElementsPerSlab;
-	uint32_t mUsed;
-	uint32_t mSlabSize;
+	PxU32 mElementsPerSlab;
+	PxU32 mUsed;
+	PxU32 mSlabSize;
 
 	FreeList* mFreeElement; // Head of free-list
 
@@ -247,14 +247,14 @@ template <class T, class Alloc = typename PxAllocatorTraits<T>::Type>
 class PxPool : public PxPoolBase<T, Alloc>
 {
   public:
-	PxPool(const Alloc& alloc = Alloc(), uint32_t elementsPerSlab = 32)
+	PxPool(const Alloc& alloc = Alloc(), PxU32 elementsPerSlab = 32)
 	: PxPoolBase<T, Alloc>(alloc, elementsPerSlab, elementsPerSlab * sizeof(T))
 	{
 	}
 };
 
 // allows specification of the slab size instead of the occupancy
-template <class T, uint32_t slabSize, class Alloc = typename PxAllocatorTraits<T>::Type>
+template <class T, PxU32 slabSize, class Alloc = typename PxAllocatorTraits<T>::Type>
 class PxPool2 : public PxPoolBase<T, Alloc>
 {
   public:

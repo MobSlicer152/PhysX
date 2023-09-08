@@ -64,7 +64,7 @@ namespace Gu
 	// PT: TODO: move this to PrunerPayload?
 	struct ExtendedBucketPrunerHash
 	{
-		PX_FORCE_INLINE uint32_t operator()(const PrunerPayload& payload) const
+		PX_FORCE_INLINE PxU32 operator()(const PrunerPayload& payload) const
 		{
 #if PX_P64_FAMILY
 //			const PxU32 h0 = PxHash((const void*)payload.data[0]);

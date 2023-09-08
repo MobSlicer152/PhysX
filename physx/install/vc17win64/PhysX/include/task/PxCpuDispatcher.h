@@ -69,7 +69,7 @@ public:
 	matching the number of tasks with the number of execution units task
 	overhead can be reduced.
 	*/
-	virtual uint32_t getWorkerCount() const = 0;
+	virtual PxU32 getWorkerCount() const = 0;
 
 	virtual ~PxCpuDispatcher() {}
 };

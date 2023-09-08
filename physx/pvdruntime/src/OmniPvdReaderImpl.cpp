@@ -160,16 +160,16 @@ OmniPvdCommandEnum::Enum OMNI_PVD_CALL OmniPvdReaderImpl::getNextCommand()
 					mStream->readBytes((unsigned char*)&mCmdAttributeDataType, sizeof(OmniPvdAttributeDataType));
 					if (mCmdAttributeDataType == OmniPvdDataTypeEnum::eENUM_VALUE)
 					{
-						mStream->readBytes((unsigned char*)&mCmdEnumValue, sizeof(uint32_t));
+						mStream->readBytes((unsigned char*)&mCmdEnumValue, sizeof(PxU32));
 					}
 					else if (mCmdAttributeDataType == OmniPvdDataTypeEnum::eFLAGS_WORD)
 					{
-						mStream->readBytes((unsigned char*)&mCmdEnumClassHandle, sizeof(uint32_t));
+						mStream->readBytes((unsigned char*)&mCmdEnumClassHandle, sizeof(PxU32));
 					}
 					else
 					{
 						mCmdEnumValue = 0;
-						mStream->readBytes((unsigned char*)&mCmdAttributeNbrFields, sizeof(uint32_t));
+						mStream->readBytes((unsigned char*)&mCmdAttributeNbrFields, sizeof(PxU32));
 					}
 					mStream->readBytes((unsigned char*)&mCmdAttributeNameLen, sizeof(uint16_t));
 					mStream->readBytes((unsigned char*)mCmdAttributeName, mCmdAttributeNameLen);
@@ -207,12 +207,12 @@ OmniPvdCommandEnum::Enum OMNI_PVD_CALL OmniPvdReaderImpl::getNextCommand()
 					mStream->readBytes((unsigned char*)&mCmdContextHandle, sizeof(OmniPvdContextHandle));
 					mStream->readBytes((unsigned char*)&mCmdObjectHandle, sizeof(OmniPvdObjectHandle));
 					mStream->readBytes((unsigned char*)&mCmdAttributeHandleDepth, sizeof(uint8_t));
-					uint32_t* attributeHandleStack = mCmdAttributeHandleStack;
+					PxU32* attributeHandleStack = mCmdAttributeHandleStack;
 					for (int i = 0; i < mCmdAttributeHandleDepth; i++) {
 						mStream->readBytes((unsigned char*)&mCmdAttributeHandle, sizeof(OmniPvdAttributeHandle));
 						attributeHandleStack++;
 					}
-					mStream->readBytes((unsigned char*)&mCmdAttributeDataLen, sizeof(uint32_t));
+					mStream->readBytes((unsigned char*)&mCmdAttributeDataLen, sizeof(PxU32));
 					readLongDataFromStream(mCmdAttributeDataLen);
 					mLog.outputLine("[parser] set attribute (contextHandle:%llu, objectHandle: %llu, handle: %llu, dataLen: %llu)\n", static_cast<unsigned long long>(mCmdContextHandle), static_cast<unsigned long long>(mCmdObjectHandle), static_cast<unsigned long long>(mCmdAttributeHandle), static_cast<unsigned long long>(mCmdAttributeDataLen));
 				}
@@ -223,12 +223,12 @@ OmniPvdCommandEnum::Enum OMNI_PVD_CALL OmniPvdReaderImpl::getNextCommand()
 					mStream->readBytes((unsigned char*)&mCmdContextHandle, sizeof(OmniPvdContextHandle));
 					mStream->readBytes((unsigned char*)&mCmdObjectHandle, sizeof(OmniPvdObjectHandle));
 					mStream->readBytes((unsigned char*)&mCmdAttributeHandleDepth, sizeof(uint8_t));
-					uint32_t* attributeHandleStack = mCmdAttributeHandleStack;
+					PxU32* attributeHandleStack = mCmdAttributeHandleStack;
 					for (int i = 0; i < mCmdAttributeHandleDepth; i++) {
 						mStream->readBytes((unsigned char*)&mCmdAttributeHandle, sizeof(OmniPvdAttributeHandle));
 						attributeHandleStack++;
 					}
-					mStream->readBytes((unsigned char*)&mCmdAttributeDataLen, sizeof(uint32_t));
+					mStream->readBytes((unsigned char*)&mCmdAttributeDataLen, sizeof(PxU32));
 					readLongDataFromStream(mCmdAttributeDataLen);
 					mLog.outputLine("[parser] add to attributeSet (contextHandle:%llu, objectHandle: %llu, attributeHandle: %llu, dataLen: %llu)\n", static_cast<unsigned long long>(mCmdContextHandle), static_cast<unsigned long long>(mCmdObjectHandle), static_cast<unsigned long long>(mCmdAttributeHandle), static_cast<unsigned long long>(mCmdAttributeDataLen));
 				}
@@ -239,12 +239,12 @@ OmniPvdCommandEnum::Enum OMNI_PVD_CALL OmniPvdReaderImpl::getNextCommand()
 					mStream->readBytes((unsigned char*)&mCmdContextHandle, sizeof(OmniPvdContextHandle));
 					mStream->readBytes((unsigned char*)&mCmdObjectHandle, sizeof(OmniPvdObjectHandle));
 					mStream->readBytes((unsigned char*)&mCmdAttributeHandleDepth, sizeof(uint8_t));
-					uint32_t* attributeHandleStack = mCmdAttributeHandleStack;
+					PxU32* attributeHandleStack = mCmdAttributeHandleStack;
 					for (int i = 0; i < mCmdAttributeHandleDepth; i++) {
 						mStream->readBytes((unsigned char*)&mCmdAttributeHandle, sizeof(OmniPvdAttributeHandle));
 						attributeHandleStack++;
 					}
-					mStream->readBytes((unsigned char*)&mCmdAttributeDataLen, sizeof(uint32_t));
+					mStream->readBytes((unsigned char*)&mCmdAttributeDataLen, sizeof(PxU32));
 					readLongDataFromStream(mCmdAttributeDataLen);
 					mLog.outputLine("[parser] remove from attributeSet (contextHandle:%llu, objectHandle: %llu, handle: %llu, dataLen: %llu)\n", static_cast<unsigned long long>(mCmdContextHandle), static_cast<unsigned long long>(mCmdObjectHandle), static_cast<unsigned long long>(mCmdAttributeHandle), static_cast<unsigned long long>(mCmdAttributeDataLen));
 				}
@@ -308,17 +308,17 @@ OmniPvdCommandEnum::Enum OMNI_PVD_CALL OmniPvdReaderImpl::getCommandType()
 	return mCmdType;
 }
 
-uint32_t OMNI_PVD_CALL OmniPvdReaderImpl::getMajorVersion()
+PxU32 OMNI_PVD_CALL OmniPvdReaderImpl::getMajorVersion()
 {
 	return mCmdMajorVersion;
 }
 
-uint32_t OMNI_PVD_CALL OmniPvdReaderImpl::getMinorVersion()
+PxU32 OMNI_PVD_CALL OmniPvdReaderImpl::getMinorVersion()
 {
 	return mCmdMinorVersion;
 }
 
-uint32_t OMNI_PVD_CALL OmniPvdReaderImpl::getPatch()
+PxU32 OMNI_PVD_CALL OmniPvdReaderImpl::getPatch()
 {
 	return mCmdPatch;
 }
@@ -338,7 +338,7 @@ OmniPvdClassHandle OMNI_PVD_CALL OmniPvdReaderImpl::getBaseClassHandle()
 	return mCmdBaseClassHandle;
 }
 
-uint32_t OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeHandle() {
+PxU32 OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeHandle() {
 	return mCmdAttributeHandle;
 }
 
@@ -366,11 +366,11 @@ uint16_t OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeDataType() {
 	return mCmdAttributeDataType;
 }
 
-uint32_t OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeDataLength() {
+PxU32 OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeDataLength() {
 	return mCmdAttributeDataLen;
 }
 
-uint32_t OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeNumberElements() {
+PxU32 OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeNumberElements() {
 	return mCmdAttributeNbrFields;
 }
 
@@ -382,7 +382,7 @@ uint8_t OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeNumberHandles() {
 	return mCmdAttributeHandleDepth;
 }
 
-uint32_t* OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeHandles() {
+PxU32* OMNI_PVD_CALL OmniPvdReaderImpl::getAttributeHandles() {
 	return mCmdAttributeHandleStack;
 }
 
@@ -399,16 +399,16 @@ OmniPvdClassHandle OMNI_PVD_CALL OmniPvdReaderImpl::getEnumClassHandle()
 	return mCmdEnumClassHandle;
 }
 
-uint32_t OMNI_PVD_CALL OmniPvdReaderImpl::getEnumValue()
+PxU32 OMNI_PVD_CALL OmniPvdReaderImpl::getEnumValue()
 {
 	return mCmdEnumValue;
 }
 
-void OmniPvdReaderImpl::readLongDataFromStream(uint32_t streamByteLen) {
+void OmniPvdReaderImpl::readLongDataFromStream(PxU32 streamByteLen) {
 	if (streamByteLen < 1) return;
 	if (streamByteLen > mDataBuffAllocatedLen) {
 		delete[] mDataBuffer;
-		mDataBuffAllocatedLen = (uint32_t)(streamByteLen * 1.3f);
+		mDataBuffAllocatedLen = (PxU32)(streamByteLen * 1.3f);
 		mDataBuffer = new uint8_t[mDataBuffAllocatedLen];
 		mCmdAttributeDataPtr = mDataBuffer;
 	}

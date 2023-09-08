@@ -58,7 +58,7 @@ namespace physx { namespace profile {
 					, public PxProfileEventBufferClient
 	{
 		typedef PxMutexT<PxProfileWrapperReflectionAllocator<uint8_t> >	TMutexType;
-		typedef PxProfileHashMap<const char*, uint32_t>			TNameToEvtIndexMap;
+		typedef PxProfileHashMap<const char*, PxU32>			TNameToEvtIndexMap;
 		//ensure we don't reuse event ids.
 		typedef PxProfileHashMap<uint16_t, const char*>			TEvtIdToNameMap;
 		typedef TMutexType::ScopedLock						TLockType;
@@ -80,7 +80,7 @@ namespace physx { namespace profile {
 
 		PX_NOCOPY(ZoneImpl<TNameProvider>)
 	public:
-		ZoneImpl( PxAllocatorCallback* inAllocator, const char* inName, uint32_t bufferSize = 0x10000 /*64k*/, const TNameProvider& inProvider = TNameProvider() )
+		ZoneImpl( PxAllocatorCallback* inAllocator, const char* inName, PxU32 bufferSize = 0x10000 /*64k*/, const TNameProvider& inProvider = TNameProvider() )
 			: TZoneEventBufferType( inAllocator, bufferSize, PxDefaultContextProvider(), NULL, PxProfileNullEventFilter() )
 			, mName( inName )
 			, mMutex( PxProfileWrapperReflectionAllocator<uint8_t>( mWrapper ) )
@@ -95,7 +95,7 @@ namespace physx { namespace profile {
 			TZoneEventBufferType::setBufferMutex( &mMutex );
 			//Initialize the event name structure with existing names from the name provider.
 			PxProfileNames theNames( inProvider.getProfileNames() );
-			for ( uint32_t idx = 0; idx < theNames.eventCount; ++idx )
+			for ( PxU32 idx = 0; idx < theNames.eventCount; ++idx )
 			{
 				const PxProfileEventName& theName (theNames.events[idx]);
 				doAddName( theName.name, theName.eventId.eventId, theName.eventId.compileTimeEnabled );
@@ -114,7 +114,7 @@ namespace physx { namespace profile {
 		{
 			TLockType theLocker( mMutex );
 			mEvtIdToNameMap.insert( inEventId, inName );
-			uint32_t idx = static_cast<uint32_t>( mEventNames.size() );
+			PxU32 idx = static_cast<PxU32>( mEventNames.size() );
 			mNameToEvtIndexMapRW.insert( inName, idx );
 			mEventNames.pushBack( PxProfileEventName( inName, PxProfileEventId( inEventId, inCompileTimeEnabled ) ) );
 		}
@@ -137,7 +137,7 @@ namespace physx { namespace profile {
 			return getEventIdsForNames( &inName, 1 );
 		}
 
-		virtual uint16_t getEventIdsForNames( const char** inNames, uint32_t inLen )
+		virtual uint16_t getEventIdsForNames( const char** inNames, PxU32 inLen )
 		{
 			if ( inLen == 0 )
 				return 0;
@@ -168,12 +168,12 @@ namespace physx { namespace profile {
 			}
 			while( foundAnEventId );
 
-			uint32_t clientCount = mZoneClients.size();
+			PxU32 clientCount = mZoneClients.size();
 			for ( uint16_t nameIdx = 0; nameIdx < inLen; ++nameIdx )
 			{
 				uint16_t newId = uint16_t(eventId + nameIdx);
 				doAddName( inNames[nameIdx], newId, true );
-				for( uint32_t clientIdx =0; clientIdx < clientCount; ++clientIdx )
+				for( PxU32 clientIdx =0; clientIdx < clientCount; ++clientIdx )
 					mZoneClients[clientIdx]->handleEventAdded( PxProfileEventName( inNames[nameIdx], PxProfileEventId( newId ) ) );
 			}
 
@@ -208,7 +208,7 @@ namespace physx { namespace profile {
 		void removeClient( PxProfileZoneClient& inClient )
 		{
 			TLockType lock( mMutex );
-			for ( uint32_t idx =0; idx < mZoneClients.size(); ++idx )
+			for ( PxU32 idx =0; idx < mZoneClients.size(); ++idx )
 			{
 				if (mZoneClients[idx] == &inClient )
 				{
@@ -229,7 +229,7 @@ namespace physx { namespace profile {
 		{
 			TLockType theLocker( mMutex );
 			const PxProfileEventName* theNames = mEventNames.begin();
-			uint32_t theEventCount = uint32_t(mEventNames.size());
+			PxU32 theEventCount = PxU32(mEventNames.size());
 			return PxProfileNames( theEventCount, theNames );
 		}
 
@@ -239,12 +239,12 @@ namespace physx { namespace profile {
 		}
 
 		//Implementation chaining the buffer flush to our clients
-		virtual void handleBufferFlush( const uint8_t* inData, uint32_t inLength )
+		virtual void handleBufferFlush( const uint8_t* inData, PxU32 inLength )
 		{
 			TLockType theLocker( mMutex );
 
-			uint32_t clientCount = mZoneClients.size();
-			for( uint32_t idx =0; idx < clientCount; ++idx )
+			PxU32 clientCount = mZoneClients.size();
+			for( PxU32 idx =0; idx < clientCount; ++idx )
 				mZoneClients[idx]->handleBufferFlush( inData, inLength );
 		}
 		//Happens if something removes all the clients from the manager.
@@ -267,14 +267,14 @@ namespace physx { namespace profile {
 			}
 		}
 
-		virtual void startEvent( uint16_t inId, uint64_t contextId, uint32_t threadId)
+		virtual void startEvent( uint16_t inId, uint64_t contextId, PxU32 threadId)
 		{
 			if( mEventsActive )
 			{
 				TZoneEventBufferType::startEvent( inId, contextId, threadId );
 			}
 		}
-		virtual void stopEvent( uint16_t inId, uint64_t contextId, uint32_t threadId )
+		virtual void stopEvent( uint16_t inId, uint64_t contextId, PxU32 threadId )
 		{
 			if( mEventsActive )
 			{
@@ -282,7 +282,7 @@ namespace physx { namespace profile {
 			}
 		}
 
-		virtual void atEvent(uint16_t inId, uint64_t contextId, uint32_t threadId, uint64_t start, uint64_t stop)
+		virtual void atEvent(uint16_t inId, uint64_t contextId, PxU32 threadId, uint64_t start, uint64_t stop)
 		{
 			if (mEventsActive)
 			{

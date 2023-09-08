@@ -135,7 +135,7 @@ namespace physx {
 		\param inEventBufferByteSize rough maximum size of the event buffer.  May exceed this size
 		by sizeof one event.  When full an immediate call to all listeners is made.
 		*/
-		virtual PxProfileZone& createProfileZone( const char* inSDKName, PxProfileNames inNames = PxProfileNames(), uint32_t inEventBufferByteSize = 0x4000 /*16k*/ ) = 0;
+		virtual PxProfileZone& createProfileZone( const char* inSDKName, PxProfileNames inNames = PxProfileNames(), PxU32 inEventBufferByteSize = 0x4000 /*16k*/ ) = 0;
 
 		/**
 		\brief Releases the profile manager instance.

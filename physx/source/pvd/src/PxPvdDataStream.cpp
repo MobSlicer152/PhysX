@@ -61,7 +61,7 @@ struct PropertyDefinitionHelper : public PvdPropertyDefinitionHelper
 	PvdDataStream* mStream;
 	PvdOMMetaDataProvider& mProvider;
     PxArray<char> mNameBuffer;
-    PxArray<uint32_t> mNameStack;
+    PxArray<PxU32> mNameStack;
     PxArray<NamedValue> mNamedValues;
     PxArray<PropertyMessageArg> mPropertyMessageArgs;
 
@@ -92,15 +92,15 @@ struct PropertyDefinitionHelper : public PvdPropertyDefinitionHelper
 		else
 			endBufOffset -= 1;
 
-		mNameBuffer.resize(static_cast<uint32_t>(resizeLen + strLen));
+		mNameBuffer.resize(static_cast<PxU32>(resizeLen + strLen));
 		char* endPtr = mNameBuffer.begin() + endBufOffset;
-		PxMemCopy(endPtr, str, static_cast<uint32_t>(strLen));
+		PxMemCopy(endPtr, str, static_cast<PxU32>(strLen));
 	}
 
 	virtual void pushName(const char* nm, const char* appender = ".")
 	{
 		size_t nameBufLen = mNameBuffer.size();
-		mNameStack.pushBack(static_cast<uint32_t>(nameBufLen));
+		mNameStack.pushBack(static_cast<PxU32>(nameBufLen));
 		if(mNameBuffer.empty() == false)
 			appendStrToBuffer(appender);
 		appendStrToBuffer(nm);
@@ -110,7 +110,7 @@ struct PropertyDefinitionHelper : public PvdPropertyDefinitionHelper
 	virtual void pushBracketedName(const char* inName, const char* leftBracket = "[", const char* rightBracket = "]")
 	{
 		size_t nameBufLen = mNameBuffer.size();
-		mNameStack.pushBack(static_cast<uint32_t>(nameBufLen));
+		mNameStack.pushBack(static_cast<PxU32>(nameBufLen));
 		appendStrToBuffer(leftBracket);
 		appendStrToBuffer(inName);
 		appendStrToBuffer(rightBracket);
@@ -121,7 +121,7 @@ struct PropertyDefinitionHelper : public PvdPropertyDefinitionHelper
 	{
 		if(mNameStack.empty())
 			return;
-		mNameBuffer.resize(static_cast<uint32_t>(mNameStack.back()));
+		mNameBuffer.resize(static_cast<PxU32>(mNameStack.back()));
 		mNameStack.popBack();
 		if(mNameBuffer.empty() == false)
 			mNameBuffer.back() = 0;
@@ -139,7 +139,7 @@ struct PropertyDefinitionHelper : public PvdPropertyDefinitionHelper
 		mNameStack.clear();
 	}
 
-	virtual void addNamedValue(const char* name, uint32_t value)
+	virtual void addNamedValue(const char* name, PxU32 value)
 	{
 		mNamedValues.pushBack(NamedValue(name, value));
 	}
@@ -164,12 +164,12 @@ struct PropertyDefinitionHelper : public PvdPropertyDefinitionHelper
 		ScopedMetaData scopedProvider(mProvider);
 		return scopedProvider->getStringTable().registerStr(str);
 	}
-	virtual void addPropertyMessageArg(const NamespacedName& inDatatype, uint32_t inOffset, uint32_t inSize)
+	virtual void addPropertyMessageArg(const NamespacedName& inDatatype, PxU32 inOffset, PxU32 inSize)
 	{
 		mPropertyMessageArgs.pushBack(PropertyMessageArg(registerStr(getTopName()), inDatatype, inOffset, inSize));
 	}
 	virtual void addPropertyMessage(const NamespacedName& clsName, const NamespacedName& msgName,
-	                                uint32_t inStructSizeInBytes)
+	                                PxU32 inStructSizeInBytes)
 	{
 		if(mPropertyMessageArgs.empty())
 		{
@@ -193,8 +193,8 @@ class PvdMemPool
 {
 	// Link List
     PxArray<uint8_t*> mMemBuffer;
-	uint32_t mLength;
-	uint32_t mBufIndex;
+	PxU32 mLength;
+	PxU32 mBufIndex;
 
 	// 4k for one page
 	static const int BUFFER_LENGTH = 4096;
@@ -207,7 +207,7 @@ class PvdMemPool
 
 	~PvdMemPool()
 	{
-		for(uint32_t i = 0; i < mMemBuffer.size(); i++)
+		for(PxU32 i = 0; i < mMemBuffer.size(); i++)
 		{
 			PX_FREE(mMemBuffer[i]);
 		}
@@ -228,12 +228,12 @@ class PvdMemPool
 		mLength = 0;
 	}
 
-	void* allocate(uint32_t length)
+	void* allocate(PxU32 length)
 	{
-		if(length > uint32_t(BUFFER_LENGTH))
+		if(length > PxU32(BUFFER_LENGTH))
 			return NULL;
 
-		if(length + mLength > uint32_t(BUFFER_LENGTH))
+		if(length + mLength > PxU32(BUFFER_LENGTH))
 			grow();
 
 		void* mem = reinterpret_cast<void*>(&mMemBuffer[mBufIndex][mLength]);
@@ -249,7 +249,7 @@ class PvdMemPool
 };
 struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 {
-    PxHashMap<String, uint32_t> mStringHashMap;
+    PxHashMap<String, PxU32> mStringHashMap;
 	PvdOMMetaDataProvider& mMetaDataProvider;
     PxArray<uint8_t> mTempBuffer;
 	PropertyDefinitionHelper mPropertyDefinitionHelper;
@@ -261,8 +261,8 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 	// us to write the data out to a separate buffer
 	// when strings are involved.
 	ForwardingMemoryBuffer mSPVBuffer;
-	uint32_t mEventCount;
-	uint32_t mPropertyMessageSize;
+	PxU32 mEventCount;
+	PxU32 mPropertyMessageSize;
 	bool mConnected;
 	uint64_t mStreamId;
     PxArray<PvdCommand*> mPvdCommandArray;
@@ -299,7 +299,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 	{
 		if(nm == NULL || *nm == 0)
 			return 0;
-        const PxHashMap<String, uint32_t>::Entry* entry(mStringHashMap.find(nm));
+        const PxHashMap<String, PxU32>::Entry* entry(mStringHashMap.find(nm));
 		if(entry)
 			return entry->second;
 		ScopedMetaData meta(mMetaDataProvider);
@@ -378,9 +378,9 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 	}
 
 	template <typename TDataType>
-	TDataType* allocTemp(uint32_t numItems)
+	TDataType* allocTemp(PxU32 numItems)
 	{
-		uint32_t desiredBytes = numItems * sizeof(TDataType);
+		PxU32 desiredBytes = numItems * sizeof(TDataType);
 		if(desiredBytes > mTempBuffer.size())
 			mTempBuffer.resize(desiredBytes);
 		TDataType* retval = reinterpret_cast<TDataType*>(mTempBuffer.begin());
@@ -410,7 +410,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 	                                  const NamespacedName& dtypeName, PropertyType::Enum propertyType)
 	{
 		ScopedMetaData meta(mMetaDataProvider);
-		int32_t dtypeType = meta->findClass(dtypeName)->mClassId;
+		PxI32 dtypeType = meta->findClass(dtypeName)->mClassId;
 		NamespacedName typeName = dtypeName;
 		if(dtypeType == getPvdTypeForType<String>())
 		{
@@ -448,7 +448,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 			PX_ASSERT(false);
 			return PvdErrorType::ArgumentError;
 		}
-		uint32_t numItems = values.size();
+		PxU32 numItems = values.size();
 		NameHandleValue* streamValues = allocTemp<NameHandleValue>(numItems);
 		PVD_FOREACH(idx, numItems)
 		streamValues[idx] = NameHandleValue(toStream(values[idx].mName), values[idx].mValue);
@@ -458,7 +458,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 	}
 
 	bool createMetaPropertyMessage(const NamespacedName& cls, const NamespacedName& msgName,
-	                               DataRef<PropertyMessageArg> entries, uint32_t messageSizeInBytes)
+	                               DataRef<PropertyMessageArg> entries, PxU32 messageSizeInBytes)
 	{
 		ScopedMetaData meta(mMetaDataProvider);
 		return meta->createPropertyMessage(cls, msgName, entries, messageSizeInBytes).hasValue();
@@ -474,7 +474,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 #endif
 
 	virtual PvdError createPropertyMessage(const NamespacedName& cls, const NamespacedName& msgName,
-	                                       DataRef<PropertyMessageArg> entries, uint32_t messageSizeInBytes)
+	                                       DataRef<PropertyMessageArg> entries, PxU32 messageSizeInBytes)
 	{
 		PX_ASSERT(mStreamState == DataStreamState::Open);
 #if PX_DEBUG
@@ -482,7 +482,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 		PX_ASSERT(messageExists(msgName) == false);
 #endif
 		createMetaPropertyMessage(cls, msgName, entries, messageSizeInBytes);
-		uint32_t numItems = entries.size();
+		PxU32 numItems = entries.size();
 		StreamPropMessageArg* streamValues = allocTemp<StreamPropMessageArg>(numItems);
 		PVD_FOREACH(idx, numItems)
 		streamValues[idx] =
@@ -517,13 +517,13 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 	// If the property will fit or is already completely in memory
 	bool checkPropertyType(const void* instance, String name, const NamespacedName& incomingType)
 	{
-		int32_t instType = mMetaDataProvider.getInstanceClassType(instance);
+		PxI32 instType = mMetaDataProvider.getInstanceClassType(instance);
 		ScopedMetaData meta(mMetaDataProvider);
 		Option<PropertyDescription> prop = meta->findProperty(instType, name);
 		if(prop.hasValue() == false)
 			return false;
-		int32_t propType = prop->mDatatype;
-		int32_t incomingTypeId = meta->findClass(incomingType)->mClassId;
+		PxI32 propType = prop->mDatatype;
+		PxI32 incomingTypeId = meta->findClass(incomingType)->mClassId;
 		if(incomingTypeId != getPvdTypeForType<VoidPtr>())
 		{
 			MarshalQueryResult result = meta->checkMarshalling(incomingTypeId, propType);
@@ -542,8 +542,8 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 
 	DataRef<const uint8_t> bufferPropertyValue(ClassDescriptionSizeInfo info, DataRef<const uint8_t> data)
 	{
-		uint32_t realSize = info.mByteSize;
-		uint32_t numItems = data.size() / realSize;
+		PxU32 realSize = info.mByteSize;
+		PxU32 numItems = data.size() / realSize;
 		if(info.mPtrOffsets.size() != 0)
 		{
 			mSPVBuffer.clear();
@@ -559,7 +559,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 					const char* strPtr;
 					physx::intrinsics::memCopy(&strPtr, itemPtr + offset.mOffset, sizeof(char*));
 					strPtr = nonNull(strPtr);
-					uint32_t len = safeStrLen(strPtr) + 1;
+					PxU32 len = safeStrLen(strPtr) + 1;
 					mSPVBuffer.write(strPtr, len);
 				}
 			}
@@ -582,8 +582,8 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 			ScopedMetaData meta(mMetaDataProvider);
 			clsDesc = meta->findClass(incomingTypeName);
 		}
-		uint32_t realSize = clsDesc.getNativeSize();
-		uint32_t numItems = data.size() / realSize;
+		PxU32 realSize = clsDesc.getNativeSize();
+		PxU32 numItems = data.size() / realSize;
 		data = bufferPropertyValue(clsDesc.getNativeSizeInfo(), data);
 		SetPropertyValue evt(toStream(instance), toStream(name), data, toStream(incomingTypeName), numItems);
 		return boolToError(handlePvdEvent(evt));
@@ -609,8 +609,8 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 
 	virtual PvdError appendPropertyValueData(DataRef<const uint8_t> data)
 	{
-		uint32_t realSize = mSPVClass.getNativeSize();
-		uint32_t numItems = data.size() / realSize;
+		PxU32 realSize = mSPVClass.getNativeSize();
+		PxU32 numItems = data.size() / realSize;
 		data = bufferPropertyValue(mSPVClass.getNativeSizeInfo(), data);
 		PX_ASSERT(mStreamState == DataStreamState::SetPropertyValue);
 		return boolToError(handlePvdEvent(AppendPropertyValueData(data, numItems)));
@@ -626,7 +626,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 
 	bool checkPropertyMessage(const void* instance, const NamespacedName& msgName)
 	{
-		int32_t clsId = mMetaDataProvider.getInstanceClassType(instance);
+		PxI32 clsId = mMetaDataProvider.getInstanceClassType(instance);
 		ScopedMetaData meta(mMetaDataProvider);
 		PropertyMessageDescription desc(meta->findPropertyMessage(msgName));
 		bool retval = meta->isDerivedFrom(clsId, desc.mClassId);
@@ -646,7 +646,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 				const char* strPtr;
 				physx::intrinsics::memCopy(&strPtr, data.begin() + desc.mStringOffsets[idx], sizeof(char*));
 				strPtr = nonNull(strPtr);
-				uint32_t len = safeStrLen(strPtr) + 1;
+				PxU32 len = safeStrLen(strPtr) + 1;
 				mSPVBuffer.write(strPtr, len);
 			}
 			data = DataRef<const uint8_t>(mSPVBuffer.begin(), mSPVBuffer.end());
@@ -791,7 +791,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 		         getCommStreamEventType<SetIsTopLevel>());
 	}
 
-	void sendErrorMessage(uint32_t code, const char* message, const char* file, uint32_t line)
+	void sendErrorMessage(PxU32 code, const char* message, const char* file, PxU32 line)
 	{
 		addEvent(ErrorMessage(code, message, file, line), getCommStreamEventType<ErrorMessage>());
 	}
@@ -819,7 +819,7 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 		return mConnected;
 	}
 
-	virtual void* allocateMemForCmd(uint32_t length)
+	virtual void* allocateMemForCmd(PxU32 length)
 	{
 		return mPvdCommandPool.allocate(length);
 	}
@@ -831,8 +831,8 @@ struct PvdOutStream : public PvdDataStream, public PxUserAllocated
 
 	virtual void flushPvdCommand()
 	{
-		uint32_t cmdQueueSize = mPvdCommandArray.size();
-		for(uint32_t i = 0; i < cmdQueueSize; i++)
+		PxU32 cmdQueueSize = mPvdCommandArray.size();
+		for(PxU32 i = 0; i < cmdQueueSize; i++)
 		{
 			if(mPvdCommandArray[i])
 			{

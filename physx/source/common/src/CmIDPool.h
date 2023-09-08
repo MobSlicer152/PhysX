@@ -127,7 +127,7 @@ namespace Cm
 	};
 
 	//This is spu friendly fixed size array
-	template <typename T, uint32_t N>
+	template <typename T, PxU32 N>
 	class InlineFixedArray
 	{
 		T mArr[N];

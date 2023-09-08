@@ -56,30 +56,30 @@ namespace physx
 {
 #endif
 template <class T, class Predicate, class PxAllocator>
-void PxSort(T* elements, uint32_t count, const Predicate& compare, const PxAllocator& inAllocator,
-          const uint32_t initialStackSize = 32)
+void PxSort(T* elements, PxU32 count, const Predicate& compare, const PxAllocator& inAllocator,
+          const PxU32 initialStackSize = 32)
 {
-	static const uint32_t SMALL_SORT_CUTOFF = 5; // must be >= 3 since we need 3 for median
+	static const PxU32 SMALL_SORT_CUTOFF = 5; // must be >= 3 since we need 3 for median
 
-	PX_ALLOCA(stackMem, int32_t, initialStackSize);
+	PX_ALLOCA(stackMem, PxI32, initialStackSize);
 	PxStack<PxAllocator> stack(stackMem, initialStackSize, inAllocator);
 
-	int32_t first = 0, last = int32_t(count - 1);
+	PxI32 first = 0, last = PxI32(count - 1);
 	if(last > first)
 	{
 		for(;;)
 		{
 			while(last > first)
 			{
-				PX_ASSERT(first >= 0 && last < int32_t(count));
-				if(uint32_t(last - first) < SMALL_SORT_CUTOFF)
+				PX_ASSERT(first >= 0 && last < PxI32(count));
+				if(PxU32(last - first) < SMALL_SORT_CUTOFF)
 				{
 					PxSmallSort(elements, first, last, compare);
 					break;
 				}
 				else
 				{
-					const int32_t partIndex = PxPartition(elements, first, last, compare);
+					const PxI32 partIndex = PxPartition(elements, first, last, compare);
 
 					// push smaller sublist to minimize stack usage
 					if((partIndex - first) < (last - partIndex))
@@ -102,19 +102,19 @@ void PxSort(T* elements, uint32_t count, const Predicate& compare, const PxAlloc
 		}
 	}
 #if PX_SORT_PARANOIA
-	for(uint32_t i = 1; i < count; i++)
+	for(PxU32 i = 1; i < count; i++)
 		PX_ASSERT(!compare(elements[i], elements[i - 1]));
 #endif
 }
 
 template <class T, class Predicate>
-void PxSort(T* elements, uint32_t count, const Predicate& compare)
+void PxSort(T* elements, PxU32 count, const Predicate& compare)
 {
 	PxSort(elements, count, compare, typename PxAllocatorTraits<T>::Type());
 }
 
 template <class T>
-void PxSort(T* elements, uint32_t count)
+void PxSort(T* elements, PxU32 count)
 {
 	PxSort(elements, count, PxLess<T>(), typename PxAllocatorTraits<T>::Type());
 }

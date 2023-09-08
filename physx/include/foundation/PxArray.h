@@ -71,7 +71,7 @@ class PxArray : protected Alloc
 	/*!
 	Initialize array with given capacity
 	*/
-	PX_INLINE explicit PxArray(uint32_t size, const T& a = T(), const Alloc& alloc = Alloc())
+	PX_INLINE explicit PxArray(PxU32 size, const T& a = T(), const Alloc& alloc = Alloc())
 	: Alloc(alloc), mData(0), mSize(0), mCapacity(0)
 	{
 		resize(size, a);
@@ -103,7 +103,7 @@ class PxArray : protected Alloc
 	Initialize array with given length
 	*/
 	PX_INLINE explicit PxArray(const T* first, const T* last, const Alloc& alloc = Alloc())
-	: Alloc(alloc), mSize(last < first ? 0 : uint32_t(last - first)), mCapacity(mSize)
+	: Alloc(alloc), mSize(last < first ? 0 : PxU32(last - first)), mCapacity(mSize)
 	{
 		mData = allocate(mSize);
 		copy(mData, mData + mSize, first);
@@ -149,7 +149,7 @@ class PxArray : protected Alloc
 	\return
 	The element i in the array.
 	*/
-	PX_FORCE_INLINE const T& operator[](uint32_t i) const
+	PX_FORCE_INLINE const T& operator[](PxU32 i) const
 	{
 		PX_ASSERT(i < mSize);
 		return mData[i];
@@ -162,7 +162,7 @@ class PxArray : protected Alloc
 	\return
 	The element i in the array.
 	*/
-	PX_FORCE_INLINE T& operator[](uint32_t i)
+	PX_FORCE_INLINE T& operator[](PxU32 i)
 	{
 		PX_ASSERT(i < mSize);
 		return mData[i];
@@ -239,7 +239,7 @@ class PxArray : protected Alloc
 	\return
 	The number of of entries in the array.
 	*/
-	PX_FORCE_INLINE uint32_t size() const
+	PX_FORCE_INLINE PxU32 size() const
 	{
 		return mSize;
 	}
@@ -271,7 +271,7 @@ class PxArray : protected Alloc
 
 	PX_INLINE Iterator find(const T& a)
 	{
-		uint32_t index;
+		PxU32 index;
 		for(index = 0; index < mSize && mData[index] != a; index++)
 			;
 		return mData + index;
@@ -279,7 +279,7 @@ class PxArray : protected Alloc
 
 	PX_INLINE ConstIterator find(const T& a) const
 	{
-		uint32_t index;
+		PxU32 index;
 		for(index = 0; index < mSize && mData[index] != a; index++)
 			;
 		return mData + index;
@@ -342,7 +342,7 @@ class PxArray : protected Alloc
 	The position of the element that will be subtracted from this array.
 	*/
 	/////////////////////////////////////////////////////////////////////////
-	PX_INLINE void replaceWithLast(uint32_t i)
+	PX_INLINE void replaceWithLast(PxU32 i)
 	{
 		PX_ASSERT(i < mSize);
 		mData[i] = mData[--mSize];
@@ -352,7 +352,7 @@ class PxArray : protected Alloc
 
 	PX_INLINE void replaceWithLast(Iterator i)
 	{
-		replaceWithLast(static_cast<uint32_t>(i - mData));
+		replaceWithLast(static_cast<PxU32>(i - mData));
 	}
 
 	/////////////////////////////////////////////////////////////////////////
@@ -367,7 +367,7 @@ class PxArray : protected Alloc
 
 	PX_INLINE bool findAndReplaceWithLast(const T& a)
 	{
-		uint32_t index = 0;
+		PxU32 index = 0;
 		while(index < mSize && mData[index] != a)
 			++index;
 		if(index == mSize)
@@ -385,7 +385,7 @@ class PxArray : protected Alloc
 	The position of the element that will be subtracted from this array.
 	*/
 	/////////////////////////////////////////////////////////////////////////
-	PX_INLINE void remove(uint32_t i)
+	PX_INLINE void remove(PxU32 i)
 	{
 		PX_ASSERT(i < mSize);
 
@@ -410,19 +410,19 @@ class PxArray : protected Alloc
 	The number of elments that will be subtracted from this array.
 	*/
 	/////////////////////////////////////////////////////////////////////////
-	PX_INLINE void removeRange(uint32_t begin, uint32_t count)
+	PX_INLINE void removeRange(PxU32 begin, PxU32 count)
 	{
 		PX_ASSERT(begin < mSize);
 		PX_ASSERT((begin + count) <= mSize);
 
-		for(uint32_t i = 0; i < count; i++)
+		for(PxU32 i = 0; i < count; i++)
 			mData[begin + i].~T(); // call the destructor on the ones being removed first.
 
 		T* dest = &mData[begin];                       // location we are copying the tail end objects to
 		T* src = &mData[begin + count];                // start of tail objects
-		uint32_t move_count = mSize - (begin + count); // compute remainder that needs to be copied down
+		PxU32 move_count = mSize - (begin + count); // compute remainder that needs to be copied down
 
-		for(uint32_t i = 0; i < move_count; i++)
+		for(PxU32 i = 0; i < move_count; i++)
 		{
 			PX_PLACEMENT_NEW(dest, T(*src));	// copy the old one to the new location
 			src->~T();							// call the destructor on the old location
@@ -437,9 +437,9 @@ class PxArray : protected Alloc
 	Resize array
 	*/
 	//////////////////////////////////////////////////////////////////////////
-	PX_NOINLINE void resize(const uint32_t size, const T& a = T());
+	PX_NOINLINE void resize(const PxU32 size, const T& a = T());
 
-	PX_NOINLINE void resizeUninitialized(const uint32_t size);
+	PX_NOINLINE void resizeUninitialized(const PxU32 size);
 
 	//////////////////////////////////////////////////////////////////////////
 	/*!
@@ -483,7 +483,7 @@ class PxArray : protected Alloc
 	Ensure that the array has at least size capacity.
 	*/
 	//////////////////////////////////////////////////////////////////////////
-	PX_INLINE void reserve(const uint32_t capacity)
+	PX_INLINE void reserve(const PxU32 capacity)
 	{
 		if(capacity > this->capacity())
 			grow(capacity);
@@ -494,7 +494,7 @@ class PxArray : protected Alloc
 	Query the capacity(allocated mem) for the array.
 	*/
 	//////////////////////////////////////////////////////////////////////////
-	PX_FORCE_INLINE uint32_t capacity() const
+	PX_FORCE_INLINE PxU32 capacity() const
 	{
 		return mCapacity & ~PX_SIGN_BITMASK;
 	}
@@ -504,7 +504,7 @@ class PxArray : protected Alloc
 	Unsafe function to force the size of the array
 	*/
 	//////////////////////////////////////////////////////////////////////////
-	PX_FORCE_INLINE void forceSize_Unsafe(uint32_t size)
+	PX_FORCE_INLINE void forceSize_Unsafe(PxU32 size)
 	{
 		PX_ASSERT(size <= mCapacity);
 		mSize = size;
@@ -529,13 +529,13 @@ class PxArray : protected Alloc
 	//////////////////////////////////////////////////////////////////////////
 	PX_INLINE void assign(const T* first, const T* last)
 	{
-		resizeUninitialized(uint32_t(last - first));
+		resizeUninitialized(PxU32(last - first));
 		copy(begin(), end(), first);
 	}
 
 	// We need one bit to mark arrays that have been deserialized from a user-provided memory block.
 	// For alignment & memory saving purpose we store that bit in the rarely used capacity member.
-	PX_FORCE_INLINE uint32_t isInUserMemory() const
+	PX_FORCE_INLINE PxU32 isInUserMemory() const
 	{
 		return mCapacity & PX_SIGN_BITMASK;
 	}
@@ -548,7 +548,7 @@ class PxArray : protected Alloc
 
   protected:
 	// constructor for where we don't own the memory
-	PxArray(T* memory, uint32_t size, uint32_t capacity, const Alloc& alloc = Alloc())
+	PxArray(T* memory, PxU32 size, PxU32 capacity, const Alloc& alloc = Alloc())
 	: Alloc(alloc), mData(memory), mSize(size), mCapacity(capacity | PX_SIGN_BITMASK)
 	{
 	}
@@ -556,7 +556,7 @@ class PxArray : protected Alloc
 	template <class A>
 	PX_NOINLINE void copy(const PxArray<T, A>& other);
 
-	PX_INLINE T* allocate(uint32_t size)
+	PX_INLINE T* allocate(PxU32 size)
 	{
 		if(size > 0)
 		{
@@ -605,7 +605,7 @@ class PxArray : protected Alloc
 	\param capacity
 	The number of entries that the set should be able to hold.
 	*/
-	PX_INLINE void grow(uint32_t capacity)
+	PX_INLINE void grow(PxU32 capacity)
 	{
 		PX_ASSERT(this->capacity() < capacity);
 		recreate(capacity);
@@ -617,24 +617,24 @@ class PxArray : protected Alloc
 	\param capacity
 	The number of entries that the set should be able to hold.
 	*/
-	PX_NOINLINE void recreate(uint32_t capacity);
+	PX_NOINLINE void recreate(PxU32 capacity);
 
 	// The idea here is to prevent accidental bugs with pushBack or insert. Unfortunately
 	// it interacts badly with InlineArrays with smaller inline allocations.
 	// TODO(dsequeira): policy template arg, this is exactly what they're for.
-	PX_INLINE uint32_t capacityIncrement() const
+	PX_INLINE PxU32 capacityIncrement() const
 	{
-		const uint32_t capacity = this->capacity();
+		const PxU32 capacity = this->capacity();
 		return capacity == 0 ? 1 : capacity * 2;
 	}
 
 	T* mData;
-	uint32_t mSize;
-	uint32_t mCapacity;
+	PxU32 mSize;
+	PxU32 mCapacity;
 };
 
 template <class T, class Alloc>
-PX_NOINLINE void PxArray<T, Alloc>::resize(const uint32_t size, const T& a)
+PX_NOINLINE void PxArray<T, Alloc>::resize(const PxU32 size, const T& a)
 {
 	reserve(size);
 	create(mData + mSize, mData + size, a);
@@ -665,7 +665,7 @@ PX_NOINLINE void PxArray<T, Alloc>::copy(const PxArray<T, A>& other)
 }
 
 template <class T, class Alloc>
-PX_NOINLINE void PxArray<T, Alloc>::resizeUninitialized(const uint32_t size)
+PX_NOINLINE void PxArray<T, Alloc>::resizeUninitialized(const PxU32 size)
 {
 	reserve(size);
 	mSize = size;
@@ -674,7 +674,7 @@ PX_NOINLINE void PxArray<T, Alloc>::resizeUninitialized(const uint32_t size)
 template <class T, class Alloc>
 PX_NOINLINE T& PxArray<T, Alloc>::growAndPushBack(const T& a)
 {
-	uint32_t capacity = capacityIncrement();
+	PxU32 capacity = capacityIncrement();
 
 	T* newData = allocate(capacity);
 	PX_ASSERT((!capacity) || (newData && (newData != mData)));
@@ -695,7 +695,7 @@ PX_NOINLINE T& PxArray<T, Alloc>::growAndPushBack(const T& a)
 }
 
 template <class T, class Alloc>
-PX_NOINLINE void PxArray<T, Alloc>::recreate(uint32_t capacity)
+PX_NOINLINE void PxArray<T, Alloc>::recreate(PxU32 capacity)
 {
 	T* newData = allocate(capacity);
 	PX_ASSERT((!capacity) || (newData && (newData != mData)));

@@ -58,7 +58,7 @@ class ObjectRegistrar
 	void clear();
 
   private:
-	physx::PxHashMap<const void*, uint32_t> mRefCountMap;
+	physx::PxHashMap<const void*, PxU32> mRefCountMap;
 	physx::PxMutex mRefCountMapLock;
 };
 #if !PX_DOXYGEN
