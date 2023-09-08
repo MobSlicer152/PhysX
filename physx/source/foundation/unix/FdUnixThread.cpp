@@ -32,14 +32,16 @@
 #include "foundation/PxThread.h"
 
 #include <math.h>
-#if !PX_APPLE_FAMILY && !defined(__CYGWIN__) && !PX_EMSCRIPTEN
+#if !PX_APPLE_FAMILY && !defined(__CYGWIN__) && !PX_EMSCRIPTEN && !PX_PSP
 #include <bits/local_lim.h> // PTHREAD_STACK_MIN
 #endif
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#if !PX_PSP
 #include <sys/syscall.h>
-#if !PX_APPLE_FAMILY && !PX_EMSCRIPTEN
+#endif
+#if !PX_APPLE_FAMILY && !PX_EMSCRIPTEN && !PX_PSP
 #include <asm/unistd.h>
 #include <sys/resource.h>
 #endif

@@ -66,6 +66,21 @@
 namespace physx
 {
 #endif
+// PSP defines int32_t as long, this fucks up literally everything
+#ifdef PX_PSP
+typedef long long PxI64;
+typedef unsigned long long PxU64;
+typedef int PxI32;
+typedef unsigned int PxU32;
+typedef short PxI16;
+typedef unsigned short PxU16;
+// char's default signedness is implementation defined
+typedef signed char PxI8;
+typedef unsigned char PxU8;
+typedef float PxF32;
+typedef double PxF64;
+typedef float PxReal;
+#else
 typedef int64_t PxI64;
 typedef uint64_t PxU64;
 typedef int32_t PxI32;
@@ -77,6 +92,7 @@ typedef uint8_t PxU8;
 typedef float PxF32;
 typedef double PxF64;
 typedef float PxReal;
+#endif
 // Int-as-bool type - has some uses for efficiency and with SIMD
 typedef PxI32 PxIntBool;
 static const PxIntBool PxIntFalse = 0;

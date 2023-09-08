@@ -44,7 +44,11 @@ namespace physx
 {
 #endif
 
+#ifdef PX_PSP
+typedef unsigned int PxU32;
+#else
 typedef uint32_t PxU32;
+#endif
 
 class PxAllocatorCallback;
 class PxErrorCallback;

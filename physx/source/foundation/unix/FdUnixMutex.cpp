@@ -172,7 +172,7 @@ void PxReadWriteLock::lockReader(bool takeLock)
 	if(takeLock)
 		mImpl->mutex.lock();
 
-	PxAtomicIncrement(&mImpl->readerCounter);
+	PxAtomicIncrement((PxI32*)&mImpl->readerCounter);
 
 	if(takeLock)
 		mImpl->mutex.unlock();
@@ -188,7 +188,7 @@ void PxReadWriteLock::lockWriter()
 
 void PxReadWriteLock::unlockReader()
 {
-	PxAtomicDecrement(&mImpl->readerCounter);
+	PxAtomicDecrement((PxI32*)&mImpl->readerCounter);
 }
 
 void PxReadWriteLock::unlockWriter()
