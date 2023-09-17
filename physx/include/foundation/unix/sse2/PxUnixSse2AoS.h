@@ -43,10 +43,10 @@ namespace aos
 #if PX_EMSCRIPTEN
 typedef int8_t   __int8_t;
 typedef int16_t  __int16_t;
-typedef PxI32  __PxI32;
+typedef int32_t __int32_t;
 typedef int64_t  __int64_t;
 typedef uint16_t __uint16_t;
-typedef PxU32 __PxU32;
+typedef uint32_t __uint32_t;
 typedef uint64_t __uint64_t;
 #endif
 
@@ -78,10 +78,10 @@ typedef union UnionM128
 	float m128_f32[4];
 	__int8_t m128_i8[16];
 	__int16_t m128_i16[8];
-	__PxI32 m128_i32[4];
+	__int32_t m128_i32[4];
 	__int64_t m128_i64[2];
 	__uint16_t m128_u16[8];
-	__PxU32 m128_u32[4];
+	__uint32_t m128_u32[4];
 	__uint64_t m128_u64[2];
 	__m128 m128;
 	__m128i m128i;
